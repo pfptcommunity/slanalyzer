@@ -52,3 +52,18 @@ cmake -S . -B build/ -D CMAKE_BUILD_TYPE=Release
 cmake --build build/
 ```
 ![slparser_binary](https://user-images.githubusercontent.com/83429267/201460299-0bc98973-433f-4c46-91af-639d21dc0d34.png)
+
+### Running the Tool
+
+![slparser_execution](https://user-images.githubusercontent.com/83429267/201460641-66ad9637-01e5-41a6-81f1-92004f5d8e65.png)
+
+### Reviewing the Data
+The below output is limited, but ever match conditon is annotated with the number of messages that triggered the blocked or safe list. This is provides a good heatmap to see which safelist entry is excessive or inactive. 
+```
+"FieldType","MatchType","Pattern","Comment","Matches"
+$from,match,@indeed.com,,155
+$from,match,@pluralsight.com,,82
+$hfrom,match,trystoryboard.com,,2
+$from,match,em8330.trystoryboard.com,,2
+$ip,equal,192.89.112.126,,2
+```
