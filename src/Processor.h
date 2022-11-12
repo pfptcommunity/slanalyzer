@@ -81,7 +81,7 @@ namespace Proofpoint {
 
 			auto stop = high_resolution_clock::now();
 			auto duration = duration_cast<microseconds>(stop-start);
-			std::cout << std::right << std::setw(25) << "SL Parse Completed: "
+			std::cout << std::right << std::setw(25) << "SS Processing Completed: "
 					  << std::left << std::setw(25) << std::to_string(duration.count())+"μs"
 					  << std::setw(10) << std::setprecision(2)
 					  << "["+std::to_string((double)duration.count()/1000000)+"s]" << "[" << ss_file << "]"
