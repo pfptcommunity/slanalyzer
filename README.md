@@ -48,7 +48,5 @@ cmake -S . -B build/ -D CMAKE_BUILD_TYPE=Release
 
 # Compile the code
 cmake --build build/
-
-# Move the binary to a location of your choice
-![slparser_binary](https://user-images.githubusercontent.com/83429267/201460299-0bc98973-433f-4c46-91af-639d21dc0d34.png)
 ```
+![slparser_binary](https://user-images.githubusercontent.com/83429267/201460299-0bc98973-433f-4c46-91af-639d21dc0d34.png)
