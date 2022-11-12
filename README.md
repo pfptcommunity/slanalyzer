@@ -1,6 +1,6 @@
 # Proofpoint Safe/Block List Parser
 
-This tool was created to answer a common question from Proofpoint on Demand administraotrs, "Which global block or safelist entry fired the most or never?" This normally happens after years of these lists being poorly maintained. These global lists can grow massive and ultimately map back to "blocked" or "safe" classifiers associated with the core filtering module. The global safe and block entries have the following match fields.
+This tool was created to answer a common question from Proofpoint on Demand administraotrs, "Which global block or safelist entry fired the most or never?" This normally happens after years of these lists being poorly maintained. These global lists can grow massive and ultimately map back to "blocked" or "safe" classifiers associated with the core filtering module. 
 
 ### Requirements:
 
@@ -8,6 +8,8 @@ This tool was created to answer a common question from Proofpoint on Demand admi
 * pthreads
 * libre2
 * cmake
+
+The global safe and block entries have the following match fields.
 
 ```
 ### MatchFields
