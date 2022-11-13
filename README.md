@@ -65,3 +65,6 @@ $hfrom,match,trystoryboard.com,,2
 $from,match,em8330.trystoryboard.com,,2
 $ip,equal,192.89.112.126,,2
 ```
+### Limitations
+
+Safe and Block list entries using domain sets are not currently supported.
