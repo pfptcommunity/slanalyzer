@@ -1,3 +1,11 @@
+/**
+ * This code was tested against C++20
+ *
+ * @author Ludvik Jerabek
+ * @package slparser
+ * @version 1.0.0
+ * @license MIT
+ */
 #include "Subnet.h"
 #include <sys/socket.h>
 #include <netinet/in.h>

@@ -1,7 +1,11 @@
-//
-// Created by ljerabek on 11/13/2022.
-//
-
+/**
+ * This code was tested against C++20
+ *
+ * @author Ludvik Jerabek
+ * @package slparser
+ * @version 1.0.0
+ * @license MIT
+ */
 #ifndef SLPARSER_SRC_UTILS_H_
 #define SLPARSER_SRC_UTILS_H_
 

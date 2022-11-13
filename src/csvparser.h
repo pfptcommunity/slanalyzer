@@ -1,3 +1,11 @@
+/**
+ * This code was tested against C++20
+ *
+ * @author Aria Fallah (https://github.com/AriaFallah)
+ * @package slparser
+ * @version 1.0.0
+ * @license MIT
+ */
 #ifndef ARIA_CSV_H
 #define ARIA_CSV_H
 

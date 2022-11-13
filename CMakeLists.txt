@@ -6,4 +6,4 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 link_libraries(libre2.a)
 
-add_executable(slparser main.cpp src/Subnet.cpp src/SafeList.cpp src/StringMatcher.cpp src/AddressMatcher.cpp src/Processor.cpp src/Matcher.cpp src/InvertedMatcher.cpp )
+add_executable(slparser slparser.cpp src/Subnet.cpp src/SafeList.cpp src/StringMatcher.cpp src/AddressMatcher.cpp src/Processor.cpp src/Matcher.cpp src/InvertedMatcher.cpp )

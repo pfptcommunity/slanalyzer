@@ -1,3 +1,11 @@
+/**
+ * This code was tested against C++20
+ *
+ * @author Ludvik Jerabek
+ * @package slparser
+ * @version 1.0.0
+ * @license MIT
+ */
 #include "InvertedMatcher.h"
 
 Proofpoint::InvertedMatcher::InvertedMatcher(bool literal, bool case_sensitive, RE2::Anchor anchor) {

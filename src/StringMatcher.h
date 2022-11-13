@@ -1,3 +1,11 @@
+/**
+ * This code was tested against C++20
+ *
+ * @author Ludvik Jerabek
+ * @package slparser
+ * @version 1.0.0
+ * @license MIT
+ */
 #ifndef SLPARSER_STRINGMATCHER_H
 #define SLPARSER_STRINGMATCHER_H
 
