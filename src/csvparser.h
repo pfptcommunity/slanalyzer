@@ -2,7 +2,7 @@
  * This code was tested against C++20
  *
  * @author Aria Fallah (https://github.com/AriaFallah)
- * @package slparser
+ * @package slanalyzer
  * @version 1.0.0
  * @license MIT
  */

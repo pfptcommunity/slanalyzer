@@ -2,11 +2,11 @@
  * This code was tested against C++20
  *
  * @author Ludvik Jerabek
- * @package slparser
+ * @package slanalyzer
  * @version 1.0.0
  * @license MIT
  */
-#include "src/Processor.h"
+#include "src/Analyzer.h"
 #include <getopt.h>
 #include <filesystem>
 #include <chrono>
@@ -16,7 +16,7 @@ using namespace std;
 using namespace std::chrono;
 
 void help() {
-  cout << "Usage: slparser [-h] [-s SAFELIST|BLOCKLIST] [-o OUTPUTFILE] [SS_FILES...]"
+  cout << "Usage: slanalyzer [-h] [-s SAFELIST|BLOCKLIST] [-o OUTPUTFILE] [SS_FILES...]"
 			<< endl
 			<< endl
 			<< "Search multiple smart search exports to determine which safe or block list entries triggered against the mail flow."
@@ -39,8 +39,8 @@ void help() {
 }
 
 void usage() {
-  cout << "Usage: slparser [-h] [-s SAFELIST|BLOCKLIST] [-o OUTPUTFILE] [SMART_SEARCH_FILES...]" << endl
-            << "Try 'slparser --help' for more information." << endl;
+  cout << "Usage: slanalyzer [-h] [-s SAFELIST|BLOCKLIST] [-o OUTPUTFILE] [SMART_SEARCH_FILES...]" << endl
+            << "Try 'slanalyzer --help' for more information." << endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
   Proofpoint::SafeList safelist;
   safelist.Load(input_list);
 
-  Proofpoint::Processor processor(safelist);
+  Proofpoint::Analyzer processor(safelist);
 
   for (const auto& file : ss_inputs) {
 	processor.Process(file, safelist);

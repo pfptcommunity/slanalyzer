@@ -2,7 +2,7 @@
  * This code was tested against C++20
  *
  * @author Ludvik Jerabek
- * @package slparser
+ * @package slanalyzer
  * @version 1.0.0
  * @license MIT
  */
@@ -14,10 +14,10 @@
 #include "StringMatcher.h"
 
 namespace Proofpoint {
-class Processor {
+class Analyzer {
  public:
-  explicit Processor(const SafeList &safelist);
-  ~Processor() = default;
+  explicit Analyzer(const SafeList &safelist);
+  ~Analyzer() = default;
   void Process(const std::string &ss_file, SafeList &safelist);
  private:
   AddressMatcher ip;

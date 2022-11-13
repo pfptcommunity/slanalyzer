@@ -2,7 +2,7 @@
  * This code was tested against C++20
  *
  * @author Ludvik Jerabek
- * @package slparser
+ * @package slanalyzer
  * @version 1.0.0
  * @license MIT
  */

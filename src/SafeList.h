@@ -2,7 +2,7 @@
  * This code was tested against C++20
  *
  * @author Ludvik Jerabek
- * @package slparser
+ * @package slanalyzer
  * @version 1.0.0
  * @license MIT
  */
@@ -14,7 +14,7 @@
 
 namespace Proofpoint {
 class SafeList {
-  friend class Processor;
+  friend class Analyzer;
  public:
   enum class SBFieldType {
 	UNKNOWN, IP, HOST, HELO, RCPT, FROM, HFROM

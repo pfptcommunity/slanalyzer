@@ -2,11 +2,11 @@
  * This code was tested against C++20
  *
  * @author Ludvik Jerabek
- * @package slparser
+ * @package slanalyzer
  * @version 1.0.0
  * @license MIT
  */
-#include "Processor.h"
+#include "Analyzer.h"
 #include "CsvParser.h"
 #include "Utils.h"
 #include <chrono>
@@ -14,7 +14,7 @@
 #include <iomanip>
 #include "re2/re2.h"
 
-Proofpoint::Processor::Processor(const SafeList &safelist) {
+Proofpoint::Analyzer::Analyzer(const SafeList &safelist) {
   using
   enum SafeList::SBFieldType;
   for (std::size_t i = 0; i < safelist.safe_list.size(); i++) {
@@ -36,7 +36,7 @@ Proofpoint::Processor::Processor(const SafeList &safelist) {
 	}
   }
 }
-void Proofpoint::Processor::Process(const std::string &ss_file, SafeList &safelist) {
+void Proofpoint::Analyzer::Process(const std::string &ss_file, SafeList &safelist) {
   using std::chrono::high_resolution_clock;
   using std::chrono::microseconds;
 
