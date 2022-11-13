@@ -68,21 +68,17 @@ int main(int argc, char *argv[]) {
 
   while ((c = getopt_long(argc, argv, "s:o:h", long_options, &option_index))!=-1) {
 	switch (c) {
-	  case 's':
-		input_list = optarg;
+	  case 's': input_list = optarg;
 		input = true;
 		break;
-	  case 'o':
-		output_list = optarg;
+	  case 'o': output_list = optarg;
 		output = true;
 		break;
-	  case 'h':
-		help();
+	  case 'h': help();
 		exit(0);
 		break;
 	  case '?':
-	  default:
-		usage();
+	  default: usage();
 		exit(1);
 		break;
 	}
@@ -116,9 +112,9 @@ int main(int argc, char *argv[]) {
   }
 
   filesystem::path p(output_list);
-  if ( filesystem::is_directory(p) ) {
+  if (filesystem::is_directory(p)) {
 	cerr << "Output file is a directory: " << quoted(output_list)
-			  << " please specify a filename" << endl;
+		 << " please specify a filename" << endl;
 	exit(1);
   }
 
@@ -127,7 +123,7 @@ int main(int argc, char *argv[]) {
 	exit(1);
   }
 
-  if( !input || !output || !files ) {
+  if (!input || !output || !files) {
 	usage();
 	exit(1);
   }
@@ -136,9 +132,12 @@ int main(int argc, char *argv[]) {
   Proofpoint::SafeList safelist;
   safelist.Load(input_list);
 
-  Proofpoint::Analyzer processor(safelist);
+  // Used to collect pattern errors in the even there is a bad pattern
+  Proofpoint::PatternErrors errors;
 
-  for (const auto& file : ss_inputs) {
+  Proofpoint::Analyzer processor(safelist, errors);
+
+  for (const auto &file : ss_inputs) {
 	processor.Process(file, safelist);
   }
 
@@ -147,8 +146,18 @@ int main(int argc, char *argv[]) {
   auto stop = high_resolution_clock::now();
   auto duration = duration_cast<microseconds>(stop - start);
   cout << right << setw(25) << "Completed: "
-			<< left << setw(25) << to_string(duration.count()) + "μs"
-			<< setw(10) << setprecision(2) << "[" + to_string((double)duration.count()/1000000) + "s]"
-			<< endl;
+	   << left << setw(25) << to_string(duration.count()) + "μs"
+	   << setw(10) << setprecision(2) << "[" + to_string((double)duration.count()/1000000) + "s]"
+	   << endl;
+
+  if (!errors.empty()) {
+		cout << "Pattern errors occurred, see the following entries in your safe or blocked list:" << endl;
+	  for (auto e : errors){
+		cout << "Line: " << e.index << " Pattern: " << e.pattern << " Reason: " << e.error << endl;
+	  }
+  }
+
   return 0;
+
+
 }

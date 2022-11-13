@@ -11,13 +11,12 @@
 
 #include "IListMatcher.h"
 #include "IMatcher.h"
-#include <unordered_map>
 
 namespace Proofpoint {
-class StringMatcher : IListMatcher {
+class StringMatcher : public IListMatcher {
  public:
   StringMatcher();
-  void Add(SafeList::SBMatchType type, const std::string &pattern, const std::size_t &index) override;
+  void Add(SafeList::SBMatchType type, const std::string &pattern, const std::size_t &index, PatternErrors& errors) override;
   bool Match(const std::string &pattern, std::vector<std::shared_ptr<SafeList::SLEntry>> &safe_list) override;
  private:
   std::unordered_map<SafeList::SBMatchType, std::shared_ptr<IMatcher>> matchers;

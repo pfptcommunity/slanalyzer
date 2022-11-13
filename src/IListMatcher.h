@@ -10,11 +10,18 @@
 #define SLPARSER_SRC_ILISTMATCHER_H_
 
 #include "SafeList.h"
+#include "IMatcher.h"
+
 namespace Proofpoint {
 class IListMatcher {
  public:
-  virtual void Add(SafeList::SBMatchType type, const std::string &pattern, const std::size_t &index) = 0;
+  virtual void Add(SafeList::SBMatchType type,
+				   const std::string &pattern,
+				   const std::size_t &index,
+				   PatternErrors& errors) = 0;
   virtual bool Match(const std::string &pattern, std::vector<std::shared_ptr<SafeList::SLEntry>> &safe_list) = 0;
+ protected:
+
 };
 }
 #endif //SLPARSER_SRC_ILISTMATCHER_H_

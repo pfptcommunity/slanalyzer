@@ -10,6 +10,7 @@
 #define SLPARSER_SRC_UTILS_H_
 
 #include <string>
+#include <map>
 
 namespace Proofpoint {
 namespace Utils {

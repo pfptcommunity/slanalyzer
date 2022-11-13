@@ -14,23 +14,23 @@
 #include <iomanip>
 #include "re2/re2.h"
 
-Proofpoint::Analyzer::Analyzer(const SafeList &safelist) {
+Proofpoint::Analyzer::Analyzer(const SafeList &safelist, PatternErrors &errors) {
   using
   enum SafeList::SBFieldType;
   for (std::size_t i = 0; i < safelist.safe_list.size(); i++) {
 	std::shared_ptr<SafeList::SLEntry> sle = safelist.safe_list.at(i);
 	switch (sle->field_type) {
-	  case IP: ip.Add(sle->match_type, sle->pattern, i);
+	  case IP: ip.Add(sle->match_type, sle->pattern, i, errors);
 		break;
-	  case HOST: host.Add(sle->match_type, sle->pattern, i);
+	  case HOST: host.Add(sle->match_type, sle->pattern, i, errors);
 		break;
-	  case HELO: host.Add(sle->match_type, sle->pattern, i);
+	  case HELO: host.Add(sle->match_type, sle->pattern, i, errors);
 		break;
-	  case FROM: from.Add(sle->match_type, sle->pattern, i);
+	  case FROM: from.Add(sle->match_type, sle->pattern, i, errors);
 		break;
-	  case HFROM: hfrom.Add(sle->match_type, sle->pattern, i);
+	  case HFROM: hfrom.Add(sle->match_type, sle->pattern, i, errors);
 		break;
-	  case RCPT: rcpt.Add(sle->match_type, sle->pattern, i);
+	  case RCPT: rcpt.Add(sle->match_type, sle->pattern, i, errors);
 		break;
 	  case UNKNOWN: break;
 	}

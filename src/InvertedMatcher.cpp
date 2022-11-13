@@ -7,15 +7,23 @@
  * @license MIT
  */
 #include "InvertedMatcher.h"
+#include <iostream>
+#include <iomanip>
 
 Proofpoint::InvertedMatcher::InvertedMatcher(bool literal, bool case_sensitive, RE2::Anchor anchor) {
   compiled = false;
   opt.set_literal(literal);
   opt.set_case_sensitive(case_sensitive);
+  opt.set_log_errors(false);
   match = std::make_unique<RE2::Set>(opt, anchor);
 }
-void Proofpoint::InvertedMatcher::Add(const std::string &pattern, const size_t &index) {
-  int i = match->Add(pattern, NULL);
+void Proofpoint::InvertedMatcher::Add(const std::string &pattern, const size_t &index,std::vector<PatternError>& errors) {
+  std::string error;
+  int i = match->Add(pattern, &error);
+  if( i == -1 ) {
+	errors.push_back({index,pattern,error});
+	return;
+  }
   map_to_sle.insert({i, index});
 }
 bool Proofpoint::InvertedMatcher::Match(const std::string &pattern, std::vector<std::size_t> &match_indexes) {
