@@ -1,8 +1,11 @@
+#include "src/Processor.h"
 #include <getopt.h>
 #include <filesystem>
-#include "src/Parser.h"
+#include <chrono>
+#include <iostream>
 
 using namespace std;
+using namespace std::chrono;
 
 void help() {
   cout << "Usage: slparser [-h] [-s SAFELIST|BLOCKLIST] [-o OUTPUTFILE] [SS_FILES...]"
@@ -127,7 +130,7 @@ int main(int argc, char *argv[]) {
 
   Proofpoint::Processor processor(safelist);
 
-  for (auto file : ss_inputs) {
+  for (const auto& file : ss_inputs) {
 	processor.Process(file, safelist);
   }
 
