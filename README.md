@@ -1,4 +1,4 @@
-# Proofpoint Safe/Block List Parser
+# Proofpoint Safe/Block List Analyzer
 
 This tool was created to answer a common question from Proofpoint on Demand administrators, "Which global block or safelist entry fired the most or never?" This normally happens after years of these lists being poorly maintained. These global lists can grow massive and ultimately map back to "blocked" or "safe" classifiers associated with the core filtering module. 
 
@@ -40,10 +40,10 @@ if_in_domain_set - Matches addresses that match entries contained in a domainset
 
 ```
 # Download slparser via Git or Zip
-git clone https://github.com/pfptcommunity/slparser
+git clone https://github.com/pfptcommunity/slanalyzer
 
-# Change directory into slparser source directory
-cd slparser
+# Change directory into slanalyzer source directory
+cd slanalyzer
 
 # Create the Release build profile
 cmake -S . -B build/ -D CMAKE_BUILD_TYPE=Release
