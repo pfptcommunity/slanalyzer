@@ -20,9 +20,7 @@ $host  - Hostname associated with the connecting IP.
 $ip    - Connecting IP address.  
 $rcpt  - Recipient email address.  
 ```
-
 Every match field has an associated match type, these types can be partial matches, literal matches, and pattern matches. The match types are shown beloe:
-
 ```
 ### MatchTypes
 equal            - String matches the entire match field.  
@@ -35,7 +33,6 @@ in_ip_net        - Matches a CIDR block for $ip match field only.
 ip_not_in_net    - Matches ip that are not in the CIDR block, for $ip match field only.
 if_in_domain_set - Matches addresses that match entries contained in a domainset. (Not Yet Implemented)
 ```
-
 ### Getting Started
 
 ```
@@ -51,11 +48,12 @@ cmake -S . -B build/ -D CMAKE_BUILD_TYPE=Release
 # Compile the code
 cmake --build build/
 ```
-![slparser_binary](https://user-images.githubusercontent.com/83429267/201460299-0bc98973-433f-4c46-91af-639d21dc0d34.png)
+
+![image](https://user-images.githubusercontent.com/83429267/201535586-b20249fd-b122-4446-8a80-500a95f4d942.png)
 
 ### Running the Tool
 
-![slparser_execution](https://user-images.githubusercontent.com/83429267/201460641-66ad9637-01e5-41a6-81f1-92004f5d8e65.png)
+![image](https://user-images.githubusercontent.com/83429267/201535761-bc3ce4ba-68e4-4bdd-8c31-ee05fd6c49ea.png)
 
 ### Reviewing the Data
 The below output is limited, but ever match conditon is annotated with the number of messages that triggered the blocked or safe list. This is provides a good heatmap to see which safelist entry is excessive or inactive. 
