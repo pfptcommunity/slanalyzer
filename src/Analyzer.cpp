@@ -46,6 +46,7 @@ void Proofpoint::Analyzer::Process(const std::string& ss_file, SafeList& safelis
 	std::vector<std::string> header;
 	re2::StringPiece matches[2];
 	RE2 hfrom_addr_only(R"(<?\s*([a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)\s*>?\s*(?:;|$))");
+	RE2 inbound_check(R"(\bdefault_inbound\b)");
 	auto compare = [](const std::string& lhs, const std::string& rhs) -> bool {
 	  return strcasecmp(lhs.c_str(), rhs.c_str())<0;
 	};
@@ -64,6 +65,8 @@ void Proofpoint::Analyzer::Process(const std::string& ss_file, SafeList& safelis
 	}
 
 	for (auto& row : parser) {
+		//Preparing for filtering into inbound and outbound columns.
+		//bool inbound = RE2::PartialMatch(row[header_to_index["Policy_Route"]],inbound_check);
 		ip.Match(row[header_to_index["Sender_IP_Address"]], safelist.safe_list);
 		host.Match(row[header_to_index["Sender_Host"]], safelist.safe_list);
 		helo.Match(row[header_to_index["HELO"]], safelist.safe_list);

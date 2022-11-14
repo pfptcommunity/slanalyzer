@@ -8,6 +8,7 @@
  */
 #include "SafeList.h"
 #include "CsvParser.h"
+#include <cstring>
 #include <iostream>
 #include <iomanip>
 #include <chrono>
@@ -30,6 +31,8 @@ void Proofpoint::SafeList::Load(const std::string& list_file)
 		safe_list.back()->pattern = (cols>2) ? row.at(2) : "";
 		safe_list.back()->comment = (cols>3) ? row.at(3) : "";
 		safe_list.back()->matches = 0;
+		//safe_list.back()->inbound = 0;
+		//safe_list.back()->outbound = 0;
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop-start);
@@ -67,23 +70,24 @@ void Proofpoint::SafeList::Save(const std::string& list_file)
 			  << "["+std::to_string((double)duration.count()/1000000)+"s]" << "[" << list_file << "]"
 			  << std::endl;
 }
-Proofpoint::SafeList::FieldType Proofpoint::SafeList::GetFieldType(const std::string& field)
+inline Proofpoint::SafeList::FieldType Proofpoint::SafeList::GetFieldType(const std::string& field)
 {
-	if (field=="$ip")
+	if (strcmp("$ip",field.c_str()) == 0)
 		return FieldType::IP;
-	if (field=="$host")
+	if (strcmp("$host",field.c_str()) == 0)
 		return FieldType::HOST;
-	if (field=="$helo")
+	if (strcmp("$helo",field.c_str()) == 0)
 		return FieldType::HELO;
-	if (field=="$rcpt")
+	if (strcmp("$rcpt",field.c_str()) == 0)
 		return FieldType::RCPT;
-	if (field=="$from")
+	if (strcmp("$from",field.c_str()) == 0)
 		return FieldType::FROM;
-	if (field=="$hfrom")
+	if (strcmp("$hfrom",field.c_str()) == 0)
 		return FieldType::HFROM;
 	return FieldType::UNKNOWN;
 }
-std::string Proofpoint::SafeList::GetFieldTypeString(Proofpoint::SafeList::FieldType field)
+
+inline std::string Proofpoint::SafeList::GetFieldTypeString(Proofpoint::SafeList::FieldType field)
 {
 	switch (field) {
 	case FieldType::IP: return "$ip";
@@ -102,30 +106,31 @@ std::string Proofpoint::SafeList::GetFieldTypeString(Proofpoint::SafeList::Field
 		break;
 	}
 }
-Proofpoint::SafeList::MatchType Proofpoint::SafeList::GetMatchType(const std::string& field)
+inline Proofpoint::SafeList::MatchType Proofpoint::SafeList::GetMatchType(const std::string& field)
 {
-	if (field=="equal")
+	// strcmp has consistently better times than string.compare or ==
+	if (strcmp("equal",field.c_str()) == 0)
 		return MatchType::EQUAL;
-	else if (field=="not_equal")
+	else if (strcmp("not_equal",field.c_str()) == 0)
 		return MatchType::NOT_EQUAL;
-	else if (field=="match")
+	else if (strcmp("match",field.c_str()) == 0)
 		return MatchType::MATCH;
-	else if (field=="not_match")
+	else if (strcmp("not_match",field.c_str()) == 0)
 		return MatchType::NOT_MATCH;
-	else if (field=="regex")
+	else if (strcmp("regex",field.c_str()) == 0)
 		return MatchType::REGEX;
-	else if (field=="not_regex")
+	else if (strcmp("not_regex",field.c_str()) == 0)
 		return MatchType::NOT_REGEX;
-	else if (field=="ip_in_net")
+	else if (strcmp("ip_in_net",field.c_str()) == 0)
 		return MatchType::IP_IN_NET;
-	else if (field=="ip_not_in_net")
+	else if (strcmp("ip_not_in_net",field.c_str()) == 0)
 		return MatchType::IP_NOT_IN_NET;
-	else if (field=="is_in_domainset")
+	else if (strcmp("is_in_domainset",field.c_str()) == 0)
 		return MatchType::IS_IN_DOMAINSET;
 	else
 		return MatchType::UNKNOWN;
 }
-std::string Proofpoint::SafeList::GetMatchTypeString(Proofpoint::SafeList::MatchType matchtype)
+inline std::string Proofpoint::SafeList::GetMatchTypeString(Proofpoint::SafeList::MatchType matchtype)
 {
 	switch (matchtype) {
 	case MatchType::EQUAL: return "equal";

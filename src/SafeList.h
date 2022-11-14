@@ -28,12 +28,15 @@ public:
 	  std::string pattern;
 	  std::string comment;
 	  uint32_t matches;
+	  // Preparing for inbound and outbound split
+	  // inbound;
+	  //uint32_t outbound;
 	};
 public:
-	static FieldType GetFieldType(const std::string& field);
-	static std::string GetFieldTypeString(FieldType field);
-	static MatchType GetMatchType(const std::string& field);
-	static std::string GetMatchTypeString(MatchType matchtype);
+	inline static FieldType GetFieldType(const std::string& field);
+	inline static std::string GetFieldTypeString(FieldType field);
+	inline static MatchType GetMatchType(const std::string& field);
+	inline static std::string GetMatchTypeString(MatchType matchtype);
 public:
 	SafeList() = default;;
 	void Load(const std::string& list_file);
