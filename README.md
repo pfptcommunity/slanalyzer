@@ -87,6 +87,15 @@ $from,match,em8330.trystoryboard.com,,2
 $ip,equal,192.89.112.126,,2
 ```
 
+### Performance
+During testing analyzer was able to process 10,000(10K) safelist entries and 10,000,000(10M) row smart search in ~72 seconds that would be 100,000,000,000(100B)  permutations. 
+```
+      SL Load Completed: 2957μs                  [0.002957s][/home/ljerabek/megasafe.csv]
+SS Processing Completed: 72601453μs              [72.601453s][/home/ljerabek/mega_smart_search.csv]
+      SL Save Completed: 93586μs                 [0.093586s][/home/ljerabek/safelist_annotated.csv]
+              Completed: 72730485μs              [72.730485s]
+```
+
 ### Limitations
 
 Safe and Block list entries using domain sets are not currently supported.
