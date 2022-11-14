@@ -15,19 +15,19 @@
 
 namespace Proofpoint {
 class Analyzer {
- public:
-  typedef std::unordered_map<SafeList::FieldType, PatternErrors> PatternErrorMap;
- public:
-  explicit Analyzer(const SafeList &safelist, PatternErrors &errors);
-  ~Analyzer() = default;
-  void Process(const std::string &ss_file, SafeList &safelist);
- private:
-  AddressMatcher ip;
-  StringMatcher host;
-  StringMatcher helo;
-  StringMatcher hfrom;
-  StringMatcher from;
-  StringMatcher rcpt;
+public:
+	typedef std::unordered_map<SafeList::FieldType, PatternErrors> PatternErrorMap;
+public:
+	explicit Analyzer(const SafeList& safelist, PatternErrors& errors);
+	~Analyzer() = default;
+	void Process(const std::string& ss_file, SafeList& safelist);
+private:
+	AddressMatcher ip;
+	StringMatcher host;
+	StringMatcher helo;
+	StringMatcher hfrom;
+	StringMatcher from;
+	StringMatcher rcpt;
 };
 }
 #endif //SLPARSER_SLPROCESSOR_H

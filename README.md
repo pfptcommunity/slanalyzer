@@ -1,6 +1,9 @@
 # Proofpoint Safe/Block List Analyzer
 
-This tool was created to answer a common question from Proofpoint on Demand administrators, "Which global block or safelist entry fired the most or never?" This normally happens after years of these lists being poorly maintained. These global lists can grow massive and ultimately map back to "blocked" or "safe" classifiers associated with the core filtering module. 
+This tool was created to answer a common question from Proofpoint on Demand administrators, "Which global block or
+safelist entry fired the most or never?" This normally happens after years of these lists being poorly maintained. These
+global lists can grow massive and ultimately map back to "blocked" or "safe" classifiers associated with the core
+filtering module.
 
 ### Requirements:
 
@@ -21,7 +24,10 @@ $host  - Hostname associated with the connecting IP.
 $ip    - Connecting IP address.  
 $rcpt  - Recipient email address.  
 ```
-Every match field has an associated match type, these types can be partial matches, literal matches, and pattern matches. The match types are shown beloe:
+
+Every match field has an associated match type, these types can be partial matches, literal matches, and pattern
+matches. The match types are shown beloe:
+
 ```
 ### MatchTypes
 equal            - String matches the entire match field.  
@@ -34,6 +40,7 @@ in_ip_net        - Matches a CIDR block for $ip match field only.
 ip_not_in_net    - Matches ip that are not in the CIDR block, for $ip match field only.
 if_in_domain_set - Matches addresses that match entries contained in a domainset. (Not Yet Implemented)
 ```
+
 ### Getting Started
 
 ```
@@ -63,7 +70,10 @@ cmake --build build/
 ![image](https://user-images.githubusercontent.com/83429267/201535761-bc3ce4ba-68e4-4bdd-8c31-ee05fd6c49ea.png)
 
 ### Reviewing the Data
-The below output is limited, but ever match conditon is annotated with the number of messages that triggered the blocked or safe list. This is provides a good heatmap to see which safelist entry is excessive or inactive. 
+
+The below output is limited, but ever match conditon is annotated with the number of messages that triggered the blocked
+or safe list. This is provides a good heatmap to see which safelist entry is excessive or inactive.
+
 ```
 "FieldType","MatchType","Pattern","Comment","Matches"
 $from,match,@indeed.com,,155
@@ -72,6 +82,7 @@ $hfrom,match,trystoryboard.com,,2
 $from,match,em8330.trystoryboard.com,,2
 $ip,equal,192.89.112.126,,2
 ```
+
 ### Limitations
 
 Safe and Block list entries using domain sets are not currently supported.
