@@ -67,6 +67,10 @@ cmake --build build/
 
 ### Running the Tool
 
+You may need to export chunks of 1M records from smart search. You can filter by only the safelisted messages.
+![image](https://user-images.githubusercontent.com/83429267/201682040-29d83ebc-3a3d-4231-8768-a3c8f4f9d879.png)
+
+Export the results to a CSV(s) and pass them to the tool as the last parameter. 
 ![image](https://user-images.githubusercontent.com/83429267/201535761-bc3ce4ba-68e4-4bdd-8c31-ee05fd6c49ea.png)
 
 ### Reviewing the Data
