@@ -6,8 +6,9 @@ This tool was created to answer a common question from Proofpoint on Demand admi
 
 * Linux or Windows + WSL
 * pthreads
-* libre2
+* libre2-dev
 * cmake
+* g++
 
 The global safe and block entries have the following match fields.
 
