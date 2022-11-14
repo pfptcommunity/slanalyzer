@@ -9,7 +9,7 @@
 #include "AddressMatcher.h"
 Proofpoint::AddressMatcher::AddressMatcher() : StringMatcher() {}
 
-void Proofpoint::AddressMatcher::Add(SafeList::SBMatchType type,
+void Proofpoint::AddressMatcher::Add(SafeList::MatchType type,
 									 const std::string &pattern,
 									 const std::size_t &index,
 									 PatternErrors &errors) {
@@ -23,7 +23,7 @@ void Proofpoint::AddressMatcher::Add(SafeList::SBMatchType type,
   }
 }
 bool Proofpoint::AddressMatcher::Match(const std::string &pattern,
-									   std::vector<std::shared_ptr<SafeList::SLEntry>> &safe_list) {
+									   std::vector<std::shared_ptr<SafeList::Entry>> &safe_list) {
   bool matched = false;
   std::vector<std::size_t> match_indexes;
   for (auto s : in_subnets) {

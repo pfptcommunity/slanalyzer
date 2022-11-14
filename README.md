@@ -36,6 +36,12 @@ if_in_domain_set - Matches addresses that match entries contained in a domainset
 ### Getting Started
 
 ```
+# Install necessary packages for the build 
+sudo apt install cmake
+sudo apt install g++
+sudo apt install libre2-dev
+sudo apt-get install gdb
+   
 # Download slparser via Git or Zip
 git clone https://github.com/pfptcommunity/slanalyzer
 

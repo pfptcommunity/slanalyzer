@@ -20,10 +20,10 @@ void Proofpoint::SafeList::Load(const std::string &list_file) {
   csv::CsvParser parser(f);
   for (auto &row : parser) {
 	size_t cols = row.size();
-	SBFieldType ft = (cols > 0) ? GetFieldType(row.at(0)) : SBFieldType::UNKNOWN;
-	SBMatchType mt = (cols > 1) ? GetMatchType(row.at(1)) : SBMatchType::UNKNOWN;
-	if (ft==SBFieldType::UNKNOWN || mt==SBMatchType::UNKNOWN) continue;
-	safe_list.push_back(std::make_shared<SLEntry>());
+	FieldType ft = (cols > 0) ? GetFieldType(row.at(0)) : FieldType::UNKNOWN;
+	MatchType mt = (cols > 1) ? GetMatchType(row.at(1)) : MatchType::UNKNOWN;
+	if (ft==FieldType::UNKNOWN || mt==MatchType::UNKNOWN) continue;
+	safe_list.push_back(std::make_shared<Entry>());
 	safe_list.back()->field_type = ft;
 	safe_list.back()->match_type = mt;
 	safe_list.back()->pattern = (cols > 2) ? row.at(2) : "";
@@ -65,80 +65,80 @@ void Proofpoint::SafeList::Save(const std::string &list_file) {
 			<< "[" + std::to_string((double)duration.count()/1000000) + "s]" << "[" << list_file << "]"
 			<< std::endl;
 }
-Proofpoint::SafeList::SBFieldType Proofpoint::SafeList::GetFieldType(const std::string &field) {
+Proofpoint::SafeList::FieldType Proofpoint::SafeList::GetFieldType(const std::string &field) {
   if (field=="$ip")
-	return SBFieldType::IP;
+	return FieldType::IP;
   if (field=="$host")
-	return SBFieldType::HOST;
+	return FieldType::HOST;
   if (field=="$helo")
-	return SBFieldType::HELO;
+	return FieldType::HELO;
   if (field=="$rcpt")
-	return SBFieldType::RCPT;
+	return FieldType::RCPT;
   if (field=="$from")
-	return SBFieldType::FROM;
+	return FieldType::FROM;
   if (field=="$hfrom")
-	return SBFieldType::HFROM;
-  return SBFieldType::UNKNOWN;
+	return FieldType::HFROM;
+  return FieldType::UNKNOWN;
 }
-std::string Proofpoint::SafeList::GetFieldTypeString(Proofpoint::SafeList::SBFieldType field) {
+std::string Proofpoint::SafeList::GetFieldTypeString(Proofpoint::SafeList::FieldType field) {
   switch (field) {
-	case SBFieldType::IP: return "$ip";
+	case FieldType::IP: return "$ip";
 	  break;
-	case SBFieldType::HOST: return "$host";
+	case FieldType::HOST: return "$host";
 	  break;
-	case SBFieldType::HELO: return "$helo";
+	case FieldType::HELO: return "$helo";
 	  break;
-	case SBFieldType::RCPT: return "$rcpt";
+	case FieldType::RCPT: return "$rcpt";
 	  break;
-	case SBFieldType::FROM: return "$from";
+	case FieldType::FROM: return "$from";
 	  break;
-	case SBFieldType::HFROM: return "$hfrom";
+	case FieldType::HFROM: return "$hfrom";
 	  break;
 	default: return "unknown";
 	  break;
   }
 }
-Proofpoint::SafeList::SBMatchType Proofpoint::SafeList::GetMatchType(const std::string &field) {
+Proofpoint::SafeList::MatchType Proofpoint::SafeList::GetMatchType(const std::string &field) {
   if (field=="equal")
-	return SBMatchType::EQUAL;
+	return MatchType::EQUAL;
   else if (field=="not_equal")
-	return SBMatchType::NOT_EQUAL;
+	return MatchType::NOT_EQUAL;
   else if (field=="match")
-	return SBMatchType::MATCH;
+	return MatchType::MATCH;
   else if (field=="not_match")
-	return SBMatchType::NOT_MATCH;
+	return MatchType::NOT_MATCH;
   else if (field=="regex")
-	return SBMatchType::REGEX;
+	return MatchType::REGEX;
   else if (field=="not_regex")
-	return SBMatchType::NOT_REGEX;
+	return MatchType::NOT_REGEX;
   else if (field=="ip_in_net")
-	return SBMatchType::IP_IN_NET;
+	return MatchType::IP_IN_NET;
   else if (field=="ip_not_in_net")
-	return SBMatchType::IP_NOT_IN_NET;
+	return MatchType::IP_NOT_IN_NET;
   else if (field=="is_in_domainset")
-	return SBMatchType::IS_IN_DOMAINSET;
+	return MatchType::IS_IN_DOMAINSET;
   else
-	return SBMatchType::UNKNOWN;
+	return MatchType::UNKNOWN;
 }
-std::string Proofpoint::SafeList::GetMatchTypeString(Proofpoint::SafeList::SBMatchType matchtype) {
+std::string Proofpoint::SafeList::GetMatchTypeString(Proofpoint::SafeList::MatchType matchtype) {
   switch (matchtype) {
-	case SBMatchType::EQUAL: return "equal";
+	case MatchType::EQUAL: return "equal";
 	  break;
-	case SBMatchType::NOT_EQUAL: return "not_equal";
+	case MatchType::NOT_EQUAL: return "not_equal";
 	  break;
-	case SBMatchType::MATCH: return "match";
+	case MatchType::MATCH: return "match";
 	  break;
-	case SBMatchType::NOT_MATCH: return "not_match";
+	case MatchType::NOT_MATCH: return "not_match";
 	  break;
-	case SBMatchType::REGEX: return "regex";
+	case MatchType::REGEX: return "regex";
 	  break;
-	case SBMatchType::NOT_REGEX: return "not_regex";
+	case MatchType::NOT_REGEX: return "not_regex";
 	  break;
-	case SBMatchType::IP_IN_NET: return "ip_in_net";
+	case MatchType::IP_IN_NET: return "ip_in_net";
 	  break;
-	case SBMatchType::IP_NOT_IN_NET: return "ip_not_in_net";
+	case MatchType::IP_NOT_IN_NET: return "ip_not_in_net";
 	  break;
-	case SBMatchType::IS_IN_DOMAINSET: return "is_in_domainset";
+	case MatchType::IS_IN_DOMAINSET: return "is_in_domainset";
 	  break;
 	default: return "unknown";
 	  break;

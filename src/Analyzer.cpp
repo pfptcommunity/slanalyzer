@@ -16,7 +16,7 @@
 
 Proofpoint::Analyzer::Analyzer(const SafeList &safelist, PatternErrors &errors) {
   for (std::size_t i = 0; i < safelist.safe_list.size(); i++) {
-	std::shared_ptr<SafeList::SLEntry> sle = safelist.safe_list.at(i);
+	std::shared_ptr<SafeList::Entry> sle = safelist.safe_list.at(i);
 	switch (sle->field_type) {
 	  case SBFieldType::IP: ip.Add(sle->match_type, sle->pattern, i, errors);
 		break;
