@@ -8,7 +8,7 @@ This tool was created to answer a common question from Proofpoint on Demand admi
 * pthreads
 * libre2-dev
 * cmake
-* g++
+* g++ (C++20 is required)
 
 The global safe and block entries have the following match fields.
 
