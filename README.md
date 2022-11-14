@@ -26,7 +26,7 @@ $rcpt  - Recipient email address.
 ```
 
 Every match field has an associated match type, these types can be partial matches, literal matches, and pattern
-matches. The match types are shown beloe:
+matches. The match types are shown below:
 
 ```
 ### MatchTypes
