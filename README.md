@@ -75,4 +75,5 @@ $ip,equal,192.89.112.126,,2
 ### Limitations
 
 Safe and Block list entries using domain sets are not currently supported.
-RE2 doesn't support all PCRE expressions, future release will implement hybrid method to process expressions. 
+RE2 doesn't support all PCRE expressions, future release will implement hybrid method to process expressions.
+
