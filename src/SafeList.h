@@ -41,5 +41,7 @@ class SafeList {
  private:
   std::vector<std::shared_ptr<SLEntry>> safe_list;
 };
+typedef SafeList::SBMatchType SBMatchType;
+typedef SafeList::SBFieldType SBFieldType;
 }
 #endif //SLPARSER_SAFELIST_H

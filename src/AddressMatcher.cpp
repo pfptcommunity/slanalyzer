@@ -7,16 +7,16 @@
  * @license MIT
  */
 #include "AddressMatcher.h"
-
 Proofpoint::AddressMatcher::AddressMatcher() : StringMatcher() {}
 
-void Proofpoint::AddressMatcher::Add(SafeList::SBMatchType type, const std::string &pattern, const std::size_t &index, PatternErrors& errors) {
-  using
-  enum SafeList::SBMatchType;
+void Proofpoint::AddressMatcher::Add(SafeList::SBMatchType type,
+									 const std::string &pattern,
+									 const std::size_t &index,
+									 PatternErrors &errors) {
   switch (type) {
-	case IP_IN_NET: in_subnets.emplace_back(std::make_shared<Subnet>(pattern), index);
+	case SBMatchType::IP_IN_NET: in_subnets.emplace_back(std::make_shared<Subnet>(pattern), index);
 	  break;
-	case IP_NOT_IN_NET: not_in_subnets.emplace_back(std::make_shared<Subnet>(pattern), index);
+	case SBMatchType::IP_NOT_IN_NET: not_in_subnets.emplace_back(std::make_shared<Subnet>(pattern), index);
 	  break;
 	default: StringMatcher::Add(type, pattern, index, errors);
 	  break;

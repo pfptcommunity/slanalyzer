@@ -66,37 +66,33 @@ void Proofpoint::SafeList::Save(const std::string &list_file) {
 			<< std::endl;
 }
 Proofpoint::SafeList::SBFieldType Proofpoint::SafeList::GetFieldType(const std::string &field) {
-  using
-  enum SBFieldType;
   if (field=="$ip")
-	return IP;
+	return SBFieldType::IP;
   if (field=="$host")
-	return HOST;
+	return SBFieldType::HOST;
   if (field=="$helo")
-	return HELO;
+	return SBFieldType::HELO;
   if (field=="$rcpt")
-	return RCPT;
+	return SBFieldType::RCPT;
   if (field=="$from")
-	return FROM;
+	return SBFieldType::FROM;
   if (field=="$hfrom")
-	return HFROM;
-  return UNKNOWN;
+	return SBFieldType::HFROM;
+  return SBFieldType::UNKNOWN;
 }
 std::string Proofpoint::SafeList::GetFieldTypeString(Proofpoint::SafeList::SBFieldType field) {
-  using
-  enum SBFieldType;
   switch (field) {
-	case IP: return "$ip";
+	case SBFieldType::IP: return "$ip";
 	  break;
-	case HOST: return "$host";
+	case SBFieldType::HOST: return "$host";
 	  break;
-	case HELO: return "$helo";
+	case SBFieldType::HELO: return "$helo";
 	  break;
-	case RCPT: return "$rcpt";
+	case SBFieldType::RCPT: return "$rcpt";
 	  break;
-	case FROM: return "$from";
+	case SBFieldType::FROM: return "$from";
 	  break;
-	case HFROM: return "$hfrom";
+	case SBFieldType::HFROM: return "$hfrom";
 	  break;
 	default: return "unknown";
 	  break;
@@ -125,26 +121,24 @@ Proofpoint::SafeList::SBMatchType Proofpoint::SafeList::GetMatchType(const std::
 	return SBMatchType::UNKNOWN;
 }
 std::string Proofpoint::SafeList::GetMatchTypeString(Proofpoint::SafeList::SBMatchType matchtype) {
-  using
-  enum SBMatchType;
   switch (matchtype) {
-	case EQUAL: return "equal";
+	case SBMatchType::EQUAL: return "equal";
 	  break;
-	case NOT_EQUAL: return "not_equal";
+	case SBMatchType::NOT_EQUAL: return "not_equal";
 	  break;
-	case MATCH: return "match";
+	case SBMatchType::MATCH: return "match";
 	  break;
-	case NOT_MATCH: return "not_match";
+	case SBMatchType::NOT_MATCH: return "not_match";
 	  break;
-	case REGEX: return "regex";
+	case SBMatchType::REGEX: return "regex";
 	  break;
-	case NOT_REGEX: return "not_regex";
+	case SBMatchType::NOT_REGEX: return "not_regex";
 	  break;
-	case IP_IN_NET: return "ip_in_net";
+	case SBMatchType::IP_IN_NET: return "ip_in_net";
 	  break;
-	case IP_NOT_IN_NET: return "ip_not_in_net";
+	case SBMatchType::IP_NOT_IN_NET: return "ip_not_in_net";
 	  break;
-	case IS_IN_DOMAINSET: return "is_in_domainset";
+	case SBMatchType::IS_IN_DOMAINSET: return "is_in_domainset";
 	  break;
 	default: return "unknown";
 	  break;

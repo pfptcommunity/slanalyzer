@@ -22,10 +22,9 @@ Proofpoint::StringMatcher::StringMatcher()
 					 std::make_shared<InvertedMatcher>(false, false, RE2::UNANCHORED)}}) {}
 void Proofpoint::StringMatcher::Add(Proofpoint::SafeList::SBMatchType type,
 									const std::string &pattern,
-									const size_t &index, PatternErrors& errors) {
-  using
-  enum SafeList::SBMatchType;
-  if (type==IS_IN_DOMAINSET || type==UNKNOWN) {
+									const size_t &index, PatternErrors &errors) {
+
+  if (type==SBMatchType::IS_IN_DOMAINSET || type==SBMatchType::UNKNOWN) {
 	std::cerr << "Unhandled SBMatchType" << std::endl;
 	return;
   }

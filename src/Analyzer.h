@@ -16,9 +16,9 @@
 namespace Proofpoint {
 class Analyzer {
  public:
-  typedef std::unordered_map<SafeList::SBFieldType,PatternErrors> PatternErrorMap;
+  typedef std::unordered_map<SafeList::SBFieldType, PatternErrors> PatternErrorMap;
  public:
-  explicit Analyzer(const SafeList &safelist, PatternErrors& errors);
+  explicit Analyzer(const SafeList &safelist, PatternErrors &errors);
   ~Analyzer() = default;
   void Process(const std::string &ss_file, SafeList &safelist);
  private:
