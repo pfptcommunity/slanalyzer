@@ -67,7 +67,7 @@ cmake --build build/
 
 ### Running the Tool
 
-You may need to export chunks of 1M records from smart search. You can filter by only the safelisted messages.
+You may need to export multiple 1M record chunks from smart search for a 30 day window. You can filter safelisted messages based on the direction of the flow.
 ![image](https://user-images.githubusercontent.com/83429267/201682040-29d83ebc-3a3d-4231-8768-a3c8f4f9d879.png)
 
 Export the results to a CSV(s) and pass them to the tool as the last parameter. 
