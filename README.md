@@ -88,7 +88,7 @@ $ip,equal,192.89.112.126,,2
 ```
 
 ### Performance
-During testing analyzer was able to process 10,000(10K) safelist entries and 10,000,000(10M) row smart search in ~72 seconds that would be 100,000,000,000(100B)  permutations. 
+During testing analyzer was able to process 10,000(10K) safelist entries and 10,000,000(10M) row smart search in ~72 seconds that would be 10,000,000,000(10B)  permutations. 
 ```
       SL Load Completed: 2957μs                  [0.002957s][/home/ljerabek/megasafe.csv]
 SS Processing Completed: 72601453μs              [72.601453s][/home/ljerabek/mega_smart_search.csv]
