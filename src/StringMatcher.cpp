@@ -25,7 +25,7 @@ void Proofpoint::StringMatcher::Add(Proofpoint::SafeList::MatchType type,
 		const size_t& index, PatternErrors& errors)
 {
 
-	if (type==SBMatchType::IS_IN_DOMAINSET || type==SBMatchType::UNKNOWN) {
+	if (type==MatchType::IS_IN_DOMAINSET || type==MatchType::UNKNOWN) {
 		std::cerr << "Unhandled MatchType" << std::endl;
 		return;
 	}
