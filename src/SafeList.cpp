@@ -43,18 +43,19 @@ void Proofpoint::SafeList::Load(const std::string& list_file)
 void Proofpoint::SafeList::Save(const std::string& list_file)
 {
 	RE2 quoted("\"");
+	const char delim{'"'};
+	const char escape{'"'};
+
 	using std::chrono::high_resolution_clock;
 	using std::chrono::microseconds;
 	auto start = high_resolution_clock::now();
-	const char delim{'"'};
-	const char escape{'"'};
 	std::ios_base::sync_with_stdio(false);
 	std::ofstream f(list_file);
-	f << std::quoted("FieldType", delim, escape)
-	  << "," << std::quoted("MatchType", delim, escape)
-	  << "," << std::quoted("Pattern", delim, escape)
-	  << "," << std::quoted("Comment", delim, escape)
-	  << "," << std::quoted("Matches", delim, escape) << "\r\n";
+	f << "\"" << "FieldType"
+	  << "\",\"" << "MatchType"
+	  << "\",\"" << "Pattern"
+	  << "\",\"" << "Comment"
+	  << "\",\"" << "Matches" << "\"\r\n";
 	for (const auto& list_entry : safe_list) {
 		// Replaced for std::quoted() to improve speed
 		RE2::GlobalReplace(&list_entry->pattern, quoted, "\"\"");
