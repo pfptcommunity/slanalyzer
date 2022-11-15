@@ -11,6 +11,7 @@
 
 #include <arpa/inet.h>
 #include <stdexcept>
+#include "re2/re2.h"
 
 namespace Proofpoint {
 class Subnet {
@@ -26,7 +27,6 @@ public:
 	static bool IsValidIp(const std::string& address);
 	static bool IsValidCidr(const std::string& cidr, std::string& network, std::string& bits);
 	static bool IsValidCidr(const std::string& cidr);
-	static bool IsNumber(const std::string& s);
 	static std::string GetAddress(in_addr_t address, ByteOrder order = HOST);
 public:
 	explicit Subnet(const std::string& cidr);
@@ -48,8 +48,8 @@ public:
 	[[nodiscard]] in_addr_t GetWildcardAddress(ByteOrder order = HOST) const;
 	[[nodiscard]] uint32_t GetAddressableHosts() const;
 private:
-	void _validate();
-
+	inline static RE2 ip_matcher = R"(^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)";
+	inline static RE2 cidr_matcher = R"(^((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))(?:\/)((?:3[0-2]|2[0-9]|1[0-9]|[0-9]))$)";
 private:
 	// Network Address (host order)
 	in_addr_t net;
