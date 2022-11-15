@@ -8,10 +8,10 @@
  */
 #include "SafeList.h"
 #include "CsvParser.h"
-#include <cstring>
 #include <iostream>
 #include <iomanip>
 #include <chrono>
+#include "re2/re2.h"
 
 void Proofpoint::SafeList::Load(const std::string& list_file)
 {
@@ -31,8 +31,6 @@ void Proofpoint::SafeList::Load(const std::string& list_file)
 		safe_list.back()->pattern = (cols>2) ? row.at(2) : "";
 		safe_list.back()->comment = (cols>3) ? row.at(3) : "";
 		safe_list.back()->matches = 0;
-		//safe_list.back()->inbound = 0;
-		//safe_list.back()->outbound = 0;
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop-start);
@@ -44,26 +42,32 @@ void Proofpoint::SafeList::Load(const std::string& list_file)
 }
 void Proofpoint::SafeList::Save(const std::string& list_file)
 {
+	RE2 quoted("\"");
 	using std::chrono::high_resolution_clock;
 	using std::chrono::microseconds;
 	auto start = high_resolution_clock::now();
 	const char delim{'"'};
 	const char escape{'"'};
+	std::ios_base::sync_with_stdio(false);
 	std::ofstream f(list_file);
 	f << std::quoted("FieldType", delim, escape)
 	  << "," << std::quoted("MatchType", delim, escape)
 	  << "," << std::quoted("Pattern", delim, escape)
 	  << "," << std::quoted("Comment", delim, escape)
-	  << "," << std::quoted("Matches", delim, escape) << std::endl;
+	  << "," << std::quoted("Matches", delim, escape) << "\r\n";
 	for (const auto& list_entry : safe_list) {
-		f << std::quoted(GetFieldTypeString(list_entry->field_type), delim, escape)
-		  << "," << std::quoted(GetMatchTypeString(list_entry->match_type), delim, escape)
-		  << "," << std::quoted(list_entry->pattern, delim, escape)
-		  << "," << std::quoted(list_entry->comment, delim, escape)
-		  << "," << std::quoted(std::to_string(list_entry->matches), delim, escape) << std::endl;
+		// Replaced for std::quoted() to improve speed
+		RE2::GlobalReplace(&list_entry->pattern, quoted, "\"\"");
+		RE2::GlobalReplace(&list_entry->comment, quoted, "\"\"");
+		f << "\"" << FieldTypeStrings[static_cast<int>(list_entry->field_type)]
+		  << "\",\"" << MatchTypeStrings[static_cast<int>(list_entry->match_type)]
+		  << "\",\"" << list_entry->pattern
+		  << "\",\"" << list_entry->comment
+		  << "\",\"" << std::to_string(list_entry->matches) << "\"\r\n";
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop-start);
+	std::ios_base::sync_with_stdio(true);
 	std::cout << std::right << std::setw(25) << "SL Save Completed: "
 			  << std::left << std::setw(25) << std::to_string(duration.count())+"μs"
 			  << std::setw(10) << std::setprecision(2)
@@ -87,25 +91,11 @@ inline Proofpoint::SafeList::FieldType Proofpoint::SafeList::GetFieldType(const 
 	return FieldType::UNKNOWN;
 }
 
-inline std::string Proofpoint::SafeList::GetFieldTypeString(Proofpoint::SafeList::FieldType field)
+inline const std::string& Proofpoint::SafeList::GetFieldTypeString(Proofpoint::SafeList::FieldType field)
 {
-	switch (field) {
-	case FieldType::IP: return "$ip";
-		break;
-	case FieldType::HOST: return "$host";
-		break;
-	case FieldType::HELO: return "$helo";
-		break;
-	case FieldType::RCPT: return "$rcpt";
-		break;
-	case FieldType::FROM: return "$from";
-		break;
-	case FieldType::HFROM: return "$hfrom";
-		break;
-	default: return "unknown";
-		break;
-	}
+	return FieldTypeStrings[static_cast<int>(field)];
 }
+
 inline Proofpoint::SafeList::MatchType Proofpoint::SafeList::GetMatchType(const std::string& field)
 {
 	// strcmp has consistently better times than string.compare or ==
@@ -130,28 +120,7 @@ inline Proofpoint::SafeList::MatchType Proofpoint::SafeList::GetMatchType(const 
 	else
 		return MatchType::UNKNOWN;
 }
-inline std::string Proofpoint::SafeList::GetMatchTypeString(Proofpoint::SafeList::MatchType matchtype)
+inline const std::string& Proofpoint::SafeList::GetMatchTypeString(Proofpoint::SafeList::MatchType matchtype)
 {
-	switch (matchtype) {
-	case MatchType::EQUAL: return "equal";
-		break;
-	case MatchType::NOT_EQUAL: return "not_equal";
-		break;
-	case MatchType::MATCH: return "match";
-		break;
-	case MatchType::NOT_MATCH: return "not_match";
-		break;
-	case MatchType::REGEX: return "regex";
-		break;
-	case MatchType::NOT_REGEX: return "not_regex";
-		break;
-	case MatchType::IP_IN_NET: return "ip_in_net";
-		break;
-	case MatchType::IP_NOT_IN_NET: return "ip_not_in_net";
-		break;
-	case MatchType::IS_IN_DOMAINSET: return "is_in_domainset";
-		break;
-	default: return "unknown";
-		break;
-	}
+	return MatchTypeStrings[static_cast<int>(matchtype)];
 }
