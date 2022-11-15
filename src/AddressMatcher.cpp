@@ -16,9 +16,9 @@ void Proofpoint::AddressMatcher::Add(SafeList::MatchType type,
 		PatternErrors& errors)
 {
 	switch (type) {
-	case SBMatchType::IP_IN_NET: in_subnets.emplace_back(std::make_shared<Subnet>(pattern), index);
+	case MatchType::IP_IN_NET: in_subnets.emplace_back(std::make_shared<Subnet>(pattern), index);
 		break;
-	case SBMatchType::IP_NOT_IN_NET: not_in_subnets.emplace_back(std::make_shared<Subnet>(pattern), index);
+	case MatchType::IP_NOT_IN_NET: not_in_subnets.emplace_back(std::make_shared<Subnet>(pattern), index);
 		break;
 	default: StringMatcher::Add(type, pattern, index, errors);
 		break;
