@@ -139,12 +139,14 @@ int main(int argc, char* argv[])
 			  << "Filename" << std::endl;
 
 	Proofpoint::SafeList safelist;
-	safelist.Load(input_list);
+	Proofpoint::SafeList::EntryErrors entry_errors;
+
+	safelist.Load(input_list,entry_errors);
 
 	// Used to collect pattern errors in the even there is a bad pattern
-	Proofpoint::PatternErrors errors;
+	Proofpoint::PatternErrors pattern_errors;
 
-	Proofpoint::Analyzer processor(safelist, errors);
+	Proofpoint::Analyzer processor(safelist, pattern_errors);
 
 	for (const auto& file : ss_inputs) {
 		processor.Process(file, safelist);
@@ -159,12 +161,18 @@ int main(int argc, char* argv[])
 			  << std::setw(25) << std::setprecision(2) << std::to_string((double)duration.count()/1000000) << " "
 			  << std::setw(25) << std::endl;
 
-	if (!errors.empty()) {
-		cout << "Pattern errors occurred, see the following entries in your safe or blocked list:" << endl;
-		for (auto e : errors) {
-			cout << "Line: " << e.index << " Pattern: " << e.pattern << " Reason: " << e.error << endl;
+	if (!pattern_errors.empty()) {
+		cerr << endl << endl << endl << "Pattern errors occurred, see the following entries in your safe or blocked list:" << endl;
+		for (auto e : pattern_errors) {
+			cerr << "Line: " << e.index << " Pattern: " << e.pattern << " Reason: " << e.error << endl;
 		}
 	}
 
+	if (!entry_errors.empty()) {
+		cerr << endl << endl << endl << "Entry errors occurred, see the following entries in your safe or blocked list:" << endl;
+		for (auto e : entry_errors) {
+			cerr << "Line: " << e.index << " FieldType: " << e.field_data << " MatchType: " << e.match_data << "Error: " << e.error << endl;
+		}
+	}
 	return 0;
 }

@@ -14,7 +14,7 @@
 #include <chrono>
 #include "re2/re2.h"
 
-void Proofpoint::SafeList::Load(const std::string& list_file)
+void Proofpoint::SafeList::Load(const std::string& list_file, EntryErrors& entry_errors )
 {
 	std::size_t count = 0;
 	using std::chrono::high_resolution_clock;
@@ -27,7 +27,13 @@ void Proofpoint::SafeList::Load(const std::string& list_file)
 		FieldType ft = (cols>0) ? GetFieldType(row.at(0)) : FieldType::UNKNOWN;
 		MatchType mt = (cols>1) ? GetMatchType(row.at(1)) : MatchType::UNKNOWN;
 
-		if (ft==FieldType::UNKNOWN || mt==MatchType::UNKNOWN) continue;
+		if ( ft==FieldType::UNKNOWN || mt==MatchType::UNKNOWN ) {
+			// We are missing something.
+			entry_errors.push_back({count,
+									(cols>0) ? row.at(0) : "",
+									(cols>1) ? row.at(1) : "",
+									"Please see field type and match type information"});
+		}
 
 		safe_list.push_back(std::make_shared<Entry>());
 		safe_list.back()->field_type = ft;
@@ -87,17 +93,17 @@ void Proofpoint::SafeList::Save(const std::string& list_file)
 }
 inline Proofpoint::SafeList::FieldType Proofpoint::SafeList::GetFieldType(const std::string& field)
 {
-	if (strcmp("$ip",field.c_str()) == 0)
+	if (strcmp("$ip", field.c_str())==0)
 		return FieldType::IP;
-	if (strcmp("$host",field.c_str()) == 0)
+	if (strcmp("$host", field.c_str())==0)
 		return FieldType::HOST;
-	if (strcmp("$helo",field.c_str()) == 0)
+	if (strcmp("$helo", field.c_str())==0)
 		return FieldType::HELO;
-	if (strcmp("$rcpt",field.c_str()) == 0)
+	if (strcmp("$rcpt", field.c_str())==0)
 		return FieldType::RCPT;
-	if (strcmp("$from",field.c_str()) == 0)
+	if (strcmp("$from", field.c_str())==0)
 		return FieldType::FROM;
-	if (strcmp("$hfrom",field.c_str()) == 0)
+	if (strcmp("$hfrom", field.c_str())==0)
 		return FieldType::HFROM;
 	return FieldType::UNKNOWN;
 }
@@ -110,23 +116,23 @@ inline const std::string& Proofpoint::SafeList::GetFieldTypeString(Proofpoint::S
 inline Proofpoint::SafeList::MatchType Proofpoint::SafeList::GetMatchType(const std::string& field)
 {
 	// strcmp has consistently better times than string.compare or ==
-	if (strcmp("equal",field.c_str()) == 0)
+	if (strcmp("equal", field.c_str())==0)
 		return MatchType::EQUAL;
-	else if (strcmp("not_equal",field.c_str()) == 0)
+	else if (strcmp("not_equal", field.c_str())==0)
 		return MatchType::NOT_EQUAL;
-	else if (strcmp("match",field.c_str()) == 0)
+	else if (strcmp("match", field.c_str())==0)
 		return MatchType::MATCH;
-	else if (strcmp("not_match",field.c_str()) == 0)
+	else if (strcmp("not_match", field.c_str())==0)
 		return MatchType::NOT_MATCH;
-	else if (strcmp("regex",field.c_str()) == 0)
+	else if (strcmp("regex", field.c_str())==0)
 		return MatchType::REGEX;
-	else if (strcmp("not_regex",field.c_str()) == 0)
+	else if (strcmp("not_regex", field.c_str())==0)
 		return MatchType::NOT_REGEX;
-	else if (strcmp("ip_in_net",field.c_str()) == 0)
+	else if (strcmp("ip_in_net", field.c_str())==0)
 		return MatchType::IP_IN_NET;
-	else if (strcmp("ip_not_in_net",field.c_str()) == 0)
+	else if (strcmp("ip_not_in_net", field.c_str())==0)
 		return MatchType::IP_NOT_IN_NET;
-	else if (strcmp("is_in_domainset",field.c_str()) == 0)
+	else if (strcmp("is_in_domainset", field.c_str())==0)
 		return MatchType::IS_IN_DOMAINSET;
 	else
 		return MatchType::UNKNOWN;

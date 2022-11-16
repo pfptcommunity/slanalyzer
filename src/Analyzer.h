@@ -18,7 +18,7 @@ class Analyzer {
 public:
 	typedef std::unordered_map<SafeList::FieldType, PatternErrors> PatternErrorMap;
 public:
-	explicit Analyzer(const SafeList& safelist, PatternErrors& errors);
+	explicit Analyzer(const SafeList& safelist, PatternErrors& pattern_errors);
 	~Analyzer() = default;
 	void Process(const std::string& ss_file, SafeList& safelist);
 private:

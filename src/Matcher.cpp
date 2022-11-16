@@ -17,12 +17,12 @@ Proofpoint::Matcher::Matcher(bool literal, bool case_sensitive, RE2::Anchor anch
 	opt.set_log_errors(false);
 	match = std::make_unique<RE2::Set>(opt, anchor);
 }
-void Proofpoint::Matcher::Add(const std::string& pattern, const size_t& index, std::vector<PatternError>& errors)
+void Proofpoint::Matcher::Add(const std::string& pattern, const size_t& index, std::vector<PatternError>& pattern_errors)
 {
 	std::string error;
 	int i = match->Add(pattern, &error);
 	if (i==-1) {
-		errors.push_back({index, pattern, error});
+		pattern_errors.push_back({index, pattern, error});
 		return;
 	}
 	map_to_sle.insert({i, index});

@@ -15,22 +15,22 @@
 #include "re2/re2.h"
 #include "Utils.h"
 
-Proofpoint::Analyzer::Analyzer(const SafeList& safelist, PatternErrors& errors)
+Proofpoint::Analyzer::Analyzer(const SafeList& safelist, PatternErrors& pattern_errors)
 {
 	for (std::size_t i = 0; i<safelist.safe_list.size(); i++) {
 		std::shared_ptr<SafeList::Entry> sle = safelist.safe_list.at(i);
 		switch (sle->field_type) {
-		case FieldType::IP: ip.Add(sle->match_type, sle->pattern, i, errors);
+		case FieldType::IP: ip.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case FieldType::HOST: host.Add(sle->match_type, sle->pattern, i, errors);
+		case FieldType::HOST: host.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case FieldType::HELO: helo.Add(sle->match_type, sle->pattern, i, errors);
+		case FieldType::HELO: helo.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case FieldType::FROM: from.Add(sle->match_type, sle->pattern, i, errors);
+		case FieldType::FROM: from.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case FieldType::HFROM: hfrom.Add(sle->match_type, sle->pattern, i, errors);
+		case FieldType::HFROM: hfrom.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case FieldType::RCPT: rcpt.Add(sle->match_type, sle->pattern, i, errors);
+		case FieldType::RCPT: rcpt.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
 		case FieldType::UNKNOWN: break;
 		}
@@ -68,16 +68,16 @@ void Proofpoint::Analyzer::Process(const std::string& ss_file, SafeList& safelis
 	}
 
 	for (auto& row : parser) {
-		bool inbound = RE2::PartialMatch(row[header_to_index["Policy_Route"]],inbound_check);
-		ip.Match(inbound,row[header_to_index["Sender_IP_Address"]], safelist.safe_list);
-		host.Match(inbound,row[header_to_index["Sender_Host"]], safelist.safe_list);
-		helo.Match(inbound,row[header_to_index["HELO"]], safelist.safe_list);
+		bool inbound = RE2::PartialMatch(row[header_to_index["Policy_Route"]], inbound_check);
+		ip.Match(inbound, row[header_to_index["Sender_IP_Address"]], safelist.safe_list);
+		host.Match(inbound, row[header_to_index["Sender_Host"]], safelist.safe_list);
+		helo.Match(inbound, row[header_to_index["HELO"]], safelist.safe_list);
 		// This single call has large impact on processing. Since we need to perform header from "address only"
-		hfrom.Match(inbound,(hfrom_addr_only.Match(row[header_to_index["Header_From"]], 0,
+		hfrom.Match(inbound, (hfrom_addr_only.Match(row[header_to_index["Header_From"]], 0,
 				row[header_to_index["Header_From"]].length(), RE2::UNANCHORED, matches, 2))
 				? matches[1].ToString() : row[header_to_index["Header_From"]], safelist.safe_list);
-		from.Match(inbound,row[header_to_index["Sender"]], safelist.safe_list);
-		rcpt.Match(inbound,row[header_to_index["Recipients"]], safelist.safe_list);
+		from.Match(inbound, row[header_to_index["Sender"]], safelist.safe_list);
+		rcpt.Match(inbound, row[header_to_index["Recipients"]], safelist.safe_list);
 		count++;
 	}
 

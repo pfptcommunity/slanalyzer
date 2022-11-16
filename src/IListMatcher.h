@@ -18,8 +18,9 @@ public:
 	virtual void Add(SafeList::MatchType type,
 			const std::string& pattern,
 			const std::size_t& index,
-			PatternErrors& errors) = 0;
-	virtual bool Match(bool inbound, const std::string& pattern, std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) = 0;
+			PatternErrors& pattern_errors) = 0;
+	virtual bool Match(bool inbound, const std::string& pattern,
+			std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) = 0;
 };
 }
 #endif //SLANALYZER_ILISTMATCHER_H

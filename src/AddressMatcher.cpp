@@ -10,7 +10,6 @@
 #include "InvertedMatcher.h"
 #include "Matcher.h"
 #include "Utils.h"
-#include <iostream>
 
 Proofpoint::AddressMatcher::AddressMatcher()
 		:
@@ -23,12 +22,9 @@ Proofpoint::AddressMatcher::AddressMatcher()
 						std::make_shared<InvertedMatcher>(false, false, RE2::UNANCHORED)}}) { };
 
 void Proofpoint::AddressMatcher::Add(SafeList::MatchType type, const std::string& pattern, const std::size_t& index,
-		PatternErrors& errors)
+		PatternErrors& pattern_errors)
 {
-	if (type==MatchType::IS_IN_DOMAINSET || type==MatchType::UNKNOWN) {
-		std::cerr << "Unhandled MatchType" << std::endl;
-		return;
-	}
+	if (type==MatchType::IS_IN_DOMAINSET || type==MatchType::UNKNOWN) return;
 
 	switch (type) {
 	case MatchType::IP_IN_NET: in_subnets.emplace_back();
@@ -43,7 +39,7 @@ void Proofpoint::AddressMatcher::Add(SafeList::MatchType type, const std::string
 			std::get<0>(not_in_subnets.back()).emplace_back(std::make_shared<Subnet>(std::string(subnet)));
 		}
 		break;
-	default: matchers[type]->Add(pattern, index, errors);
+	default: matchers[type]->Add(pattern, index, pattern_errors);
 		break;
 	}
 }
@@ -71,7 +67,7 @@ bool Proofpoint::AddressMatcher::Match(bool inbound, const std::string& pattern,
 				break;
 			}
 	}
-	
+
 	std::vector<std::size_t> match_indexes;
 	for (auto m : matchers) {
 		if (m.second->GetPatternCount()) {

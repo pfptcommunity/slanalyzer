@@ -22,7 +22,7 @@ public:
 	};
 	typedef std::vector<PatternError> PatternErrors;
 public:
-	virtual void Add(const std::string& pattern, const std::size_t& index, PatternErrors& errors) = 0;
+	virtual void Add(const std::string& pattern, const std::size_t& index, PatternErrors& pattern_errors) = 0;
 	virtual bool Match(const std::string& pattern, std::vector<std::size_t>& match_indexes) = 0;
 	virtual std::size_t GetPatternCount() = 0;
 };

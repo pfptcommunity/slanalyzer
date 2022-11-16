@@ -19,7 +19,7 @@ namespace Proofpoint {
 class Matcher : public IMatcher {
 public:
 	explicit Matcher(bool literal = false, bool case_sensitive = false, RE2::Anchor anchor = RE2::ANCHOR_BOTH);
-	void Add(const std::string& pattern, const size_t& index, PatternErrors& errors) override;
+	void Add(const std::string& pattern, const size_t& index, PatternErrors& pattern_errors) override;
 	bool Match(const std::string& pattern, std::vector<std::size_t>& match_indexes) override;
 	std::size_t GetPatternCount() override;
 private:

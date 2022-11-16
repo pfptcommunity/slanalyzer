@@ -17,8 +17,10 @@ class AddressMatcher : public IListMatcher {
 public:
 	AddressMatcher();
 	~AddressMatcher() = default;
-	void Add(SafeList::MatchType type,const std::string& pattern,const std::size_t& index,PatternErrors& errors) final;
-	bool Match(bool inbound,const std::string& pattern, std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) final;
+	void Add(SafeList::MatchType type, const std::string& pattern, const std::size_t& index,
+			PatternErrors& pattern_errors) final;
+	bool Match(bool inbound, const std::string& pattern,
+			std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) final;
 private:
 	typedef std::vector<std::shared_ptr<Subnet>> SubnetCollection;
 	typedef std::tuple<SubnetCollection, std::size_t> SubnetPair;

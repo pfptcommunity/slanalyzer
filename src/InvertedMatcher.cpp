@@ -20,12 +20,12 @@ Proofpoint::InvertedMatcher::InvertedMatcher(bool literal, bool case_sensitive, 
 }
 void Proofpoint::InvertedMatcher::Add(const std::string& pattern,
 		const size_t& index,
-		std::vector<PatternError>& errors)
+		std::vector<PatternError>& pattern_errors)
 {
 	std::string error;
 	int i = match->Add(pattern, &error);
 	if (i==-1) {
-		errors.push_back({index, pattern, error});
+		pattern_errors.push_back({index, pattern, error});
 		return;
 	}
 	map_to_sle.insert({i, index});
