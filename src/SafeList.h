@@ -51,10 +51,10 @@ public:
 	static MatchType GetMatchType(const std::string& field);
 	static const std::string& GetMatchTypeString(MatchType matchtype);
 private:
-	inline static const std::string FieldTypeStrings[] = {"unknown", "equal", "not_equal", "match", "not_match",
-			"regex", "not_regex", "ip_in_net", "ip_not_in_net", "is_domain_set"};
-	inline static const std::string MatchTypeStrings[] = {"unknown", "$ip", "$host", "$helo", "$rcpt", "$from",
+	inline static const std::string FieldTypeStrings[] = {"unknown", "$ip", "$host", "$helo", "$rcpt", "$from",
 			"$hfrom"};
+	inline static const std::string MatchTypeStrings[] = {"unknown", "equal", "not_equal", "match", "not_match",
+			"regex", "not_regex", "ip_in_net", "ip_not_in_net", "is_domain_set"};
 public:
 	SafeList() = default;;
 	void Load(const std::string& list_file);

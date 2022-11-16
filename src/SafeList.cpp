@@ -26,7 +26,9 @@ void Proofpoint::SafeList::Load(const std::string& list_file)
 		size_t cols = row.size();
 		FieldType ft = (cols>0) ? GetFieldType(row.at(0)) : FieldType::UNKNOWN;
 		MatchType mt = (cols>1) ? GetMatchType(row.at(1)) : MatchType::UNKNOWN;
+
 		if (ft==FieldType::UNKNOWN || mt==MatchType::UNKNOWN) continue;
+
 		safe_list.push_back(std::make_shared<Entry>());
 		safe_list.back()->field_type = ft;
 		safe_list.back()->match_type = mt;
