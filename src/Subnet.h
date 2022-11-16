@@ -42,7 +42,7 @@ public:
 	inline bool InSubnet(const std::string& ip_address) const
 	{
 		in_addr address{0};
-		if (inet_aton(ip_address.c_str(), &address)==0) return false;
+		if (inet_pton(AF_INET, ip_address.c_str(), &address)==0) return false;
 		return !((ntohl(address.s_addr) ^ net) & mask);
 	}
 	[[nodiscard]] std::string GetNet() const;
