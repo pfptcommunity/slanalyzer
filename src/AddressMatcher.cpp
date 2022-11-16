@@ -24,7 +24,7 @@ void Proofpoint::AddressMatcher::Add(SafeList::MatchType type,
 		break;
 	}
 }
-bool Proofpoint::AddressMatcher::Match(const std::string& pattern,
+bool Proofpoint::AddressMatcher::Match(bool inbound, const std::string& pattern,
 		std::vector<std::shared_ptr<SafeList::Entry>>& safe_list)
 {
 	bool matched = false;
@@ -33,7 +33,7 @@ bool Proofpoint::AddressMatcher::Match(const std::string& pattern,
 		auto ptr = std::get<0>(s);
 		auto index = std::get<1>(s);
 		if (ptr->InSubnet(pattern)) {
-			safe_list[index]->matches++;
+			(inbound) ? safe_list[index]->inbound++ : safe_list[index]->outbound++;
 			matched |= true;
 		}
 	}
@@ -41,10 +41,10 @@ bool Proofpoint::AddressMatcher::Match(const std::string& pattern,
 		auto ptr = std::get<0>(s);
 		auto index = std::get<1>(s);
 		if (!ptr->InSubnet(pattern)) {
-			safe_list[index]->matches++;
+			(inbound) ? safe_list[index]->inbound++ : safe_list[index]->outbound++;
 			matched |= true;
 		}
 	}
-	matched |= StringMatcher::Match(pattern, safe_list);
+	matched |= StringMatcher::Match(inbound, pattern, safe_list);
 	return matched;
 }

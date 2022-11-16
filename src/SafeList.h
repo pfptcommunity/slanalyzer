@@ -42,7 +42,8 @@ public:
 	  MatchType match_type;
 	  std::string pattern;
 	  std::string comment;
-	  uint32_t matches;
+	  uint32_t inbound;
+	  uint32_t outbound;
 	};
 public:
 	static FieldType GetFieldType(const std::string& field);

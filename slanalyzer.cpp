@@ -132,6 +132,12 @@ int main(int argc, char* argv[])
 	}
 
 	auto start = high_resolution_clock::now();
+	std::cout << std::left << std::setw(25) << "Status" << " "
+			  << std::left << std::setw(25) << "Microseconds" << " "
+			  << std::setw(25) << "Seconds" << " "
+			  << std::setw(25) << "Records " << " "
+			  << "Filename" << std::endl;
+
 	Proofpoint::SafeList safelist;
 	safelist.Load(input_list);
 
@@ -148,10 +154,10 @@ int main(int argc, char* argv[])
 
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop-start);
-	cout << right << setw(25) << "Completed: "
-		 << left << setw(25) << to_string(duration.count())+"μs"
-		 << setw(10) << setprecision(2) << "["+to_string((double)duration.count()/1000000)+"s]"
-		 << endl;
+	std::cout << std::left << std::setw(25) << "SL Load Completed" << " "
+			  << std::left << std::setw(25) << std::to_string(duration.count()) << " "
+			  << std::setw(25) << std::setprecision(2) << std::to_string((double)duration.count()/1000000) << " "
+			  << std::setw(25) << std::endl;
 
 	if (!errors.empty()) {
 		cout << "Pattern errors occurred, see the following entries in your safe or blocked list:" << endl;

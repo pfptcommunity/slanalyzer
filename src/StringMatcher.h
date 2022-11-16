@@ -21,7 +21,7 @@ public:
 			const std::string& pattern,
 			const std::size_t& index,
 			PatternErrors& errors) override;
-	bool Match(const std::string& pattern, std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) override;
+	bool Match(bool inbound, const std::string& pattern, std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) override;
 private:
 	std::unordered_map<SafeList::MatchType, std::shared_ptr<IMatcher>> matchers;
 };

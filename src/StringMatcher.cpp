@@ -31,7 +31,7 @@ void Proofpoint::StringMatcher::Add(Proofpoint::SafeList::MatchType type,
 	}
 	matchers[type]->Add(pattern, index, errors);
 }
-bool Proofpoint::StringMatcher::Match(const std::string& pattern,
+bool Proofpoint::StringMatcher::Match(bool inbound, const std::string& pattern,
 		std::vector<std::shared_ptr<SafeList::Entry>>& safe_list)
 {
 	bool matched = false;
@@ -41,7 +41,7 @@ bool Proofpoint::StringMatcher::Match(const std::string& pattern,
 			matched |= m.second->Match(pattern, match_indexes);
 			for (auto i : match_indexes) {
 				auto mle = safe_list.at(i);
-				mle->matches++;
+				(inbound) ? mle->inbound++ : mle->outbound++;
 			}
 		}
 	}
