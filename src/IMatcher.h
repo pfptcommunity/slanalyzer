@@ -6,8 +6,8 @@
  * @version 1.0.0
  * @license MIT
  */
-#ifndef SLPARSER_SRC_IMATCHER_H_
-#define SLPARSER_SRC_IMATCHER_H_
+#ifndef SLANALYZER_IMATCHER_H
+#define SLANALYZER_IMATCHER_H
 
 #include <string>
 #include <vector>
@@ -29,4 +29,4 @@ public:
 typedef IMatcher::PatternErrors PatternErrors;
 }
 
-#endif //SLPARSER_SRC_IMATCHER_H_
+#endif //SLANALYZER_IMATCHER_H

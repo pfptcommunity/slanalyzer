@@ -46,7 +46,6 @@ Proofpoint::Subnet::Subnet(const std::string& network, const std::string& netmas
 		throw SubnetArgumentException("Invalid mask address format ["+ netmask +"]");
 
 	this->net = ntohl(net_address.s_addr);
-
 	this->mask = ntohl(mask_address.s_addr);
 
 	if ((mask & (~mask >> 1))) {
@@ -75,19 +74,6 @@ Proofpoint::Subnet::Subnet(const in_addr_t& network, const in_addr_t& netmask, P
 	min = net+1;
 	max = bcast-1;
 	hosts = wmask-1;
-}
-bool Proofpoint::Subnet::InSubnet(in_addr_t address, Proofpoint::Subnet::ByteOrder order) const
-{
-	if (order==ByteOrder::NETWORK) {
-		address = ntohl(address);
-	}
-	return !((address ^ net) & mask);
-}
-bool Proofpoint::Subnet::InSubnet(const std::string& ip_address) const
-{
-	in_addr address{0};
-	if (inet_aton(ip_address.c_str(), &address)==0) return false;
-	return !((ntohl(address.s_addr) ^ net) & mask);
 }
 std::string Proofpoint::Subnet::GetNet() const
 {

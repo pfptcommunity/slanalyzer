@@ -6,8 +6,8 @@
  * @version 1.0.0
  * @license MIT
  */
-#ifndef SLPARSER_SRC_ILISTMATCHER_H_
-#define SLPARSER_SRC_ILISTMATCHER_H_
+#ifndef SLANALYZER_ILISTMATCHER_H
+#define SLANALYZER_ILISTMATCHER_H
 
 #include "SafeList.h"
 #include "IMatcher.h"
@@ -22,4 +22,4 @@ public:
 	virtual bool Match(bool inbound, const std::string& pattern, std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) = 0;
 };
 }
-#endif //SLPARSER_SRC_ILISTMATCHER_H_
+#endif //SLANALYZER_ILISTMATCHER_H

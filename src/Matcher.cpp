@@ -37,7 +37,7 @@ bool Proofpoint::Matcher::Match(const std::string& pattern, std::vector<std::siz
 	std::vector<int> m;
 	bool matched = match->Match(pattern, &m);
 	for (auto index : m) {
-		match_indexes.push_back(map_to_sle[index]);
+		match_indexes.emplace_back(map_to_sle[index]);
 	}
 	return matched;
 }

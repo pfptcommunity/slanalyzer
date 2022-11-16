@@ -31,12 +31,11 @@ void Proofpoint::StringMatcher::Add(Proofpoint::SafeList::MatchType type,
 	}
 	matchers[type]->Add(pattern, index, errors);
 }
-bool Proofpoint::StringMatcher::Match(bool inbound, const std::string& pattern,
-		std::vector<std::shared_ptr<SafeList::Entry>>& safe_list)
+inline bool Proofpoint::StringMatcher::Match(bool inbound, const std::string& pattern, std::vector<std::shared_ptr<SafeList::Entry>>& safe_list)
 {
+	std::vector<std::size_t> match_indexes;
 	bool matched = false;
 	for (auto m : matchers) {
-		std::vector<std::size_t> match_indexes;
 		if (m.second->GetPatternCount()) {
 			matched |= m.second->Match(pattern, match_indexes);
 			for (auto i : match_indexes) {

@@ -6,8 +6,8 @@
  * @version 1.0.0
  * @license MIT
  */
-#ifndef SLPARSER_SAFELIST_H
-#define SLPARSER_SAFELIST_H
+#ifndef SLANALYZER_SAFELIST_H
+#define SLANALYZER_SAFELIST_H
 #include <string>
 #include <memory>
 #include <vector>
@@ -65,4 +65,4 @@ private:
 typedef SafeList::MatchType MatchType;
 typedef SafeList::FieldType FieldType;
 }
-#endif //SLPARSER_SAFELIST_H
+#endif //SLANALYZER_SAFELIST_H

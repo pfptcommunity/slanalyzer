@@ -6,8 +6,8 @@
  * @version 1.0.0
  * @license MIT
  */
-#ifndef SLPARSER_SLPROCESSOR_H
-#define SLPARSER_SLPROCESSOR_H
+#ifndef SLANALYZER_ANALYZER_H
+#define SLANALYZER_ANALYZER_H
 
 #include "SafeList.h"
 #include "AddressMatcher.h"
@@ -30,4 +30,4 @@ private:
 	StringMatcher rcpt;
 };
 }
-#endif //SLPARSER_SLPROCESSOR_H
+#endif //SLANALYZER_ANALYZER_H

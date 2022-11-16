@@ -6,13 +6,14 @@
  * @version 1.0.0
  * @license MIT
  */
+
 #include "Analyzer.h"
 #include "CsvParser.h"
-#include "Utils.h"
 #include <chrono>
 #include <iostream>
 #include <iomanip>
 #include "re2/re2.h"
+#include "Utils.h"
 
 Proofpoint::Analyzer::Analyzer(const SafeList& safelist, PatternErrors& errors)
 {
@@ -23,7 +24,7 @@ Proofpoint::Analyzer::Analyzer(const SafeList& safelist, PatternErrors& errors)
 			break;
 		case FieldType::HOST: host.Add(sle->match_type, sle->pattern, i, errors);
 			break;
-		case FieldType::HELO: host.Add(sle->match_type, sle->pattern, i, errors);
+		case FieldType::HELO: helo.Add(sle->match_type, sle->pattern, i, errors);
 			break;
 		case FieldType::FROM: from.Add(sle->match_type, sle->pattern, i, errors);
 			break;
@@ -48,6 +49,7 @@ void Proofpoint::Analyzer::Process(const std::string& ss_file, SafeList& safelis
 	re2::StringPiece matches[2];
 	RE2 hfrom_addr_only(R"(<?\s*([a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)\s*>?\s*(?:;|$))");
 	RE2 inbound_check(R"(\bdefault_inbound\b)");
+
 	auto compare = [](const std::string& lhs, const std::string& rhs) -> bool {
 	  return strcasecmp(lhs.c_str(), rhs.c_str())<0;
 	};

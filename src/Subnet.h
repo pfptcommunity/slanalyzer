@@ -6,8 +6,8 @@
  * @version 1.0.0
  * @license MIT
  */
-#ifndef SLPARSER_SUBNET_H
-#define SLPARSER_SUBNET_H
+#ifndef SLANALYZER_SUBNET_H
+#define SLANALYZER_SUBNET_H
 
 #include <arpa/inet.h>
 #include <stdexcept>
@@ -30,10 +30,21 @@ public:
 	static std::string GetAddress(in_addr_t address, ByteOrder order = HOST);
 public:
 	explicit Subnet(const std::string& cidr);
-	Subnet(const std::string& network, const std::string& netmask);
-	Subnet(const in_addr_t& network, const in_addr_t& netmask, ByteOrder order);
-	[[nodiscard]] bool InSubnet(in_addr_t address, ByteOrder order = HOST) const;
-	[[nodiscard]] bool InSubnet(const std::string& ip_address) const;
+	explicit Subnet(const std::string& network, const std::string& netmask);
+	explicit Subnet(const in_addr_t& network, const in_addr_t& netmask, ByteOrder order);
+	inline bool InSubnet(in_addr_t address, Proofpoint::Subnet::ByteOrder order) const
+	{
+		if (order==ByteOrder::NETWORK) {
+			address = ntohl(address);
+		}
+		return !((address ^ net) & mask);
+	}
+	inline bool InSubnet(const std::string& ip_address) const
+	{
+		in_addr address{0};
+		if (inet_aton(ip_address.c_str(), &address)==0) return false;
+		return !((ntohl(address.s_addr) ^ net) & mask);
+	}
 	[[nodiscard]] std::string GetNet() const;
 	[[nodiscard]] std::string GetMask() const;
 	[[nodiscard]] std::string GetMin() const;
@@ -67,4 +78,4 @@ private:
 	uint32_t hosts{};
 };
 }
-#endif //SLPARSER_SUBNET_H
+#endif //SLANALYZER_SUBNET_H

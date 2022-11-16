@@ -6,8 +6,8 @@
  * @version 1.0.0
  * @license MIT
  */
-#ifndef SLPARSER_MATCHER_H
-#define SLPARSER_MATCHER_H
+#ifndef SLANALYZER_MATCHER_H
+#define SLANALYZER_MATCHER_H
 
 #include "IMatcher.h"
 #include "re2/re2.h"
@@ -29,4 +29,4 @@ private:
 	std::unordered_map<int, std::size_t> map_to_sle;
 };
 }
-#endif //SLPARSER_MATCHER_H
+#endif //SLANALYZER_MATCHER_H

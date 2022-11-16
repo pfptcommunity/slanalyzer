@@ -6,25 +6,25 @@
  * @version 1.0.0
  * @license MIT
  */
-#ifndef SLPARSER_ADDRESSMATCHER_H
-#define SLPARSER_ADDRESSMATCHER_H
+#ifndef SLANALYZER_ADDRESSMATCHER_H
+#define SLANALYZER_ADDRESSMATCHER_H
 
 #include "Subnet.h"
 #include "StringMatcher.h"
 
 namespace Proofpoint {
-class AddressMatcher : public StringMatcher {
+class AddressMatcher : public IListMatcher {
 public:
 	AddressMatcher();
 	~AddressMatcher() = default;
-	void Add(SafeList::MatchType type,
-			const std::string& pattern,
-			const std::size_t& index,
-			PatternErrors& errors) override;
-	bool Match(bool inbound,const std::string& pattern, std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) override;
+	void Add(SafeList::MatchType type,const std::string& pattern,const std::size_t& index,PatternErrors& errors) final;
+	bool Match(bool inbound,const std::string& pattern, std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) final;
 private:
-	std::vector<std::tuple<std::shared_ptr<Subnet>, std::size_t>> in_subnets;
-	std::vector<std::tuple<std::shared_ptr<Subnet>, std::size_t>> not_in_subnets;
+	typedef std::vector<std::shared_ptr<Subnet>> SubnetCollection;
+	typedef std::tuple<SubnetCollection, std::size_t> SubnetPair;
+	std::vector<SubnetPair> in_subnets;
+	std::vector<SubnetPair> not_in_subnets;
+	std::unordered_map<SafeList::MatchType, std::shared_ptr<IMatcher>> matchers;
 };
 }
-#endif //SLPARSER_ADDRESSMATCHER_H
+#endif //SLANALYZER_ADDRESSMATCHER_H

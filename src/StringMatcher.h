@@ -6,8 +6,8 @@
  * @version 1.0.0
  * @license MIT
  */
-#ifndef SLPARSER_STRINGMATCHER_H
-#define SLPARSER_STRINGMATCHER_H
+#ifndef SLANALYZER_STRINGMATCHER_H
+#define SLANALYZER_STRINGMATCHER_H
 
 #include "IListMatcher.h"
 #include "IMatcher.h"
@@ -17,13 +17,10 @@ namespace Proofpoint {
 class StringMatcher : public IListMatcher {
 public:
 	StringMatcher();
-	void Add(SafeList::MatchType type,
-			const std::string& pattern,
-			const std::size_t& index,
-			PatternErrors& errors) override;
-	bool Match(bool inbound, const std::string& pattern, std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) override;
+	void Add(SafeList::MatchType type, const std::string& pattern, const std::size_t& index, PatternErrors& errors) final;
+	bool Match(bool inbound, const std::string& pattern, std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) final;
 private:
 	std::unordered_map<SafeList::MatchType, std::shared_ptr<IMatcher>> matchers;
 };
 }
-#endif //SLPARSER_STRINGMATCHER_H
+#endif //SLANALYZER_STRINGMATCHER_H
