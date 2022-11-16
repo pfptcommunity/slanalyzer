@@ -71,7 +71,8 @@ You may need to export multiple 1M record chunks from smart search for a 30 day 
 ![image](https://user-images.githubusercontent.com/83429267/201682040-29d83ebc-3a3d-4231-8768-a3c8f4f9d879.png)
 
 Export the results to a CSV(s) and pass them to the tool as the last parameter. 
-![image](https://user-images.githubusercontent.com/83429267/201535761-bc3ce4ba-68e4-4bdd-8c31-ee05fd6c49ea.png)
+![image](https://user-images.githubusercontent.com/83429267/202054937-9e37a468-a4b6-4929-823a-8b6cbe694b2f.png)
+
 
 ### Reviewing the Data
 
@@ -79,21 +80,22 @@ The below output is limited, but ever match conditon is annotated with the numbe
 or safe list. This is provides a good heatmap to see which safelist entry is excessive or inactive.
 
 ```
-"FieldType","MatchType","Pattern","Comment","Matches"
-$from,match,@indeed.com,,155
-$from,match,@pluralsight.com,,82
-$hfrom,match,trystoryboard.com,,2
-$from,match,em8330.trystoryboard.com,,2
-$ip,equal,192.89.112.126,,2
+"FieldType","MatchType","Pattern","Comment","Inbound","Outbound"
+"$from","match","@indeed.com","","155","0"
+"$from","match","@pluralsight.com","","82","0"
+"$hfrom","match","trystoryboard.com","","2","0"
+"$from","match","em8330.trystoryboard.com","","2","1"
+"$ip","equal","192.89.112.126","","2","0"
 ```
 
 ### Performance
-During testing analyzer was able to process 10,000(10K) safelist entries and 10,000,000(10M) row smart search in ~72 seconds that would be 10,000,000,000(10B)  permutations. 
+During testing analyzer was able to process 10,000(10K) safelist entries and 10,000,000(10M) row smart search in ~74 seconds that would be 10,000,000,000(10B)  permutations. 
 ```
-      SL Load Completed: 2957μs                  [0.002957s][/home/ljerabek/megasafe.csv]
-SS Processing Completed: 72601453μs              [72.601453s][/home/ljerabek/mega_smart_search.csv]
-      SL Save Completed: 93586μs                 [0.093586s][/home/ljerabek/safelist_annotated.csv]
-              Completed: 72730485μs              [72.730485s]
+Status                    Microseconds              Seconds                   Records                   Filename
+SL Load Completed         2726                      0.002726                  10000                     /home/ljerabek/megasafe.csv
+SS Processing Completed   73874963                  73.874963                 10000000                  /home/ljerabek/mega_smart_search.csv
+SL Save Completed         4314                      0.004314                  10000                     /home/ljerabek/safelist_annotated.csv
+SL Load Completed         73913884                  73.913884
 ```
 
 ### Limitations
