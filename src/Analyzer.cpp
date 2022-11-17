@@ -39,45 +39,44 @@ Proofpoint::Analyzer::Analyzer(const SafeList& safelist, PatternErrors& pattern_
 void Proofpoint::Analyzer::Process(const std::string& ss_file, SafeList& safelist)
 {
 	std::size_t count = 0;
+	bool header_found;
 	using std::chrono::high_resolution_clock;
 	using std::chrono::microseconds;
-
 	auto start = high_resolution_clock::now();
 	std::ifstream f(ss_file);
 	csv::CsvParser parser(f);
-	std::vector<std::string> header;
 	re2::StringPiece matches[2];
 	RE2 hfrom_addr_only(R"(<?\s*([a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)\s*>?\s*(?:;|$))");
 	RE2 inbound_check(R"(\bdefault_inbound\b)");
 
-	auto compare = [](const std::string& lhs, const std::string& rhs) -> bool {
-	  return strcasecmp(lhs.c_str(), rhs.c_str())<0;
-	};
+	csv::HeaderMap header_map;
+	csv::HeaderList required_headers{"Policy_Route",
+			"Sender_IP_Address",
+			"Sender_Host",
+			"HELO",
+			"Header_From",
+			"Sender",
+			"Recipients"};
 
-	std::map<std::string, std::size_t, decltype(compare)> header_to_index;
+	// Validate there are headers we are interested in...
+	header_found = parser.FindHeader(required_headers, header_map);
 
-	// Find the header first, get column names
-	for (auto& row : parser) {
-		size_t cols = row.size();
-		if (cols==1 && Utils::trim_copy(row.at(0)).empty()) continue;
-		header = row;
-		for (std::size_t i = 0; i<header.size(); i++) {
-			header_to_index.insert({header.at(i), i});
-		}
-		break;
-	}
+	// std::multimap is useful for CSVs where there may be duplicate headers.
+	//for (auto i = header_map.begin(); i!= header_map.end(); i++){
+	//	std::cout << std::setw(35) << i->first << " " << std::setw(25) << i->second  << " " << header_map.count(i->first) << "\r\n";
+	//}
 
-	for (auto& row : parser) {
-		bool inbound = RE2::PartialMatch(row[header_to_index["Policy_Route"]], inbound_check);
-		ip.Match(inbound, row[header_to_index["Sender_IP_Address"]], safelist.safe_list);
-		host.Match(inbound, row[header_to_index["Sender_Host"]], safelist.safe_list);
-		helo.Match(inbound, row[header_to_index["HELO"]], safelist.safe_list);
+	for (auto& row : parser){
+		bool inbound = RE2::PartialMatch(row[header_map.find("Policy_Route")->second], inbound_check);
+		ip.Match(inbound, row[header_map.find("Sender_IP_Address")->second], safelist.safe_list);
+		host.Match(inbound, row[header_map.find("Sender_Host")->second], safelist.safe_list);
+		helo.Match(inbound, row[header_map.find("HELO")->second], safelist.safe_list);
 		// This single call has large impact on processing. Since we need to perform header from "address only"
-		hfrom.Match(inbound, (hfrom_addr_only.Match(row[header_to_index["Header_From"]], 0,
-				row[header_to_index["Header_From"]].length(), RE2::UNANCHORED, matches, 2))
-				? matches[1].ToString() : row[header_to_index["Header_From"]], safelist.safe_list);
-		from.Match(inbound, row[header_to_index["Sender"]], safelist.safe_list);
-		rcpt.Match(inbound, row[header_to_index["Recipients"]], safelist.safe_list);
+		hfrom.Match(inbound, (hfrom_addr_only.Match(row[header_map.find("Header_From")->second], 0,
+				row[header_map.find("Header_From")->second].length(), RE2::UNANCHORED, matches, 2))
+				? matches[1].ToString() : row[header_map.find("Header_From")->second], safelist.safe_list);
+		from.Match(inbound, row[header_map.find("Sender")->second], safelist.safe_list);
+		rcpt.Match(inbound, row[header_map.find("Recipients")->second], safelist.safe_list);
 		count++;
 	}
 
@@ -87,5 +86,5 @@ void Proofpoint::Analyzer::Process(const std::string& ss_file, SafeList& safelis
 			  << std::left << std::setw(25) << std::to_string(duration.count()) << " "
 			  << std::setw(25) << std::setprecision(2) << std::to_string((double)duration.count()/1000000) << " "
 			  << std::setw(25) << count << " "
-			  << ss_file << std::endl;
+			  << ss_file << ((!header_found) ? " (No CSV Header Found)" : " ") << std::endl;
 }
