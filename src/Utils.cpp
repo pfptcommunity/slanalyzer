@@ -1,3 +1,11 @@
+/**
+ * This code was tested against C++20
+ *
+ * @author Ludvik Jerabek
+ * @package slanalyzer
+ * @version 1.0.0
+ * @license MIT
+ */
 #include "Utils.h"
 
 std::vector<std::string_view> Proofpoint::Utils::split(std::string_view str, char d)
