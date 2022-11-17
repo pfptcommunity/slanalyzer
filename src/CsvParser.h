@@ -14,6 +14,9 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <unordered_set>
+#include <map>
+#include <algorithm>
 
 namespace csv {
 enum class Term {
@@ -374,8 +377,28 @@ public:
 	};
 
 	iterator begin() { return iterator(this); };
-
 	iterator end() { return iterator(this, true); };
+
+public:
+	typedef std::multimap<std::string,std::size_t> HeaderMap;
+	typedef std::vector<std::string> HeaderList;
+
+	bool FindHeader(const HeaderList& required_fields, HeaderMap& header_map)
+	{
+		for (auto row : *this) {
+			if (row.size()<required_fields.size()) continue;
+			// Find header and return true
+			if (std::ranges::all_of(required_fields,[row](const std::string& field) { return std::find(row.begin(), row.end(), field)!=row.end(); })){
+				std::size_t index;
+				std::transform( row.begin(), row.end() ,std::inserter( header_map , header_map.end() ) ,[index = 0](const std::string& field) mutable {return std::make_pair(field,index++); } );
+				return true;
+			}
+		}
+		// Nothing was found
+		return false;
+	}
 };
+typedef CsvParser::HeaderMap HeaderMap;
+typedef CsvParser::HeaderList HeaderList;
 }
 #endif
