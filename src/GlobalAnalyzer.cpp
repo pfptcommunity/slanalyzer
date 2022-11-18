@@ -7,7 +7,7 @@
  * @license MIT
  */
 
-#include "Analyzer.h"
+#include "GlobalAnalyzer.h"
 #include "CsvParser.h"
 #include <chrono>
 #include <iostream>
@@ -15,28 +15,28 @@
 #include "re2/re2.h"
 #include "Utils.h"
 
-Proofpoint::Analyzer::Analyzer(const SafeList& safelist, PatternErrors& pattern_errors)
+Proofpoint::GlobalAnalyzer::GlobalAnalyzer(const GlobalList& safelist, PatternErrors& pattern_errors)
 {
 	for (std::size_t i = 0; i<safelist.safe_list.size(); i++) {
-		std::shared_ptr<SafeList::Entry> sle = safelist.safe_list.at(i);
+		std::shared_ptr<GlobalList::Entry> sle = safelist.safe_list.at(i);
 		switch (sle->field_type) {
-		case SafeList::FieldType::IP: ip.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case GlobalList::FieldType::IP: ip.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case SafeList::FieldType::HOST: host.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case GlobalList::FieldType::HOST: host.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case SafeList::FieldType::HELO: helo.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case GlobalList::FieldType::HELO: helo.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case SafeList::FieldType::FROM: from.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case GlobalList::FieldType::FROM: from.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case SafeList::FieldType::HFROM: hfrom.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case GlobalList::FieldType::HFROM: hfrom.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case SafeList::FieldType::RCPT: rcpt.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case GlobalList::FieldType::RCPT: rcpt.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case SafeList::FieldType::UNKNOWN: break;
+		case GlobalList::FieldType::UNKNOWN: break;
 		}
 	}
 }
-void Proofpoint::Analyzer::Process(const std::string& ss_file, SafeList& safelist)
+void Proofpoint::GlobalAnalyzer::Process(const std::string& ss_file, GlobalList& safelist)
 {
 	std::size_t count = 0;
 	csv::HeaderIndex header_index;

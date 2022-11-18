@@ -28,7 +28,7 @@ private:
 	bool compiled;
 	RE2::Options opt;
 	std::unique_ptr<RE2::Set> match;
-	std::unordered_map<int, std::size_t> map_to_sle;
+	std::unordered_map<int, std::size_t> map_to_global_list;
 };
 }
 #endif //SLANALYZER_INVERTEDMATCHER_H

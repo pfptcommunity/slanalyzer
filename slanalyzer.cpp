@@ -6,14 +6,14 @@
  * @version 1.0.0
  * @license MIT
  */
-#include "src/Analyzer.h"
+#include "src/GlobalAnalyzer.h"
 #include "src/UserAnalyzer.h"
 #include "src/Matcher.h"
 #include <getopt.h>
 #include <filesystem>
 #include <chrono>
 #include <iostream>
-#include "src/UserSafeList.h"
+#include "src/UserList.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -169,15 +169,15 @@ int main(int argc, char* argv[])
 
 	if( safe ) {
 
-		Proofpoint::SafeList safelist;
-		Proofpoint::SafeList::EntryErrors entry_errors;
+		Proofpoint::GlobalList safelist;
+		Proofpoint::GlobalList::EntryErrors entry_errors;
 
 		safelist.Load(safe_list, entry_errors);
 
 		// Used to collect pattern errors in the even there is a bad pattern
 		Proofpoint::PatternErrors pattern_errors;
 
-		Proofpoint::Analyzer processor(safelist, pattern_errors);
+		Proofpoint::GlobalAnalyzer processor(safelist, pattern_errors);
 
 		for (const auto& file : ss_inputs) {
 			processor.Process(file, safelist);
@@ -201,8 +201,8 @@ int main(int argc, char* argv[])
 	}
 
 	if( user ) {
-		Proofpoint::UserSafeList user_safe_list;
-		Proofpoint::UserSafeList::UserErrors user_errors;
+		Proofpoint::UserList user_safe_list;
+		Proofpoint::UserList::UserErrors user_errors;
 		user_safe_list.Load(user_list, user_errors);
 
 		// Used to collect pattern errors in the even there is a bad pattern

@@ -10,26 +10,15 @@
 #ifndef SLANALYZER_USERSAFELIST_H
 #define SLANALYZER_USERSAFELIST_H
 #include <string>
-#include <memory>
 #include <vector>
 
 namespace Proofpoint {
-class UserSafeList {
+class UserList {
 	friend class UserAnalyzer;
 public:
-	enum class FieldType {
-	  UNKNOWN,
-	  FROM,
-	  HFROM
-	};
-	enum class MatchType {
-	  UNKNOWN,
-	  EMAIL,
-	  DOMAIN,
-	};
-	struct UserEntry {
-	  std::string fname;
-	  std::string lname;
+	struct Entry {
+	  std::string givenName;
+	  std::string sn;
 	  std::string mail;
 	  std::vector<std::string> proxy_addresses;
 	  std::vector<std::string> safe;
@@ -43,14 +32,13 @@ public:
 	};
 	typedef std::vector<UserError> UserErrors;
 public:
-	UserSafeList() = default;
+	UserList();
 	void Load(const std::string& list_file, UserErrors& entry_errors);
 	void Save(const std::string& list_file);
 private:
-	std::vector<std::shared_ptr<UserEntry>> user_list;
+	std::vector<Entry> user_list;
+	std::size_t address_count;
 };
-typedef UserSafeList::UserErrors UserErrors;
-//typedef UserSafeList::MatchType MatchType;
-//typedef UserSafeList::FieldType FieldType;
+typedef UserList::UserErrors UserErrors;
 }
 #endif //SLANALYZER_USERSAFELIST_H

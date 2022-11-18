@@ -6,7 +6,7 @@
  * @version 1.0.0
  * @license MIT
  */
-#include "SafeList.h"
+#include "GlobalList.h"
 #include "CsvParser.h"
 #include <iostream>
 #include <utility>
@@ -14,7 +14,7 @@
 #include <chrono>
 #include "re2/re2.h"
 
-void Proofpoint::SafeList::Load(const std::string& list_file, EntryErrors& entry_errors )
+void Proofpoint::GlobalList::Load(const std::string& list_file, EntryErrors& entry_errors )
 {
 	std::size_t count = 0;
 	using std::chrono::high_resolution_clock;
@@ -52,7 +52,7 @@ void Proofpoint::SafeList::Load(const std::string& list_file, EntryErrors& entry
 			  << std::setw(25) << count << " "
 			  << list_file << std::endl;
 }
-void Proofpoint::SafeList::Save(const std::string& list_file)
+void Proofpoint::GlobalList::Save(const std::string& list_file)
 {
 	std::size_t count = 0;
 	RE2 quoted("\"");
@@ -91,7 +91,7 @@ void Proofpoint::SafeList::Save(const std::string& list_file)
 			  << std::setw(25) << count << " "
 			  << list_file << std::endl;
 }
-inline Proofpoint::SafeList::FieldType Proofpoint::SafeList::GetFieldType(const std::string& field)
+inline Proofpoint::GlobalList::FieldType Proofpoint::GlobalList::GetFieldType(const std::string& field)
 {
 	if (strcmp("$ip", field.c_str())==0)
 		return FieldType::IP;
@@ -108,12 +108,12 @@ inline Proofpoint::SafeList::FieldType Proofpoint::SafeList::GetFieldType(const 
 	return FieldType::UNKNOWN;
 }
 
-inline const std::string& Proofpoint::SafeList::GetFieldTypeString(Proofpoint::SafeList::FieldType field)
+inline const std::string& Proofpoint::GlobalList::GetFieldTypeString(Proofpoint::GlobalList::FieldType field)
 {
 	return FieldTypeStrings[static_cast<int>(field)];
 }
 
-inline Proofpoint::SafeList::MatchType Proofpoint::SafeList::GetMatchType(const std::string& field)
+inline Proofpoint::GlobalList::MatchType Proofpoint::GlobalList::GetMatchType(const std::string& field)
 {
 	// strcmp has consistently better times than string.compare or ==
 	if (strcmp("equal", field.c_str())==0)
@@ -137,7 +137,7 @@ inline Proofpoint::SafeList::MatchType Proofpoint::SafeList::GetMatchType(const 
 	else
 		return MatchType::UNKNOWN;
 }
-inline const std::string& Proofpoint::SafeList::GetMatchTypeString(Proofpoint::SafeList::MatchType matchtype)
+inline const std::string& Proofpoint::GlobalList::GetMatchTypeString(Proofpoint::GlobalList::MatchType matchtype)
 {
 	return MatchTypeStrings[static_cast<int>(matchtype)];
 }

@@ -25,7 +25,7 @@ void Proofpoint::Matcher::Add(const std::string& pattern, const size_t& index, s
 		pattern_errors.push_back({index, pattern, error});
 		return;
 	}
-	map_to_sle.insert({i, index});
+	map_to_global_list.insert({i, index});
 }
 bool Proofpoint::Matcher::Match(const std::string& pattern, std::vector<std::size_t>& match_indexes)
 {
@@ -37,11 +37,11 @@ bool Proofpoint::Matcher::Match(const std::string& pattern, std::vector<std::siz
 	std::vector<int> m;
 	bool matched = match->Match(pattern, &m);
 	for (auto index : m) {
-		match_indexes.emplace_back(map_to_sle[index]);
+		match_indexes.emplace_back(map_to_global_list[index]);
 	}
 	return matched;
 }
 std::size_t Proofpoint::Matcher::GetPatternCount()
 {
-	return map_to_sle.size();
+	return map_to_global_list.size();
 }

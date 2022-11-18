@@ -9,18 +9,38 @@
 #ifndef SLANALYZER_USERANALYZER_H
 #define SLANALYZER_USERANALYZER_H
 
-#include "UserSafeList.h"
+#include "UserList.h"
 #include "Matcher.h"
 #include <memory>
+#include <cstring>
 #include <map>
 
 namespace Proofpoint {
 class UserAnalyzer {
 public:
-	explicit UserAnalyzer(const UserSafeList& safelist, PatternErrors& pattern_errors);
+	explicit UserAnalyzer(const UserList& safelist, PatternErrors& pattern_errors);
 	~UserAnalyzer() = default;
-	void Process(const std::string& ss_file, UserSafeList& safelist);
+	void Process(const std::string& ss_file, UserList& safelist);
+public:
+	struct case_insensitive_unordered_map {
+	  struct comp {
+		bool operator() (const std::string& lhs, const std::string& rhs) const {
+			// On non Windows OS, use the function "strcasecmp" in #include <strings.h>
+			return strcasecmp(lhs.c_str(), rhs.c_str()) == 0;
+		}
+	  };
+	  struct hash {
+		std::size_t operator() (std::string str) const {
+			for (std::size_t index = 0; index < str.size(); ++index) {
+				auto ch = static_cast<unsigned char>(str[index]);
+				str[index] = static_cast<unsigned char>(std::tolower(ch));
+			}
+			return std::hash<std::string>{}(str);
+		}
+	  };
+	};
 private:
+	std::unordered_map<std::string,std::size_t,case_insensitive_unordered_map::hash,case_insensitive_unordered_map::comp> addr_to_user;
 	std::unordered_map<std::size_t,std::shared_ptr<Matcher>> safe_to_user;
 	std::unordered_map<std::size_t,std::shared_ptr<Matcher>> block_to_user;
 };

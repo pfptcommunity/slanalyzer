@@ -13,8 +13,8 @@
 #include <vector>
 
 namespace Proofpoint {
-class SafeList {
-	friend class Analyzer;
+class GlobalList {
+	friend class GlobalAnalyzer;
 public:
 	enum class FieldType {
 	  UNKNOWN,
@@ -63,7 +63,7 @@ private:
 	inline static const std::string MatchTypeStrings[] = {"unknown", "equal", "not_equal", "match", "not_match",
 			"regex", "not_regex", "ip_in_net", "ip_not_in_net", "is_in_domainset"};
 public:
-	SafeList() = default;
+	GlobalList() = default;
 	void Load(const std::string& list_file, EntryErrors& entry_errors);
 	void Save(const std::string& list_file);
 private:

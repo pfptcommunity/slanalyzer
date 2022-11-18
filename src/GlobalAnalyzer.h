@@ -9,18 +9,18 @@
 #ifndef SLANALYZER_ANALYZER_H
 #define SLANALYZER_ANALYZER_H
 
-#include "SafeList.h"
+#include "GlobalList.h"
 #include "AddressMatcher.h"
 #include "StringMatcher.h"
 
 namespace Proofpoint {
-class Analyzer {
+class GlobalAnalyzer {
 public:
-	typedef std::unordered_map<SafeList::FieldType, PatternErrors> PatternErrorMap;
+	typedef std::unordered_map<GlobalList::FieldType, PatternErrors> PatternErrorMap;
 public:
-	explicit Analyzer(const SafeList& safelist, PatternErrors& pattern_errors);
-	~Analyzer() = default;
-	void Process(const std::string& ss_file, SafeList& safelist);
+	explicit GlobalAnalyzer(const GlobalList& safelist, PatternErrors& pattern_errors);
+	~GlobalAnalyzer() = default;
+	void Process(const std::string& ss_file, GlobalList& safelist);
 private:
 	AddressMatcher ip;
 	StringMatcher host;

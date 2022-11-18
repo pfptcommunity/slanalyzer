@@ -13,24 +13,24 @@
 
 Proofpoint::StringMatcher::StringMatcher()
 		:
-		matchers({{SafeList::MatchType::EQUAL, std::make_shared<Matcher>(true, false, RE2::ANCHOR_BOTH)},
-				{SafeList::MatchType::NOT_EQUAL, std::make_shared<InvertedMatcher>(true, false, RE2::ANCHOR_BOTH)},
-				{SafeList::MatchType::MATCH, std::make_shared<Matcher>(true, false, RE2::UNANCHORED)},
-				{SafeList::MatchType::NOT_MATCH, std::make_shared<InvertedMatcher>(true, false, RE2::UNANCHORED)},
-				{SafeList::MatchType::REGEX, std::make_shared<Matcher>(false, false, RE2::UNANCHORED)},
-				{SafeList::MatchType::NOT_REGEX,
+		matchers({{GlobalList::MatchType::EQUAL, std::make_shared<Matcher>(true, false, RE2::ANCHOR_BOTH)},
+				{GlobalList::MatchType::NOT_EQUAL, std::make_shared<InvertedMatcher>(true, false, RE2::ANCHOR_BOTH)},
+				{GlobalList::MatchType::MATCH, std::make_shared<Matcher>(true, false, RE2::UNANCHORED)},
+				{GlobalList::MatchType::NOT_MATCH, std::make_shared<InvertedMatcher>(true, false, RE2::UNANCHORED)},
+				{GlobalList::MatchType::REGEX, std::make_shared<Matcher>(false, false, RE2::UNANCHORED)},
+				{GlobalList::MatchType::NOT_REGEX,
 						std::make_shared<InvertedMatcher>(false, false, RE2::UNANCHORED)}}) { }
-void Proofpoint::StringMatcher::Add(Proofpoint::SafeList::MatchType type,
+void Proofpoint::StringMatcher::Add(Proofpoint::GlobalList::MatchType type,
 		const std::string& pattern,
 		const size_t& index, PatternErrors& pattern_errors)
 {
 
-	if (type==SafeList::MatchType::IS_IN_DOMAINSET || type==SafeList::MatchType::UNKNOWN) return;
+	if (type==GlobalList::MatchType::IS_IN_DOMAINSET || type==GlobalList::MatchType::UNKNOWN) return;
 
 	matchers[type]->Add(pattern, index, pattern_errors);
 }
 inline bool Proofpoint::StringMatcher::Match(bool inbound, const std::string& pattern,
-		std::vector<std::shared_ptr<SafeList::Entry>>& safe_list)
+		std::vector<std::shared_ptr<GlobalList::Entry>>& safe_list)
 {
 	std::vector<std::size_t> match_indexes;
 	bool matched = false;

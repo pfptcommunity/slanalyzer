@@ -9,18 +9,18 @@
 #ifndef SLANALYZER_ILISTMATCHER_H
 #define SLANALYZER_ILISTMATCHER_H
 
-#include "SafeList.h"
+#include "GlobalList.h"
 #include "IMatcher.h"
 
 namespace Proofpoint {
 class IListMatcher {
 public:
-	virtual void Add(SafeList::MatchType type,
+	virtual void Add(GlobalList::MatchType type,
 			const std::string& pattern,
 			const std::size_t& index,
 			PatternErrors& pattern_errors) = 0;
 	virtual bool Match(bool inbound, const std::string& pattern,
-			std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) = 0;
+			std::vector<std::shared_ptr<GlobalList::Entry>>& safe_list) = 0;
 };
 }
 #endif //SLANALYZER_ILISTMATCHER_H

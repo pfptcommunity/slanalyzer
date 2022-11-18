@@ -17,12 +17,12 @@ namespace Proofpoint {
 class StringMatcher : public IListMatcher {
 public:
 	StringMatcher();
-	void Add(SafeList::MatchType type, const std::string& pattern, const std::size_t& index,
+	void Add(GlobalList::MatchType type, const std::string& pattern, const std::size_t& index,
 			PatternErrors& pattern_errors) final;
 	bool Match(bool inbound, const std::string& pattern,
-			std::vector<std::shared_ptr<SafeList::Entry>>& safe_list) final;
+			std::vector<std::shared_ptr<GlobalList::Entry>>& safe_list) final;
 private:
-	std::unordered_map<SafeList::MatchType, std::shared_ptr<IMatcher>> matchers;
+	std::unordered_map<GlobalList::MatchType, std::shared_ptr<IMatcher>> matchers;
 };
 }
 #endif //SLANALYZER_STRINGMATCHER_H

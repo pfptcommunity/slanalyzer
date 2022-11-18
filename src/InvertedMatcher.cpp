@@ -28,7 +28,7 @@ void Proofpoint::InvertedMatcher::Add(const std::string& pattern,
 		pattern_errors.push_back({index, pattern, error});
 		return;
 	}
-	map_to_sle.insert({i, index});
+	map_to_global_list.insert({i, index});
 }
 bool Proofpoint::InvertedMatcher::Match(const std::string& pattern, std::vector<std::size_t>& match_indexes)
 {
@@ -39,7 +39,7 @@ bool Proofpoint::InvertedMatcher::Match(const std::string& pattern, std::vector<
 	}
 	std::vector<int> m;
 	bool matched = !match->Match(pattern, &m);
-	for (auto item : map_to_sle) {
+	for (auto item : map_to_global_list) {
 		if (!std::binary_search(m.begin(), m.end(), item.first)) {
 			match_indexes.emplace_back(item.second);
 		}
@@ -48,5 +48,5 @@ bool Proofpoint::InvertedMatcher::Match(const std::string& pattern, std::vector<
 }
 std::size_t Proofpoint::InvertedMatcher::GetPatternCount()
 {
-	return map_to_sle.size();
+	return map_to_global_list.size();
 }
