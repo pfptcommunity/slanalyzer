@@ -65,8 +65,9 @@ void Proofpoint::Analyzer::Process(const std::string& ss_file, SafeList& safelis
 	//for (auto i = header_map.begin(); i!= header_map.end(); i++){
 	//	std::cout << std::setw(35) << i->first << " " << std::setw(25) << i->second  << " " << header_map.count(i->first) << "\r\n";
 	//}
-
-	for (auto& row : parser){
+	
+	if( header_found )
+ 	for (auto& row : parser){
 		bool inbound = RE2::PartialMatch(row[header_map.find("Policy_Route")->second], inbound_check);
 		ip.Match(inbound, row[header_map.find("Sender_IP_Address")->second], safelist.safe_list);
 		host.Match(inbound, row[header_map.find("Sender_Host")->second], safelist.safe_list);

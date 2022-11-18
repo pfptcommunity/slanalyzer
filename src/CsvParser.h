@@ -383,9 +383,13 @@ public:
 	typedef std::multimap<std::string,std::size_t> HeaderMap;
 	typedef std::vector<std::string> HeaderList;
 
-	bool FindHeader(const HeaderList& required_fields, HeaderMap& header_map)
+	// Search limit will set how many lines to search before aborting header lookup
+	bool FindHeader(const HeaderList& required_fields, HeaderMap& header_map, std::size_t search_limit = 0)
 	{
+		std::size_t lines_read = 0;
 		for (auto row : *this) {
+			// Max lines to search was reached
+			if( search_limit > 0 && search_limit <= lines_read++ ) return false;
 			if (row.size()<required_fields.size()) continue;
 			// Find header and return true
 			if (std::ranges::all_of(required_fields,[row](const std::string& field) { return std::find(row.begin(), row.end(), field)!=row.end(); })){
