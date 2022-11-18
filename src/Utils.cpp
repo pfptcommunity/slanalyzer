@@ -28,6 +28,10 @@ std::vector<std::string_view> Proofpoint::Utils::split(std::string_view str, cha
 	return res;
 }
 
+void Proofpoint::Utils::reverse(std::string& str){
+	std::reverse(str.begin(),str.end());
+}
+
 void Proofpoint::Utils::ltrim(std::string& s)
 {
 	s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
@@ -46,6 +50,11 @@ void Proofpoint::Utils::trim(std::string& s)
 {
 	rtrim(s);
 	ltrim(s);
+}
+
+std::string Proofpoint::Utils::reverse_copy(std::string str){
+	std::reverse(str.begin(),str.end());
+	return std::move(str);
 }
 
 std::string Proofpoint::Utils::ltrim_copy(std::string s)
