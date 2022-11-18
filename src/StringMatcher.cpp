@@ -25,7 +25,7 @@ void Proofpoint::StringMatcher::Add(Proofpoint::SafeList::MatchType type,
 		const size_t& index, PatternErrors& pattern_errors)
 {
 
-	if (type==MatchType::IS_IN_DOMAINSET || type==MatchType::UNKNOWN) return;
+	if (type==SafeList::MatchType::IS_IN_DOMAINSET || type==SafeList::MatchType::UNKNOWN) return;
 
 	matchers[type]->Add(pattern, index, pattern_errors);
 }

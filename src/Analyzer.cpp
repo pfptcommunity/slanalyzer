@@ -20,26 +20,26 @@ Proofpoint::Analyzer::Analyzer(const SafeList& safelist, PatternErrors& pattern_
 	for (std::size_t i = 0; i<safelist.safe_list.size(); i++) {
 		std::shared_ptr<SafeList::Entry> sle = safelist.safe_list.at(i);
 		switch (sle->field_type) {
-		case FieldType::IP: ip.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case SafeList::FieldType::IP: ip.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case FieldType::HOST: host.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case SafeList::FieldType::HOST: host.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case FieldType::HELO: helo.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case SafeList::FieldType::HELO: helo.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case FieldType::FROM: from.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case SafeList::FieldType::FROM: from.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case FieldType::HFROM: hfrom.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case SafeList::FieldType::HFROM: hfrom.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case FieldType::RCPT: rcpt.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case SafeList::FieldType::RCPT: rcpt.Add(sle->match_type, sle->pattern, i, pattern_errors);
 			break;
-		case FieldType::UNKNOWN: break;
+		case SafeList::FieldType::UNKNOWN: break;
 		}
 	}
 }
 void Proofpoint::Analyzer::Process(const std::string& ss_file, SafeList& safelist)
 {
 	std::size_t count = 0;
-	bool header_found;
+	csv::HeaderIndex header_index;
 	using std::chrono::high_resolution_clock;
 	using std::chrono::microseconds;
 	auto start = high_resolution_clock::now();
@@ -59,14 +59,15 @@ void Proofpoint::Analyzer::Process(const std::string& ss_file, SafeList& safelis
 			"Recipients"};
 
 	// Validate there are headers we are interested in...
-	header_found = parser.FindHeader(required_headers, header_map);
+	header_index = parser.FindHeader(required_headers, header_map);
 
+	//std::cout << std::setw(35) << "Highest Index" << " " << std::setw(25) << header_index << std::endl;
 	// std::multimap is useful for CSVs where there may be duplicate headers.
 	//for (auto i = header_map.begin(); i!= header_map.end(); i++){
-	//	std::cout << std::setw(35) << i->first << " " << std::setw(25) << i->second  << " " << header_map.count(i->first) << "\r\n";
+	//	std::cout << std::setw(35) << i->first << " " << std::setw(25) << i->second  << " " << header_map.count(i->first) << std::endl;
 	//}
-	
-	if( header_found )
+
+	if( header_index > -1 )
  	for (auto& row : parser){
 		bool inbound = RE2::PartialMatch(row[header_map.find("Policy_Route")->second], inbound_check);
 		ip.Match(inbound, row[header_map.find("Sender_IP_Address")->second], safelist.safe_list);
@@ -87,5 +88,5 @@ void Proofpoint::Analyzer::Process(const std::string& ss_file, SafeList& safelis
 			  << std::left << std::setw(25) << std::to_string(duration.count()) << " "
 			  << std::setw(25) << std::setprecision(2) << std::to_string((double)duration.count()/1000000) << " "
 			  << std::setw(25) << count << " "
-			  << ss_file << ((!header_found) ? " (No CSV Header Found)" : " ") << std::endl;
+			  << ss_file << ((header_index == -1) ? " (No CSV Header Found)" : " ") << std::endl;
 }

@@ -69,8 +69,5 @@ public:
 private:
 	std::vector<std::shared_ptr<Entry>> safe_list;
 };
-typedef SafeList::EntryErrors EntryErrors;
-typedef SafeList::MatchType MatchType;
-typedef SafeList::FieldType FieldType;
 }
 #endif //SLANALYZER_SAFELIST_H

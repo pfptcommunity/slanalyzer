@@ -24,16 +24,16 @@ Proofpoint::AddressMatcher::AddressMatcher()
 void Proofpoint::AddressMatcher::Add(SafeList::MatchType type, const std::string& pattern, const std::size_t& index,
 		PatternErrors& pattern_errors)
 {
-	if (type==MatchType::IS_IN_DOMAINSET || type==MatchType::UNKNOWN) return;
+	if (type==SafeList::MatchType::IS_IN_DOMAINSET || type==SafeList::MatchType::UNKNOWN) return;
 
 	switch (type) {
-	case MatchType::IP_IN_NET: in_subnets.emplace_back();
+	case SafeList::MatchType::IP_IN_NET: in_subnets.emplace_back();
 		std::get<1>(in_subnets.back()) = 0;
 		for (auto subnet : Utils::split(pattern, ',')) {
 			std::get<0>(in_subnets.back()).emplace_back(std::make_shared<Subnet>(std::string(subnet)));
 		}
 		break;
-	case MatchType::IP_NOT_IN_NET: not_in_subnets.emplace_back();
+	case SafeList::MatchType::IP_NOT_IN_NET: not_in_subnets.emplace_back();
 		std::get<1>(not_in_subnets.back()) = 0;
 		for (auto subnet : Utils::split(pattern, ',')) {
 			std::get<0>(not_in_subnets.back()).emplace_back(std::make_shared<Subnet>(std::string(subnet)));
