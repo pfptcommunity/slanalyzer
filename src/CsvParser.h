@@ -382,27 +382,34 @@ public:
 public:
 	typedef std::multimap<std::string,std::size_t> HeaderMap;
 	typedef std::vector<std::string> HeaderList;
-
+	typedef std::vector<std::string>::difference_type HeaderIndex;
 	// Search limit will set how many lines to search before aborting header lookup
-	bool FindHeader(const HeaderList& required_fields, HeaderMap& header_map, std::size_t search_limit = 0)
+	HeaderIndex FindHeader(const HeaderList& required_fields, HeaderMap& header_map, std::size_t search_limit = 0)
 	{
 		std::size_t lines_read = 0;
-		for (auto row : *this) {
+		for (const auto& row : *this) {
 			// Max lines to search was reached
-			if( search_limit > 0 && search_limit <= lines_read++ ) return false;
-			if (row.size()<required_fields.size()) continue;
+			if( search_limit > 0 && search_limit <= lines_read++ ) break;
+			if (row.size() < required_fields.size()) continue;
 			// Find header and return true
-			if (std::ranges::all_of(required_fields,[row](const std::string& field) { return std::find(row.begin(), row.end(), field)!=row.end(); })){
-				std::size_t index;
-				std::transform( row.begin(), row.end() ,std::inserter( header_map , header_map.end() ) ,[index = 0](const std::string& field) mutable {return std::make_pair(field,index++); } );
-				return true;
+			HeaderIndex max_req = -1;
+			if (std::ranges::all_of(required_fields,[&max_req, &row](const std::string& field) {
+				auto found = std::find(row.begin(), row.end(), field);
+			  	if( found != row.end() ) max_req = std::max(max_req, std::distance(row.begin(),found));
+				  return found != row.end();
+			})){
+				std::size_t index = 0;
+				std::transform( row.begin(), row.end() ,std::inserter( header_map , header_map.end() ) ,[&index](const std::string& field)  {return std::make_pair(field,index++); } );
+				// Return success and position of highest required index
+				return max_req;
 			}
 		}
-		// Nothing was found
-		return false;
+		// Nothing was found -1
+		return -1;
 	}
 };
 typedef CsvParser::HeaderMap HeaderMap;
 typedef CsvParser::HeaderList HeaderList;
+typedef CsvParser::HeaderIndex HeaderIndex;
 }
 #endif
