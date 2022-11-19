@@ -15,30 +15,30 @@
 #include "re2/re2.h"
 #include "Utils.h"
 
-Proofpoint::UserAnalyzer::UserAnalyzer(const UserList& userlist, PatternErrors& pattern_errors)
-{
-	addr_to_user.reserve(userlist.address_count);
-	for (std::size_t i = 0; i<userlist.user_list.size(); i++) {
-		addr_to_user.emplace(userlist.user_list[i].mail,i);
-		for ( const auto& email : userlist.user_list[i].proxy_addresses ) {
-			addr_to_user.emplace(email, i);
-		}
-		//safe_to_user.emplace(i,std::make_shared<Matcher>(true, false,RE2::ANCHOR_START));
-		//for (std::size_t j = 0; j < userlist.user_list[i].safe.size(); j++)
-		//	safe_to_user[i]->Add(Utils::reverse_copy(userlist.user_list[i].safe[j]), j, pattern_errors);
-
-		//block_to_user.emplace(i,std::make_shared<Matcher>(true, false,RE2::ANCHOR_START));
-		//for (std::size_t j = 0; j < userlist.user_list[i].block.size(); j++)
-		//	block_to_user[i]->Add(Utils::reverse_copy(userlist.user_list[i].block[j]),j,pattern_errors);
-	}
-}
-void Proofpoint::UserAnalyzer::Process(const std::string& ss_file, UserList& userlist)
+void Proofpoint::UserAnalyzer::Load(const UserList& userlist, PatternErrors& pattern_errors)
 {
 	std::size_t count = 0;
+	addr_to_user.reserve(userlist.GetAddressCount());
+	for ( auto user = userlist.begin() ; user != userlist.end() ; user++ ) {
+		std::size_t index = std::distance(userlist.begin(),user);
+		addr_to_user.emplace(user->mail,index);
+		for ( const auto& email : user->proxy_addresses ) {
+			addr_to_user.emplace(email, index);
+		}
+		//safe_to_user.emplace(i,std::make_shared<Matcher>(true, false,RE2::ANCHOR_START));
+		//for (std::size_t j = 0; j < userlist.entries[i].safe.size(); j++)
+		//	safe_to_user[i]->Add(Utils::reverse_copy(userlist.entries[i].safe[j]), j, pattern_errors);
+
+		//block_to_user.emplace(i,std::make_shared<Matcher>(true, false,RE2::ANCHOR_START));
+		//for (std::size_t j = 0; j < userlist.entries[i].block.size(); j++)
+		//	block_to_user[i]->Add(Utils::reverse_copy(userlist.entries[i].block[j]),j,pattern_errors);
+		count++;
+	}
+}
+std::size_t Proofpoint::UserAnalyzer::Process(const std::string& ss_file, UserList& userlist, std::size_t& records_processed)
+{
+	records_processed = 0;
 	csv::HeaderIndex header_index;
-	using std::chrono::high_resolution_clock;
-	using std::chrono::microseconds;
-	auto start = high_resolution_clock::now();
 	std::ifstream f(ss_file);
 	csv::CsvParser parser(f);
 	re2::StringPiece matches[2];
@@ -72,7 +72,7 @@ void Proofpoint::UserAnalyzer::Process(const std::string& ss_file, UserList& use
 				//std::vector<std::size_t> matched_indexes;
 				//bool b = false;
 				//s.second->Match(header_from,matched_indexes);
-				//userlist.user_list[s.first]->safe_count++;
+				//userlist.entries[s.first]->safe_count++;
 				//b |= s.second->Match(sender,matched_indexes);
 			}
 			for( auto b : block_to_user )
@@ -80,18 +80,11 @@ void Proofpoint::UserAnalyzer::Process(const std::string& ss_file, UserList& use
 				//std::vector<std::size_t> matched_indexes;
 				//b.second->Match(header_from,matched_indexes);
 				//b.second->Match(sender,matched_indexes);
-				//userlist.user_list[b.first]->block_count++;
+				//userlist.entries[b.first]->block_count++;
 			}
 			//std::cout << count << std::endl;
 			 */
-			count++;
+			records_processed++;
 		}
-
-	auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(stop-start);
-	std::cout << std::left << std::setw(25) << "SS Processing Completed" << " "
-			  << std::left << std::setw(25) << std::to_string(duration.count()) << " "
-			  << std::setw(25) << std::setprecision(2) << std::to_string((double)duration.count()/1000000) << " "
-			  << std::setw(25) << count << " "
-			  << ss_file << ((header_index == -1) ? " (No CSV Header Found)" : " ") << std::endl;
+	return header_index;
 }

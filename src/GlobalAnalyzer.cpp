@@ -15,34 +15,30 @@
 #include "re2/re2.h"
 #include "Utils.h"
 
-Proofpoint::GlobalAnalyzer::GlobalAnalyzer(const GlobalList& safelist, PatternErrors& pattern_errors)
+void Proofpoint::GlobalAnalyzer::Load(const GlobalList& safelist, PatternErrors& pattern_errors)
 {
-	for (std::size_t i = 0; i<safelist.safe_list.size(); i++) {
-		std::shared_ptr<GlobalList::Entry> sle = safelist.safe_list.at(i);
+	for ( auto sle = safelist.begin() ; sle != safelist.end() ; sle++ ) {
+		std::size_t index = std::distance(safelist.begin(),sle);
 		switch (sle->field_type) {
-		case GlobalList::FieldType::IP: ip.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case GlobalList::FieldType::IP: ip.Add(sle->match_type, sle->pattern, index, pattern_errors);
 			break;
-		case GlobalList::FieldType::HOST: host.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case GlobalList::FieldType::HOST: host.Add(sle->match_type, sle->pattern, index, pattern_errors);
 			break;
-		case GlobalList::FieldType::HELO: helo.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case GlobalList::FieldType::HELO: helo.Add(sle->match_type, sle->pattern, index, pattern_errors);
 			break;
-		case GlobalList::FieldType::FROM: from.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case GlobalList::FieldType::FROM: from.Add(sle->match_type, sle->pattern, index, pattern_errors);
 			break;
-		case GlobalList::FieldType::HFROM: hfrom.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case GlobalList::FieldType::HFROM: hfrom.Add(sle->match_type, sle->pattern, index, pattern_errors);
 			break;
-		case GlobalList::FieldType::RCPT: rcpt.Add(sle->match_type, sle->pattern, i, pattern_errors);
+		case GlobalList::FieldType::RCPT: rcpt.Add(sle->match_type, sle->pattern, index, pattern_errors);
 			break;
 		case GlobalList::FieldType::UNKNOWN: break;
 		}
 	}
 }
-void Proofpoint::GlobalAnalyzer::Process(const std::string& ss_file, GlobalList& safelist)
+std::size_t Proofpoint::GlobalAnalyzer::Process(const std::string& ss_file, GlobalList& safelist, std::size_t& records_processed)
 {
-	std::size_t count = 0;
 	csv::HeaderIndex header_index;
-	using std::chrono::high_resolution_clock;
-	using std::chrono::microseconds;
-	auto start = high_resolution_clock::now();
 	std::ifstream f(ss_file);
 	csv::CsvParser parser(f);
 	re2::StringPiece matches[2];
@@ -70,23 +66,16 @@ void Proofpoint::GlobalAnalyzer::Process(const std::string& ss_file, GlobalList&
 	if( header_index > -1 )
  	for (auto& row : parser){
 		bool inbound = RE2::PartialMatch(row[header_map.find("Policy_Route")->second], inbound_check);
-		ip.Match(inbound, row[header_map.find("Sender_IP_Address")->second], safelist.safe_list);
-		host.Match(inbound, row[header_map.find("Sender_Host")->second], safelist.safe_list);
-		helo.Match(inbound, row[header_map.find("HELO")->second], safelist.safe_list);
+		ip.Match(inbound, row[header_map.find("Sender_IP_Address")->second], safelist.entries);
+		host.Match(inbound, row[header_map.find("Sender_Host")->second], safelist.entries);
+		helo.Match(inbound, row[header_map.find("HELO")->second], safelist.entries);
 		// This single call has large impact on processing. Since we need to perform header from "address only"
 		hfrom.Match(inbound, (hfrom_addr_only.Match(row[header_map.find("Header_From")->second], 0,
 				row[header_map.find("Header_From")->second].length(), RE2::UNANCHORED, matches, 2))
-				? matches[1].ToString() : row[header_map.find("Header_From")->second], safelist.safe_list);
-		from.Match(inbound, row[header_map.find("Sender")->second], safelist.safe_list);
-		rcpt.Match(inbound, row[header_map.find("Recipients")->second], safelist.safe_list);
-		count++;
+				? matches[1].ToString() : row[header_map.find("Header_From")->second], safelist.entries);
+		from.Match(inbound, row[header_map.find("Sender")->second], safelist.entries);
+		rcpt.Match(inbound, row[header_map.find("Recipients")->second], safelist.entries);
+		records_processed++;
 	}
-
-	auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(stop-start);
-	std::cout << std::left << std::setw(25) << "SS Processing Completed" << " "
-			  << std::left << std::setw(25) << std::to_string(duration.count()) << " "
-			  << std::setw(25) << std::setprecision(2) << std::to_string((double)duration.count()/1000000) << " "
-			  << std::setw(25) << count << " "
-			  << ss_file << ((header_index == -1) ? " (No CSV Header Found)" : " ") << std::endl;
+	return header_index;
 }

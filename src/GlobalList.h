@@ -45,29 +45,38 @@ public:
 	  uint32_t inbound;
 	  uint32_t outbound;
 	};
+	using Entries = std::vector<Entry>;
 	struct EntryError {
 	  std::size_t index;
 	  std::string field_data;
 	  std::string match_data;
 	  std::string error;
 	};
-	typedef std::vector<EntryError> EntryErrors;
+	using EntryErrors = std::vector<EntryError>;
+	using iterator = Entries::iterator;
+	using const_iterator = Entries::const_iterator;
 public:
 	static FieldType GetFieldType(const std::string& field);
 	static const std::string& GetFieldTypeString(FieldType field);
 	static MatchType GetMatchType(const std::string& field);
 	static const std::string& GetMatchTypeString(MatchType matchtype);
 private:
-	inline static const std::string FieldTypeStrings[] = {"unknown", "$ip", "$host", "$helo", "$rcpt", "$from",
-			"$hfrom"};
-	inline static const std::string MatchTypeStrings[] = {"unknown", "equal", "not_equal", "match", "not_match",
-			"regex", "not_regex", "ip_in_net", "ip_not_in_net", "is_in_domainset"};
+	inline static const std::string FieldTypeStrings[] = {"unknown", "$ip", "$host", "$helo", "$rcpt", "$from", "$hfrom"};
+	inline static const std::string MatchTypeStrings[] = {"unknown", "equal", "not_equal", "match", "not_match", "regex", "not_regex", "ip_in_net", "ip_not_in_net", "is_in_domainset"};
 public:
 	GlobalList() = default;
 	void Load(const std::string& list_file, EntryErrors& entry_errors);
 	void Save(const std::string& list_file);
+public:
+	[[nodiscard]] inline std::size_t GetCount() const { return entries.size(); }
+	iterator begin() { return entries.begin(); }
+	iterator end() { return entries.end(); }
+	[[nodiscard]] const_iterator begin() const { return entries.begin(); }
+	[[nodiscard]] const_iterator end() const { return entries.end(); }
+	[[nodiscard]] const_iterator cbegin() const { return entries.cbegin(); }
+	[[nodiscard]] const_iterator cend() const { return entries.cend(); }
 private:
-	std::vector<std::shared_ptr<Entry>> safe_list;
+	Entries entries;
 };
 }
 #endif //SLANALYZER_SAFELIST_H

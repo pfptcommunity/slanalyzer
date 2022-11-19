@@ -18,9 +18,10 @@ class GlobalAnalyzer {
 public:
 	typedef std::unordered_map<GlobalList::FieldType, PatternErrors> PatternErrorMap;
 public:
-	explicit GlobalAnalyzer(const GlobalList& safelist, PatternErrors& pattern_errors);
+	GlobalAnalyzer() = default;
 	~GlobalAnalyzer() = default;
-	void Process(const std::string& ss_file, GlobalList& safelist);
+	void Load(const GlobalList& safelist, PatternErrors& pattern_errors);
+	std::size_t Process(const std::string& ss_file, GlobalList& safelist, std::size_t& records_processed);
 private:
 	AddressMatcher ip;
 	StringMatcher host;

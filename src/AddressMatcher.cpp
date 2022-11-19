@@ -44,7 +44,7 @@ void Proofpoint::AddressMatcher::Add(GlobalList::MatchType type, const std::stri
 	}
 }
 bool Proofpoint::AddressMatcher::Match(bool inbound, const std::string& pattern,
-		std::vector<std::shared_ptr<GlobalList::Entry>>& safe_list)
+		GlobalList::Entries& safe_list)
 {
 	bool matched = false;
 
@@ -52,7 +52,7 @@ bool Proofpoint::AddressMatcher::Match(bool inbound, const std::string& pattern,
 		// Find a single match per match condition
 		for (const auto& subnet : std::get<0>(s))
 			if (subnet->InSubnet(pattern)) {
-				(inbound) ? safe_list[std::get<1>(s)]->inbound++ : safe_list[std::get<1>(s)]->outbound++;
+				(inbound) ? safe_list[std::get<1>(s)].inbound++ : safe_list[std::get<1>(s)].outbound++;
 				matched |= true;
 				break;
 			}
@@ -62,7 +62,7 @@ bool Proofpoint::AddressMatcher::Match(bool inbound, const std::string& pattern,
 		// Find a single match per match condition
 		for (const auto& subnet : std::get<0>(s))
 			if (!subnet->InSubnet(pattern)) {
-				(inbound) ? safe_list[std::get<1>(s)]->inbound++ : safe_list[std::get<1>(s)]->outbound++;
+				(inbound) ? safe_list[std::get<1>(s)].inbound++ : safe_list[std::get<1>(s)].outbound++;
 				matched |= true;
 				break;
 			}
@@ -74,7 +74,7 @@ bool Proofpoint::AddressMatcher::Match(bool inbound, const std::string& pattern,
 			matched |= m.second->Match(pattern, match_indexes);
 			for (auto i : match_indexes) {
 				auto mle = safe_list.at(i);
-				(inbound) ? mle->inbound++ : mle->outbound++;
+				(inbound) ? mle.inbound++ : mle.outbound++;
 			}
 		}
 	}

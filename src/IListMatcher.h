@@ -20,7 +20,7 @@ public:
 			const std::size_t& index,
 			PatternErrors& pattern_errors) = 0;
 	virtual bool Match(bool inbound, const std::string& pattern,
-			std::vector<std::shared_ptr<GlobalList::Entry>>& safe_list) = 0;
+			GlobalList::Entries& safe_list) = 0;
 };
 }
 #endif //SLANALYZER_ILISTMATCHER_H

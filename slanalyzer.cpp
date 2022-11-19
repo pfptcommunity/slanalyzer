@@ -49,7 +49,6 @@ void usage()
 	cout << "Usage: slanalyzer [-h] [-s SAFELIST|BLOCKLIST ] [-u USEREXPORT ] [-o OUTPUTFILE] [SMART_SEARCH_FILES...]" << endl
 		 << "Try 'slanalyzer --help' for more information." << endl;
 }
-
 int main(int argc, char* argv[])
 {
 
@@ -158,38 +157,74 @@ int main(int argc, char* argv[])
 		exit(1);
 	}
 
-
-	std::cout << std::left << std::setw(25) << "Status" << " "
-			  << std::left << std::setw(25) << "Microseconds" << " "
-			  << std::setw(25) << "Seconds" << " "
-			  << std::setw(25) << "Records " << " "
-			  << "Filename" << std::endl;
-
 	auto start = high_resolution_clock::now();
-
 	if( safe ) {
 
 		Proofpoint::GlobalList safelist;
 		Proofpoint::GlobalList::EntryErrors entry_errors;
 
+		auto s = high_resolution_clock::now();
 		safelist.Load(safe_list, entry_errors);
+		auto e = high_resolution_clock::now();
+		auto d = duration_cast<microseconds>(e-s);
+
+		std::cout << std::left << "### Global List Load Completed ###" << std::endl
+				  << std::right << std::setw(25) <<  "Load Time: "
+				  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl
+				  << std::right << std::setw(25) << "List Count: "
+				  << std::left << std::setw(25) << safelist.GetCount() << std::endl
+				  << std::right << std::setw(25) << "List Errors: "
+				  << std::left << std::setw(25) << entry_errors.size() << std::endl
+				  << std::right << std::setw(25) << "List File: "
+				  << safe_list << std::endl << std::endl;
+
 
 		// Used to collect pattern errors in the even there is a bad pattern
 		Proofpoint::PatternErrors pattern_errors;
+		Proofpoint::GlobalAnalyzer processor;
 
-		Proofpoint::GlobalAnalyzer processor(safelist, pattern_errors);
 
+		s = high_resolution_clock::now();
+		processor.Load(safelist,pattern_errors);
+		e = high_resolution_clock::now();
+		d = duration_cast<microseconds>(e-s);
+		std::cout << std::left << "### Preprocessing Completed ###" << std::endl
+				  << std::right << std::setw(25) <<  "Load Time: "
+				  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl
+				  << std::right << std::setw(25) << "Pattern Errors: "
+				  << std::left << std::setw(25) << pattern_errors.size() << std::endl
+				  << std::endl;
+
+		std::size_t total_records_processed = 0;
 		for (const auto& file : ss_inputs) {
-			processor.Process(file, safelist);
+			s = high_resolution_clock::now();
+			std::size_t records_processed = 0;
+			std::size_t header_index = processor.Process(file, safelist, records_processed);
+			e = high_resolution_clock::now();
+			d = duration_cast<microseconds>(e-s);
+			total_records_processed += records_processed;
+			std::cout << std::left << "### Analysis Completed ###" << std::endl
+					  << std::right << std::setw(25) <<  "Analysis Time: "
+					  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl
+					  << std::right << std::setw(25) << "Smart Search File: "
+					  << file << ((header_index == -1) ? " (No CSV Header Found)" : "") << std::endl << std::endl;
 		}
 
+		s = high_resolution_clock::now();
 		safelist.Save(output_list);
+		e = high_resolution_clock::now();
+		d = duration_cast<microseconds>(e-s);
+		std::ios_base::sync_with_stdio(true);
+		std::cout << std::left << "### Global List Save Completed ###" << std::endl
+				  << std::right << std::setw(25) <<  "Save Time: "
+				  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl << std::endl;
 
 		if (!pattern_errors.empty()) {
 			cerr << endl << endl << endl << "Pattern errors occurred, see the following entries in your safe or blocked list:" << endl;
 			for (auto e : pattern_errors) {
 				cerr << "Line: " << e.index << " Pattern: " << e.pattern << " Reason: " << e.error << endl;
 			}
+			cerr << std::endl;
 		}
 
 		if (!entry_errors.empty()) {
@@ -199,29 +234,77 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
-
 	if( user ) {
 		Proofpoint::UserList user_safe_list;
 		Proofpoint::UserList::UserErrors user_errors;
+
+		auto s = high_resolution_clock::now();
 		user_safe_list.Load(user_list, user_errors);
+		auto e = high_resolution_clock::now();
+		auto d = duration_cast<microseconds>(e-s);
+
+		std::cout << std::left << "### Users Load Completed ###" << std::endl
+				  << std::right << std::setw(25) <<  "Load Time: "
+				  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl
+				  << std::right << std::setw(25) << "User Count: "
+				  << std::left << std::setw(25) << user_safe_list.GetUserCount() << std::endl
+				  << std::right << std::setw(25) << "Address Count: "
+				  << std::left << std::setw(25) << user_safe_list.GetAddressCount() << std::endl
+				<< std::right << std::setw(25) <<   "Safe Count: "
+				<< std::left << std::setw(25) << user_safe_list.GetSafeCount() << std::endl
+				  << std::right << std::setw(25) << "Block Count: "
+				  << std::left << std::setw(25) << user_safe_list.GetBlockCount() << std::endl
+				  << std::right << std::setw(25) << "List File: "
+				  << user_list << std::endl << std::endl;
 
 		// Used to collect pattern errors in the even there is a bad pattern
 		Proofpoint::PatternErrors pattern_errors;
-		Proofpoint::UserAnalyzer processor(user_safe_list,pattern_errors);
 
+		Proofpoint::UserAnalyzer processor;
+
+		s = high_resolution_clock::now();
+		processor.Load(user_safe_list,pattern_errors);
+		e = high_resolution_clock::now();
+		d = duration_cast<microseconds>(e-s);
+		std::cout << std::left << "### Preprocessing Completed ###" << std::endl
+				  << std::right << std::setw(25) <<  "Load Time: "
+				  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl
+				  << std::right << std::setw(25) << "Pattern Errors: "
+				  << std::left << std::setw(25) << pattern_errors.size() << std::endl
+				  << std::endl;
+
+
+		std::size_t total_records_processed = 0;
 		for (const auto& file : ss_inputs) {
-			processor.Process(file, user_safe_list);
+			s = high_resolution_clock::now();
+			std::size_t records_processed = 0;
+			std::size_t header_index = processor.Process(file, user_safe_list, records_processed);
+			e = high_resolution_clock::now();
+			d = duration_cast<microseconds>(e-s);
+			total_records_processed += records_processed;
+			std::cout << std::left << "### Analysis Completed ###" << std::endl
+					  << std::right << std::setw(25) <<  "Analysis Time: "
+					  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl
+					  << std::right << std::setw(25) << "Smart Search File: "
+					  << file << ((header_index == -1) ? " (No CSV Header Found)" : "") << std::endl << std::endl;
 		}
 
+
+		s = high_resolution_clock::now();
 		user_safe_list.Save(output_list);
+		e = high_resolution_clock::now();
+		d = duration_cast<microseconds>(e-s);
+		std::ios_base::sync_with_stdio(true);
+		std::cout << std::left << "### Users Save Completed ###" << std::endl
+		          << std::right << std::setw(25) <<  "Save Time: "
+				  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl << std::endl;
 	}
 
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop-start);
-	std::cout << std::left << std::setw(25) << "Processing Completed" << " "
-			  << std::left << std::setw(25) << std::to_string(duration.count()) << " "
-			  << std::setw(25) << std::setprecision(2) << std::to_string((double)duration.count()/1000000) << " "
-			  << std::setw(25) << std::endl;
+	std::cout << std::left << "### Processing Completed ###" << std::endl
+	          << std::right << std::setw(25) <<  "Total Processing Time: "
+			  << std::left << std::setprecision(9) << (double)duration.count()/1000000 << "s" << std::endl << std::endl;
 
 	return 0;
 }

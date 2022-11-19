@@ -17,9 +17,6 @@
 void Proofpoint::GlobalList::Load(const std::string& list_file, EntryErrors& entry_errors )
 {
 	std::size_t count = 0;
-	using std::chrono::high_resolution_clock;
-	using std::chrono::microseconds;
-	auto start = high_resolution_clock::now();
 	std::ifstream f(list_file);
 	csv::CsvParser parser(f);
 	for (auto& row : parser) {
@@ -34,23 +31,15 @@ void Proofpoint::GlobalList::Load(const std::string& list_file, EntryErrors& ent
 									(cols>1) ? row.at(1) : "",
 									"Please see field type and match type information"});
 		}
-
-		safe_list.push_back(std::make_shared<Entry>());
-		safe_list.back()->field_type = ft;
-		safe_list.back()->match_type = mt;
-		if (cols>2) safe_list.back()->pattern = row.at(2);
-		if (cols>3) safe_list.back()->comment = row.at(3);
-		safe_list.back()->inbound = 0;
-		safe_list.back()->outbound = 0;
+		entries.emplace_back();
+		entries.back().field_type = ft;
+		entries.back().match_type = mt;
+		if (cols>2) entries.back().pattern = row.at(2);
+		if (cols>3) entries.back().comment = row.at(3);
+		entries.back().inbound = 0;
+		entries.back().outbound = 0;
 		count++;
 	}
-	auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(stop-start);
-	std::cout << std::left << std::setw(25) << "SL Load Completed" << " "
-			  << std::left << std::setw(25) << std::to_string(duration.count()) << " "
-			  << std::setw(25) << std::setprecision(2) << std::to_string((double)duration.count()/1000000) << " "
-			  << std::setw(25) << count << " "
-			  << list_file << std::endl;
 }
 void Proofpoint::GlobalList::Save(const std::string& list_file)
 {
@@ -58,10 +47,6 @@ void Proofpoint::GlobalList::Save(const std::string& list_file)
 	RE2 quoted("\"");
 	const char delim{'"'};
 	const char escape{'"'};
-
-	using std::chrono::high_resolution_clock;
-	using std::chrono::microseconds;
-	auto start = high_resolution_clock::now();
 	std::ios_base::sync_with_stdio(false);
 	std::ofstream f(list_file);
 	f << "\"" << "FieldType"
@@ -70,26 +55,18 @@ void Proofpoint::GlobalList::Save(const std::string& list_file)
 	  << "\",\"" << "Comment"
 	  << "\",\"" << "Inbound"
 	  << "\",\"" << "Outbound" << "\"\r\n";
-	for (const auto& list_entry : safe_list) {
+	for (auto& list_entry : entries) {
 		// Replaced for std::quoted() to improve speed
-		RE2::GlobalReplace(&list_entry->pattern, quoted, "\"\"");
-		RE2::GlobalReplace(&list_entry->comment, quoted, "\"\"");
-		f << "\"" << FieldTypeStrings[static_cast<int>(list_entry->field_type)]
-		  << "\",\"" << MatchTypeStrings[static_cast<int>(list_entry->match_type)]
-		  << "\",\"" << list_entry->pattern
-		  << "\",\"" << list_entry->comment
-		  << "\",\"" << std::to_string(list_entry->inbound)
-		  << "\",\"" << std::to_string(list_entry->outbound) << "\"\r\n";
+		RE2::GlobalReplace(&list_entry.pattern, quoted, "\"\"");
+		RE2::GlobalReplace(&list_entry.comment, quoted, "\"\"");
+		f << "\"" << FieldTypeStrings[static_cast<int>(list_entry.field_type)]
+		  << "\",\"" << MatchTypeStrings[static_cast<int>(list_entry.match_type)]
+		  << "\",\"" << list_entry.pattern
+		  << "\",\"" << list_entry.comment
+		  << "\",\"" << std::to_string(list_entry.inbound)
+		  << "\",\"" << std::to_string(list_entry.outbound) << "\"\r\n";
 		count++;
 	}
-	auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(stop-start);
-	std::ios_base::sync_with_stdio(true);
-	std::cout << std::left << std::setw(25) << "SL Save Completed" << " "
-			  << std::left << std::setw(25) << std::to_string(duration.count()) << " "
-			  << std::setw(25) << std::setprecision(2) << std::to_string((double)duration.count()/1000000) << " "
-			  << std::setw(25) << count << " "
-			  << list_file << std::endl;
 }
 inline Proofpoint::GlobalList::FieldType Proofpoint::GlobalList::GetFieldType(const std::string& field)
 {

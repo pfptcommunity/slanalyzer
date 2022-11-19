@@ -15,15 +15,12 @@
 #include <chrono>
 #include "Utils.h"
 
-Proofpoint::UserList::UserList() :address_count(0) {}
+Proofpoint::UserList::UserList() :address_count(0), safe_count(0), block_count(0) {}
 
 void Proofpoint::UserList::Load(const std::string& user_file, UserErrors& entry_errors)
 {
 	address_count = 0;
 	std::size_t count = 0;
-	using std::chrono::high_resolution_clock;
-	using std::chrono::microseconds;
-	auto start = high_resolution_clock::now();
 	std::ifstream f(user_file);
 	csv::CsvParser parser(f);
 	csv::HeaderMap header_map;
@@ -40,40 +37,30 @@ void Proofpoint::UserList::Load(const std::string& user_file, UserErrors& entry_
 
 	if (header_index!=-1)
 		for (const auto& row : parser) {
-			user_list.emplace_back();
-			user_list.back().givenName = row[header_map.find("givenName")->second];
-			user_list.back().sn = row[header_map.find("sn")->second];
-			user_list.back().mail = row[header_map.find("mail")->second];
+			entries.emplace_back();
+			entries.back().givenName = row[header_map.find("givenName")->second];
+			entries.back().sn = row[header_map.find("sn")->second];
+			entries.back().mail = row[header_map.find("mail")->second];
 			address_count++;
 			for (auto proxy_address : Utils::split(row[header_map.find("mailLocalAddress")->second], ';')) {
-				user_list.back().proxy_addresses.emplace_back(proxy_address);
+				entries.back().proxy_addresses.emplace_back(proxy_address);
 				address_count++;
 			}
 			for (auto safe_entry : Utils::split(row[header_map.find("safelist")->second], ';')) {
-				user_list.back().safe.emplace_back(safe_entry);
+				entries.back().safe.emplace_back(std::string(safe_entry));
+				safe_count++;
 			}
-			for (auto safe_entry : Utils::split(row[header_map.find("blocklist")->second], ';')) {
-				user_list.back().block.emplace_back(safe_entry);
+			for (auto block_entry : Utils::split(row[header_map.find("blocklist")->second], ';')) {
+				entries.back().block.emplace_back(std::string(block_entry));
+				block_count++;
 			}
-			user_list.back().safe_count = 0;
-			user_list.back().block_count = 0;
 			count++;
 		}
-	auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(stop-start);
-	std::cout << std::left << std::setw(25) << "User Load Completed" << " "
-			  << std::left << std::setw(25) << std::to_string(duration.count()) << " "
-			  << std::setw(25) << std::setprecision(2) << std::to_string((double)duration.count()/1000000) << " "
-			  << std::setw(25) << count << " "
-			  << user_file << std::endl;
 }
 
 void Proofpoint::UserList::Save(const std::string& user_file)
 {
 	std::size_t count = 0;
-	using std::chrono::high_resolution_clock;
-	using std::chrono::microseconds;
-	auto start = high_resolution_clock::now();
 	std::ios_base::sync_with_stdio(false);
 	std::ofstream f(user_file);
 	f  << "\"" << "givenName"
@@ -85,26 +72,17 @@ void Proofpoint::UserList::Save(const std::string& user_file)
 	  << "\",\"" << "safe_count"
 	  << "\",\"" << "block_count" <<"\"\r\n";
 
-	auto concat = [](const std::string& a, const std::string& b) -> std::string { return a + (a.size() > 0 ? ";" : "") + b;};
+	auto concat1 = [](const std::string& a, const std::string& b) -> std::string { return a + (a.size() > 0 ? ";" : "") + b;};
+	//auto concat2 = [](const UserList::Entry::ListItem& a, const UserList::Entry::ListItem& b) -> UserList::Entry::ListItem { return a.pattern + (a.pattern.size() > 0 ? ";" : "") + b.pattern;};
 
-	for (const auto& user : user_list) {
+	for (const auto& user : entries) {
 		f << "\"" << user.givenName
 		  << "\",\"" << user.sn
 		  << "\",\"" << user.mail
-		  << "\",\"" << std::accumulate(user.proxy_addresses.begin(), user.proxy_addresses.end(), std::string(), concat )
-		  << "\",\"" << std::accumulate(user.safe.begin(), user.safe.end(), std::string(), concat)
-		  << "\",\"" << std::accumulate(user.block.begin(), user.block.end(), std::string(), concat)
-		  << "\",\"" << user.safe_count
-		  << "\",\"" << user.block_count << "\"\r\n";
+		  << "\",\"" << std::accumulate(user.proxy_addresses.begin(), user.proxy_addresses.end(), std::string(), concat1 )
+		  //<< "\",\"" << std::accumulate(user.safe.begin(), user.safe.end(), std::string(), concat2)
+		 // << "\",\"" << std::accumulate(user.block.begin(), user.block.end(), std::string(), concat2)
+		 << "\"\r\n";
 		count++;
 	}
-
-	auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(stop-start);
-	std::ios_base::sync_with_stdio(true);
-	std::cout << std::left << std::setw(25) << "SL Save Completed" << " "
-			  << std::left << std::setw(25) << std::to_string(duration.count()) << " "
-			  << std::setw(25) << std::setprecision(2) << std::to_string((double)duration.count()/1000000) << " "
-			  << std::setw(25) << count << " "
-			  << user_file << std::endl;
 }

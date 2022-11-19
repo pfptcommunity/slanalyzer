@@ -18,10 +18,6 @@
 namespace Proofpoint {
 class UserAnalyzer {
 public:
-	explicit UserAnalyzer(const UserList& safelist, PatternErrors& pattern_errors);
-	~UserAnalyzer() = default;
-	void Process(const std::string& ss_file, UserList& safelist);
-public:
 	struct case_insensitive_unordered_map {
 	  struct comp {
 		bool operator() (const std::string& lhs, const std::string& rhs) const {
@@ -39,6 +35,11 @@ public:
 		}
 	  };
 	};
+public:
+	UserAnalyzer() = default;
+	~UserAnalyzer() = default;
+	void Load(const UserList& safelist, PatternErrors& pattern_errors);
+	std::size_t Process(const std::string& ss_file, UserList& safelist, std::size_t& records_processed );
 private:
 	std::unordered_map<std::string,std::size_t,case_insensitive_unordered_map::hash,case_insensitive_unordered_map::comp> addr_to_user;
 	std::unordered_map<std::size_t,std::shared_ptr<Matcher>> safe_to_user;

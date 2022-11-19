@@ -29,8 +29,7 @@ void Proofpoint::StringMatcher::Add(Proofpoint::GlobalList::MatchType type,
 
 	matchers[type]->Add(pattern, index, pattern_errors);
 }
-inline bool Proofpoint::StringMatcher::Match(bool inbound, const std::string& pattern,
-		std::vector<std::shared_ptr<GlobalList::Entry>>& safe_list)
+inline bool Proofpoint::StringMatcher::Match(bool inbound, const std::string& pattern, GlobalList::Entries& safe_list)
 {
 	std::vector<std::size_t> match_indexes;
 	bool matched = false;
@@ -39,7 +38,7 @@ inline bool Proofpoint::StringMatcher::Match(bool inbound, const std::string& pa
 			matched |= m.second->Match(pattern, match_indexes);
 			for (auto i : match_indexes) {
 				auto mle = safe_list.at(i);
-				(inbound) ? mle->inbound++ : mle->outbound++;
+				(inbound) ? mle.inbound++ : mle.outbound++;
 			}
 		}
 	}
