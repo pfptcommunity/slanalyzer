@@ -16,6 +16,7 @@
 
 namespace Proofpoint {
 class UserList {
+	friend class UserAnalyzer;
 public:
 	struct Entry {
 	  struct ListItem {
@@ -29,6 +30,8 @@ public:
 	  std::vector<std::string> proxy_addresses;
 	  std::vector<ListItem> safe;
 	  std::vector<ListItem> block;
+	  std::size_t safe_count;
+	  std::size_t block_count;
 	};
 	using Entries = std::vector<Entry>;
 	using iterator = Entries::iterator;

@@ -15,7 +15,7 @@
 #include "re2/re2.h"
 #include "Utils.h"
 
-void Proofpoint::UserAnalyzer::Load(const UserList& userlist, PatternErrors<std::size_t>& pattern_errors)
+void Proofpoint::UserAnalyzer::Load(const UserList& userlist, PatternErrors<UserMatch>& pattern_errors)
 {
 	std::size_t count = 0;
 	addr_to_user.reserve(userlist.GetAddressCount());
@@ -25,13 +25,15 @@ void Proofpoint::UserAnalyzer::Load(const UserList& userlist, PatternErrors<std:
 		for ( const auto& email : user->proxy_addresses ) {
 			addr_to_user.emplace(email, index);
 		}
-		//safe_to_user.emplace(i,std::make_shared<Matcher>(true, false,RE2::ANCHOR_START));
-		//for (std::size_t j = 0; j < userlist.entries[i].safe.size(); j++)
-		//	safe_to_user[i]->Add(Utils::reverse_copy(userlist.entries[i].safe[j]), j, pattern_errors);
-
-		//block_to_user.emplace(i,std::make_shared<Matcher>(true, false,RE2::ANCHOR_START));
-		//for (std::size_t j = 0; j < userlist.entries[i].block.size(); j++)
-		//	block_to_user[i]->Add(Utils::reverse_copy(userlist.entries[i].block[j]),j,pattern_errors);
+		for (std::size_t j = 0; j < user->safe.size(); j++) {
+			safe_matcher.emplace(index, std::make_shared<Matcher<UserMatch>>(true,false,RE2::ANCHOR_START));
+			safe_matcher.at(index)->Add(Utils::reverse_copy(user->safe[j].pattern), {index,j},pattern_errors);
+			//std::cout << "Added: (" << user->safe[j].pattern << ") " << user->givenName << "," << user->sn << " " << user->mail << "" << index << " --> " << j << std::endl;
+ 		}
+		for (std::size_t j = 0; j < user->block.size(); j++){
+			block_matcher.emplace(index, std::make_shared<Matcher<UserMatch>>(true,false,RE2::ANCHOR_START));
+			block_matcher.at(index)->Add(Utils::reverse_copy(user->block[j].pattern), {index,j},pattern_errors);
+		}
 		count++;
 	}
 }
@@ -54,37 +56,37 @@ std::size_t Proofpoint::UserAnalyzer::Process(const std::string& ss_file, UserLi
 	//for (auto i = header_map.begin(); i!= header_map.end(); i++){
 	//	std::cout << std::setw(35) << i->first << " " << std::setw(25) << i->second  << " " << header_map.count(i->first) << std::endl;
 	//}
-	if( header_index > -1 )
-		for (auto& row : parser){
+	if( header_index > -1 ) {
+		for (auto& row : parser) {
 			bool inbound = RE2::PartialMatch(row[header_map.find("Policy_Route")->second], inbound_check);
-			for( auto recipient : Utils::split(row[header_map.find("Recipients")->second],',') ){
-				bool exists = addr_to_user.contains( std::string(recipient) );
-			}
-			/*
-			bool h_from_match = hfrom_addr_only.Match(row[header_map.find("Header_From")->second], 0, row[header_map.find("Header_From")->second].length(), RE2::UNANCHORED, matches, 2);
-			std::string header_from = (h_from_match) ? matches[1].ToString() : row[header_map.find("Header_From")->second];
-			Utils::reverse(header_from);
-			std::string sender = Utils::reverse_copy(row[header_map.find("Sender")->second]);
+			for (auto recipient : Utils::split(row[header_map.find("Recipients")->second], ',')) {
+				auto user = addr_to_user.find(std::string(recipient));
+				if (user != addr_to_user.end()) {
+					auto smatcher = safe_matcher.find(user->second);
+					if( smatcher != safe_matcher.end() ) {
+						std::vector<UserMatch> user_matches;
+						if( smatcher->second->Match(Utils::reverse_copy(row[header_map.find("Sender")->second]), user_matches) )
+							userlist.safe_count++;
+						for( auto m : user_matches ) {
+							//std::cout << "Safe Matched: " << m.list_index << "-->" << m.user_index << std::endl;
+							userlist.entries[m.user_index].safe[m.list_index].count++;
+						}
 
-			addr_to_user
-			for( auto s : safe_to_user )
-			{
-				//std::vector<std::size_t> matched_indexes;
-				//bool b = false;
-				//s.second->Match(header_from,matched_indexes);
-				//userlist.entries[s.first]->safe_count++;
-				//b |= s.second->Match(sender,matched_indexes);
+					}
+
+					auto bmatcher = block_matcher.find(user->second);
+					if( bmatcher != block_matcher.end() ) {
+						std::vector<UserMatch> user_matches;
+						bmatcher->second->Match(Utils::reverse_copy(row[header_map.find("Sender")->second]), user_matches);
+						for( auto m : user_matches ){
+							//std::cout << "Block Matched: " << m.list_index << "-->" << m.user_index << std::endl;
+							userlist.entries[m.user_index].block[m.list_index].count++;
+						}
+					}
+				}
 			}
-			for( auto b : block_to_user )
-			{
-				//std::vector<std::size_t> matched_indexes;
-				//b.second->Match(header_from,matched_indexes);
-				//b.second->Match(sender,matched_indexes);
-				//userlist.entries[b.first]->block_count++;
-			}
-			//std::cout << count << std::endl;
-			 */
 			records_processed++;
 		}
+	}
 	return header_index;
 }

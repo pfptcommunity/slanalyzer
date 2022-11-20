@@ -35,15 +35,20 @@ public:
 		}
 	  };
 	};
+	struct UserMatch{
+	  std::size_t user_index;
+	  std::size_t list_index;
+	};
+	using UserIndex = std::size_t;
 public:
 	UserAnalyzer() = default;
 	~UserAnalyzer() = default;
-	void Load(const UserList& safelist, PatternErrors<std::size_t>& pattern_errors);
+	void Load(const UserList& safelist, PatternErrors<UserMatch>& pattern_errors);
 	std::size_t Process(const std::string& ss_file, UserList& safelist, std::size_t& records_processed );
 private:
-	std::unordered_map<std::string,std::size_t,case_insensitive_unordered_map::hash,case_insensitive_unordered_map::comp> addr_to_user;
-	std::unordered_map<std::size_t,std::shared_ptr<Matcher<std::size_t>>> safe_to_user;
-	std::unordered_map<std::size_t,std::shared_ptr<Matcher<std::size_t>>> block_to_user;
+	std::unordered_map<std::string,UserIndex,case_insensitive_unordered_map::hash,case_insensitive_unordered_map::comp> addr_to_user;
+	std::unordered_map<UserIndex,std::shared_ptr<Matcher<UserMatch>>> safe_matcher;
+	std::unordered_map<UserIndex,std::shared_ptr<Matcher<UserMatch>>> block_matcher;
 };
 }
 #endif //SLANALYZER_USERANALYZER_H

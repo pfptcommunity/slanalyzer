@@ -30,7 +30,7 @@ private:
 	bool compiled;
 	RE2::Options opt;
 	RE2::Set* match;
-	std::unordered_map<int, T> map_to_global_list;
+	std::unordered_map<int, T> map_to_list_entry;
 };
 
 
@@ -52,7 +52,7 @@ void Proofpoint::Matcher<T>::Add(const std::string& pattern, const T& index, Pat
 		pattern_errors.push_back({index, pattern, error});
 		return;
 	}
-	map_to_global_list.insert({i, index});
+	map_to_list_entry.insert({i, index});
 }
 
 template<typename T>
@@ -66,7 +66,7 @@ bool Proofpoint::Matcher<T>::Match(const std::string& pattern, std::vector<T>& m
 	std::vector<int> m;
 	bool matched = match->Match(pattern, &m);
 	for (auto index : m) {
-		match_indexes.emplace_back(map_to_global_list[index]);
+		match_indexes.emplace_back(map_to_list_entry[index]);
 	}
 	return matched;
 }
@@ -74,7 +74,7 @@ bool Proofpoint::Matcher<T>::Match(const std::string& pattern, std::vector<T>& m
 template<typename T>
 std::size_t Proofpoint::Matcher<T>::GetPatternCount()
 {
-	return map_to_global_list.size();
+	return map_to_list_entry.size();
 }
 
 }

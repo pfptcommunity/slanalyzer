@@ -257,7 +257,7 @@ int main(int argc, char* argv[])
 				  << user_list << std::endl << std::endl;
 
 		// Used to collect pattern errors in the even there is a bad pattern
-		Proofpoint::PatternErrors<std::size_t> pattern_errors;
+		Proofpoint::PatternErrors<Proofpoint::UserAnalyzer::UserMatch> pattern_errors;
 
 		Proofpoint::UserAnalyzer processor;
 
