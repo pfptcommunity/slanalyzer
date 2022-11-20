@@ -15,7 +15,7 @@
 #include "re2/re2.h"
 #include "Utils.h"
 
-void Proofpoint::UserAnalyzer::Load(const UserList& userlist, PatternErrors& pattern_errors)
+void Proofpoint::UserAnalyzer::Load(const UserList& userlist, PatternErrors<std::size_t>& pattern_errors)
 {
 	std::size_t count = 0;
 	addr_to_user.reserve(userlist.GetAddressCount());

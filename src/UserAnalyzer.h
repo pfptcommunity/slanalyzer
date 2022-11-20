@@ -38,12 +38,12 @@ public:
 public:
 	UserAnalyzer() = default;
 	~UserAnalyzer() = default;
-	void Load(const UserList& safelist, PatternErrors& pattern_errors);
+	void Load(const UserList& safelist, PatternErrors<std::size_t>& pattern_errors);
 	std::size_t Process(const std::string& ss_file, UserList& safelist, std::size_t& records_processed );
 private:
 	std::unordered_map<std::string,std::size_t,case_insensitive_unordered_map::hash,case_insensitive_unordered_map::comp> addr_to_user;
-	std::unordered_map<std::size_t,std::shared_ptr<Matcher>> safe_to_user;
-	std::unordered_map<std::size_t,std::shared_ptr<Matcher>> block_to_user;
+	std::unordered_map<std::size_t,std::shared_ptr<Matcher<std::size_t>>> safe_to_user;
+	std::unordered_map<std::size_t,std::shared_ptr<Matcher<std::size_t>>> block_to_user;
 };
 }
 #endif //SLANALYZER_USERANALYZER_H

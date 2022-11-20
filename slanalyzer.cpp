@@ -51,7 +51,6 @@ void usage()
 }
 int main(int argc, char* argv[])
 {
-
 	if (argc==1) {
 		usage();
 		exit(1);
@@ -180,7 +179,7 @@ int main(int argc, char* argv[])
 
 
 		// Used to collect pattern errors in the even there is a bad pattern
-		Proofpoint::PatternErrors pattern_errors;
+		Proofpoint::PatternErrors<std::size_t> pattern_errors;
 		Proofpoint::GlobalAnalyzer processor;
 
 
@@ -258,7 +257,7 @@ int main(int argc, char* argv[])
 				  << user_list << std::endl << std::endl;
 
 		// Used to collect pattern errors in the even there is a bad pattern
-		Proofpoint::PatternErrors pattern_errors;
+		Proofpoint::PatternErrors<std::size_t> pattern_errors;
 
 		Proofpoint::UserAnalyzer processor;
 

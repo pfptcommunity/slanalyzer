@@ -10,12 +10,10 @@
 #include "GlobalAnalyzer.h"
 #include "CsvParser.h"
 #include <chrono>
-#include <iostream>
-#include <iomanip>
 #include "re2/re2.h"
 #include "Utils.h"
 
-void Proofpoint::GlobalAnalyzer::Load(const GlobalList& safelist, PatternErrors& pattern_errors)
+void Proofpoint::GlobalAnalyzer::Load(const GlobalList& safelist, PatternErrors<std::size_t>& pattern_errors)
 {
 	for ( auto sle = safelist.begin() ; sle != safelist.end() ; sle++ ) {
 		std::size_t index = std::distance(safelist.begin(),sle);

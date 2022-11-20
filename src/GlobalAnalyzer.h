@@ -10,25 +10,25 @@
 #define SLANALYZER_ANALYZER_H
 
 #include "GlobalList.h"
-#include "AddressMatcher.h"
-#include "StringMatcher.h"
+#include "GlobalAddressMatcher.h"
+#include "GlobalStringMatcher.h"
 
 namespace Proofpoint {
 class GlobalAnalyzer {
 public:
-	typedef std::unordered_map<GlobalList::FieldType, PatternErrors> PatternErrorMap;
+	typedef std::unordered_map<GlobalList::FieldType, PatternErrors<std::size_t>> PatternErrorMap;
 public:
 	GlobalAnalyzer() = default;
 	~GlobalAnalyzer() = default;
-	void Load(const GlobalList& safelist, PatternErrors& pattern_errors);
+	void Load(const GlobalList& safelist, PatternErrors<std::size_t>& pattern_errors);
 	std::size_t Process(const std::string& ss_file, GlobalList& safelist, std::size_t& records_processed);
 private:
-	AddressMatcher ip;
-	StringMatcher host;
-	StringMatcher helo;
-	StringMatcher hfrom;
-	StringMatcher from;
-	StringMatcher rcpt;
+	GlobalAddressMatcher ip;
+	GlobalStringMatcher host;
+	GlobalStringMatcher helo;
+	GlobalStringMatcher hfrom;
+	GlobalStringMatcher from;
+	GlobalStringMatcher rcpt;
 };
 }
 #endif //SLANALYZER_ANALYZER_H

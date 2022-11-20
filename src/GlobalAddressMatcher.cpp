@@ -6,23 +6,20 @@
  * @version 1.0.0
  * @license MIT
  */
-#include "AddressMatcher.h"
-#include "InvertedMatcher.h"
+#include "GlobalAddressMatcher.h"
 #include "Matcher.h"
-#include "Utils.h"
+#include "InvertedMatcher.h"
 
-Proofpoint::AddressMatcher::AddressMatcher()
-		:
-		matchers({{GlobalList::MatchType::EQUAL, std::make_shared<Matcher>(true, false, RE2::ANCHOR_BOTH)},
-				{GlobalList::MatchType::NOT_EQUAL, std::make_shared<InvertedMatcher>(true, false, RE2::ANCHOR_BOTH)},
-				{GlobalList::MatchType::MATCH, std::make_shared<Matcher>(true, false, RE2::UNANCHORED)},
-				{GlobalList::MatchType::NOT_MATCH, std::make_shared<InvertedMatcher>(true, false, RE2::UNANCHORED)},
-				{GlobalList::MatchType::REGEX, std::make_shared<Matcher>(false, false, RE2::UNANCHORED)},
-				{GlobalList::MatchType::NOT_REGEX,
-						std::make_shared<InvertedMatcher>(false, false, RE2::UNANCHORED)}}) { };
+Proofpoint::GlobalAddressMatcher::GlobalAddressMatcher() :
+       matchers({{GlobalList::MatchType::EQUAL, std::make_shared<Matcher<std::size_t>>(true, false, RE2::ANCHOR_BOTH)},
+				{GlobalList::MatchType::NOT_EQUAL, std::make_shared<InvertedMatcher<std::size_t>>(true, false, RE2::ANCHOR_BOTH)},
+				{GlobalList::MatchType::MATCH, std::make_shared<Matcher<std::size_t>>(true, false, RE2::UNANCHORED)},
+				{GlobalList::MatchType::NOT_MATCH, std::make_shared<InvertedMatcher<std::size_t>>(true, false, RE2::UNANCHORED)},
+				{GlobalList::MatchType::REGEX, std::make_shared<Matcher<std::size_t>>(false, false, RE2::UNANCHORED)},
+				{GlobalList::MatchType::NOT_REGEX,std::make_shared<InvertedMatcher<std::size_t>>(false, false, RE2::UNANCHORED)}})
+{ };
 
-void Proofpoint::AddressMatcher::Add(GlobalList::MatchType type, const std::string& pattern, const std::size_t& index,
-		PatternErrors& pattern_errors)
+void Proofpoint::GlobalAddressMatcher::Add(GlobalList::MatchType type, const std::string& pattern, const std::size_t& index, PatternErrors<std::size_t>& pattern_errors)
 {
 	if (type==GlobalList::MatchType::IS_IN_DOMAINSET || type==GlobalList::MatchType::UNKNOWN) return;
 
@@ -43,11 +40,9 @@ void Proofpoint::AddressMatcher::Add(GlobalList::MatchType type, const std::stri
 		break;
 	}
 }
-bool Proofpoint::AddressMatcher::Match(bool inbound, const std::string& pattern,
-		GlobalList::Entries& safe_list)
+bool Proofpoint::GlobalAddressMatcher::Match(bool inbound, const std::string& pattern,GlobalList::Entries& safe_list)
 {
 	bool matched = false;
-
 	for (auto s : in_subnets) {
 		// Find a single match per match condition
 		for (const auto& subnet : std::get<0>(s))
@@ -57,7 +52,6 @@ bool Proofpoint::AddressMatcher::Match(bool inbound, const std::string& pattern,
 				break;
 			}
 	}
-
 	for (auto s : not_in_subnets) {
 		// Find a single match per match condition
 		for (const auto& subnet : std::get<0>(s))
@@ -67,7 +61,6 @@ bool Proofpoint::AddressMatcher::Match(bool inbound, const std::string& pattern,
 				break;
 			}
 	}
-
 	std::vector<std::size_t> match_indexes;
 	for (auto m : matchers) {
 		if (m.second->GetPatternCount()) {
