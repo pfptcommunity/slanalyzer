@@ -69,18 +69,18 @@ cmake -S . -B build/ -D CMAKE_BUILD_TYPE=Release
 cmake --build build/
 ```
 
-![image](https://user-images.githubusercontent.com/83429267/201535586-b20249fd-b122-4446-8a80-500a95f4d942.png)
+![image](https://user-images.githubusercontent.com/83429267/203080734-7226126d-7ac1-4638-a218-a25310fa5373.png)
 
 ## Processing Global Block / Safe Lists 
 
-You may need to export multiple 1M record chunks from smart search for a 30 day window. You can filter safelisted messages based on the direction of the flow.
+You may need to export multiple 1M record chunks from smart search for a 30 day window. You can filter safelisted messages based on the direction of the flow.  
 ![image](https://user-images.githubusercontent.com/83429267/201682040-29d83ebc-3a3d-4231-8768-a3c8f4f9d879.png)
 
-Export the results to a CSV(s) and pass them to the tool as the last parameter. 
-![image](https://user-images.githubusercontent.com/83429267/202054937-9e37a468-a4b6-4929-823a-8b6cbe694b2f.png)
-
-Export the block / safe list you want to compare.
+Export the block / safe list you want to compare.  
 ![image](https://user-images.githubusercontent.com/83429267/202720435-3b27e154-6702-4b11-94d7-559a0f2484f4.png)
+
+Export the results to a CSV(s) and pass them to the tool as the last parameter.  
+![image](https://user-images.githubusercontent.com/83429267/203081405-e9678b8b-5512-4a89-856c-0620c385ce63.png)
 
 ### Reviewing the Data
 
