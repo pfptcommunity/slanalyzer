@@ -219,6 +219,11 @@ int main(int argc, char* argv[])
 					  << std::right << std::setw(25) << "Smart Search File: "
 					  << file << ((header_index == -1) ? " (No CSV Header Found)" : "") << std::endl << std::endl;
 		}
+		std::cout << std::left << "### Analysis Summary ###" << std::endl
+				  << std::right << std::setw(25) <<  "Total Inbound: "
+				  << std::left << safelist.GetInboundCount() << std::endl
+				  << std::right << std::setw(25) <<  "Total Outbound: "
+				  << std::left << safelist.GetOutboundCount() << std::endl << std::endl;
 
 		s = high_resolution_clock::now();
 		safelist.Save(output_list);
@@ -254,16 +259,16 @@ int main(int argc, char* argv[])
 		auto d = duration_cast<microseconds>(e-s);
 
 		std::cout << std::left << "### Users Load Completed ###" << std::endl
-				  << std::right << std::setw(25) <<  "Load Time: "
+				  << std::right << std::setw(25) << "Load Time: "
 				  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl
 				  << std::right << std::setw(25) << "User Count: "
 				  << std::left << std::setw(25) << user_safe_list.GetUserCount() << std::endl
 				  << std::right << std::setw(25) << "Address Count: "
-				  << std::left << std::setw(25) << user_safe_list.GetAddressCount() << std::endl
-				  << std::right << std::setw(25) <<   "Safe Count: "
-				  << std::left << std::setw(25) << user_safe_list.GetSafeCount() << std::endl
+				  << std::left << std::setw(25) << user_safe_list.GetUserAddressCount() << std::endl
+				  << std::right << std::setw(25) << "Safe Count: "
+				  << std::left << std::setw(25) << user_safe_list.GetSafeListCount() << std::endl
 				  << std::right << std::setw(25) << "Block Count: "
-				  << std::left << std::setw(25) << user_safe_list.GetBlockCount() << std::endl
+				  << std::left << std::setw(25) << user_safe_list.GetBlockListCount() << std::endl
 				  << std::right << std::setw(25) << "List File: "
 				  << user_list << std::endl << std::endl;
 
@@ -280,8 +285,7 @@ int main(int argc, char* argv[])
 				  << std::right << std::setw(25) <<  "Load Time: "
 				  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl
 				  << std::right << std::setw(25) << "Pattern Errors: "
-				  << std::left << std::setw(25) << pattern_errors.size() << std::endl
-				  << std::endl;
+				  << std::left << std::setw(25) << pattern_errors.size() << std::endl << std::endl;
 
 
 		std::size_t total_records_processed = 0;
@@ -298,7 +302,11 @@ int main(int argc, char* argv[])
 					  << std::right << std::setw(25) << "Smart Search File: "
 					  << file << ((header_index == -1) ? " (No CSV Header Found)" : "") << std::endl << std::endl;
 		}
-
+		std::cout << std::left << "### Analysis Summary ###" << std::endl
+		          << std::right << std::setw(25) <<  "Total Safe Listed: "
+				  << std::left << user_safe_list.GetSafeCount() << std::endl
+				  << std::right << std::setw(25) <<  "Total Block Listed: "
+				  << std::left << user_safe_list.GetBlockCount() << std::endl << std::endl;
 
 		s = high_resolution_clock::now();
 		user_safe_list.Save(output_list, extended);

@@ -69,6 +69,8 @@ public:
 	void Save(const std::string& list_file);
 public:
 	[[nodiscard]] inline std::size_t GetCount() const { return entries.size(); }
+	[[nodiscard]] std::size_t GetInboundCount() const;
+	[[nodiscard]] std::size_t GetOutboundCount() const;
 	iterator begin() { return entries.begin(); }
 	iterator end() { return entries.end(); }
 	[[nodiscard]] const_iterator begin() const { return entries.begin(); }

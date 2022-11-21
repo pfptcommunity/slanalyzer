@@ -49,9 +49,11 @@ public:
 	void Save(const std::string& list_file, bool extened);
 public:
 	[[nodiscard]] inline std::size_t GetUserCount() const { return entries.size(); }
-	[[nodiscard]] inline std::size_t GetAddressCount() const { return address_count; }
-	[[nodiscard]] inline std::size_t GetSafeCount() const { return safe_count; }
-	[[nodiscard]] inline std::size_t GetBlockCount() const { return block_count; }
+	[[nodiscard]] inline std::size_t GetUserAddressCount() const { return user_address_count; }
+	[[nodiscard]] inline std::size_t GetSafeListCount() const { return safe_list_count; }
+	[[nodiscard]] inline std::size_t GetBlockListCount() const { return block_list_count; }
+	[[nodiscard]] std::size_t GetSafeCount() const;
+	[[nodiscard]] std::size_t GetBlockCount() const;
 	iterator begin() { return entries.begin(); }
 	iterator end() { return entries.end(); }
 	[[nodiscard]] const_iterator begin() const { return entries.begin(); }
@@ -60,9 +62,9 @@ public:
 	[[nodiscard]] const_iterator cend() const { return entries.cend(); }
 private:
 	Entries entries;
-	std::size_t address_count;
-	std::size_t safe_count;
-	std::size_t block_count;
+	std::size_t user_address_count;
+	std::size_t safe_list_count;
+	std::size_t block_list_count;
 };
 typedef UserList::UserErrors UserErrors;
 }

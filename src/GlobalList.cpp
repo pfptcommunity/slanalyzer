@@ -10,9 +10,9 @@
 #include "CsvParser.h"
 #include <iostream>
 #include <utility>
-#include <iomanip>
 #include <chrono>
 #include "re2/re2.h"
+#include <numeric>
 
 void Proofpoint::GlobalList::Load(const std::string& list_file, EntryErrors& entry_errors )
 {
@@ -24,7 +24,7 @@ void Proofpoint::GlobalList::Load(const std::string& list_file, EntryErrors& ent
 		FieldType ft = (cols>0) ? GetFieldType(row.at(0)) : FieldType::UNKNOWN;
 		MatchType mt = (cols>1) ? GetMatchType(row.at(1)) : MatchType::UNKNOWN;
 
-		if ( ft==FieldType::UNKNOWN || mt==MatchType::UNKNOWN ) {
+		if ( cols > 1 && (ft==FieldType::UNKNOWN || mt==MatchType::UNKNOWN) ) {
 			// We are missing something.
 			entry_errors.push_back({count,
 									(cols>0) ? row.at(0) : "",
@@ -117,4 +117,12 @@ inline Proofpoint::GlobalList::MatchType Proofpoint::GlobalList::GetMatchType(co
 inline const std::string& Proofpoint::GlobalList::GetMatchTypeString(Proofpoint::GlobalList::MatchType matchtype)
 {
 	return MatchTypeStrings[static_cast<int>(matchtype)];
+}
+std::size_t Proofpoint::GlobalList::GetInboundCount() const
+{
+	return std::accumulate(entries.begin(), entries.end(), 0, [](const std::size_t& a, const Entry& b) -> std::size_t {return a + b.inbound;} );
+}
+std::size_t Proofpoint::GlobalList::GetOutboundCount() const
+{
+	return std::accumulate(entries.begin(), entries.end(), 0, [](const std::size_t& a, const Entry& b) -> std::size_t {return a + b.outbound;} );
 }

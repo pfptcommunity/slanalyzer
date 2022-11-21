@@ -10,15 +10,13 @@
 #include "UserAnalyzer.h"
 #include "CsvParser.h"
 #include <chrono>
-#include <iostream>
-#include <iomanip>
 #include "re2/re2.h"
 #include "Utils.h"
 
 void Proofpoint::UserAnalyzer::Load(const UserList& userlist, PatternErrors<UserMatch>& pattern_errors)
 {
 	std::size_t count = 0;
-	addr_to_user.reserve(userlist.GetAddressCount());
+	addr_to_user.reserve(userlist.GetUserAddressCount());
 	for ( auto user = userlist.begin() ; user != userlist.end() ; user++ ) {
 		std::size_t index = std::distance(userlist.begin(),user);
 		addr_to_user.emplace(user->mail,index);

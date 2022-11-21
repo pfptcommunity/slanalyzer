@@ -13,11 +13,11 @@
 #include <numeric>
 #include "Utils.h"
 
-Proofpoint::UserList::UserList() :address_count(0), safe_count(0), block_count(0) {}
+Proofpoint::UserList::UserList() :user_address_count(0), safe_list_count(0), block_list_count(0) {}
 
 void Proofpoint::UserList::Load(const std::string& user_file, UserErrors& entry_errors)
 {
-	address_count = 0;
+	user_address_count = 0;
 	std::size_t count = 0;
 	std::ifstream f(user_file);
 	csv::CsvParser parser(f);
@@ -41,18 +41,18 @@ void Proofpoint::UserList::Load(const std::string& user_file, UserErrors& entry_
 			entries.back().mail = row[header_map.find("mail")->second];
 			entries.back().safe_count = 0;
 			entries.back().block_count = 0;
-			address_count++;
+			user_address_count++;
 			for (auto proxy_address : Utils::split(row[header_map.find("mailLocalAddress")->second], ';')) {
 				entries.back().proxy_addresses.emplace_back(proxy_address);
-				address_count++;
+				user_address_count++;
 			}
 			for (auto safe_entry : Utils::split(row[header_map.find("safelist")->second], ';')) {
 				entries.back().safe.emplace_back(std::string(safe_entry));
-				safe_count++;
+				safe_list_count++;
 			}
 			for (auto block_entry : Utils::split(row[header_map.find("blocklist")->second], ';')) {
 				entries.back().block.emplace_back(std::string(block_entry));
-				block_count++;
+				block_list_count++;
 			}
 			count++;
 		}
@@ -69,8 +69,8 @@ void Proofpoint::UserList::Save(const std::string& user_file, bool extended)
 		  << "\",\"" << "mailLocalAddress"
 		  << "\",\"" << "safelist"
 		  << "\",\"" << "blocklist"
-		  << "\",\"" << "safe_count"
-		  << "\",\"" << "block_count" << "\"\r\n";
+		  << "\",\"" << "safe_list_count"
+		  << "\",\"" << "block_list_count" << "\"\r\n";
 
 		auto acc = [](const std::string& a, const Entry::ListItem& b) -> std::string {
 		  return a+(a.size()>0 ? ";" : "")+b.pattern;
@@ -140,4 +140,13 @@ void Proofpoint::UserList::Save(const std::string& user_file, bool extended)
 			}
 		}
 	}
+}
+std::size_t Proofpoint::UserList::GetSafeCount() const
+{
+	return std::accumulate(entries.begin(), entries.end(), 0, [](const std::size_t& a, const Entry& b) -> std::size_t {return a + b.safe_count;} );
+}
+
+std::size_t Proofpoint::UserList::GetBlockCount() const
+{
+	return std::accumulate(entries.begin(), entries.end(), 0, [](const std::size_t& a, const Entry& b) -> std::size_t {return a + b.block_count;} );
 }
