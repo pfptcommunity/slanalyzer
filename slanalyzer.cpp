@@ -249,8 +249,8 @@ int main(int argc, char* argv[])
 				  << std::left << std::setw(25) << user_safe_list.GetUserCount() << std::endl
 				  << std::right << std::setw(25) << "Address Count: "
 				  << std::left << std::setw(25) << user_safe_list.GetAddressCount() << std::endl
-				<< std::right << std::setw(25) <<   "Safe Count: "
-				<< std::left << std::setw(25) << user_safe_list.GetSafeCount() << std::endl
+				  << std::right << std::setw(25) <<   "Safe Count: "
+				  << std::left << std::setw(25) << user_safe_list.GetSafeCount() << std::endl
 				  << std::right << std::setw(25) << "Block Count: "
 				  << std::left << std::setw(25) << user_safe_list.GetBlockCount() << std::endl
 				  << std::right << std::setw(25) << "List File: "
