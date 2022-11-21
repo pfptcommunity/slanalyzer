@@ -26,13 +26,18 @@ void help()
 		 << "Search multiple smart search exports to determine which safe or block list entries triggered against the mail flow."
 		 << endl
 		 << endl
-		 << "Options:"
+		 << "Report Type Options (choose one):"
 		 << endl
-		 << "-s, --safelist        (required) safelist file to use for smart search file processing"
+		 << "-s, --safelist        Exported Proofpoint organizational safe / block list CSV to use for analysis"
 		 << endl
-		 << "-u, --userlist        (required) PPS user export, personal safe and blocked list to use for smart search file processing"
+		 << "-u, --userlist        Exported Proofpoint user CSV export for personal safe / blocked list used for analysis"
 		 << endl
-		 << "-o, --output          (required) annotated safelist created after smart search processing"
+		 << endl
+		 << "Output Options:"
+		 << endl
+		 << "-o, --output          (required) Output report based on report type chosen"
+		 << endl
+		 << "-x, --extended        (optional) Only applies to user list exports provides full details of block and safe lists and field that matched"
 		 << endl
 		 << "-h, --help            show this help message and exit"
 		 << endl
@@ -63,12 +68,15 @@ int main(int argc, char* argv[])
 	vector<string> ss_inputs;
 	bool safe = false;
 	bool user = false;
+	bool extended = false;
 	bool output = false;
 	bool files = false;
+
 	static struct option long_options[] =
 			{
 					{("safelist"), required_argument, 0, 's'},
 					{("userlist"), required_argument, 0, 'u'},
+					{("extended"), required_argument, 0, 'x'},
 					{("output"), required_argument, 0, 'o'},
 					{("help"), no_argument, 0, 'h'},
 					{0, 0, 0, 0}
@@ -76,13 +84,16 @@ int main(int argc, char* argv[])
 
 	int option_index = 0;
 
-	while ((c = getopt_long(argc, argv, "s:u:o:h", long_options, &option_index))!=-1) {
+	while ((c = getopt_long(argc, argv, "s:u:xo:h", long_options, &option_index))!=-1) {
 		switch (c) {
 		case 's': safe_list = optarg;
 			safe = true;
 			break;
 		case 'u': user_list = optarg;
 			user = true;
+			break;
+		case 'x':
+			extended = true;
 			break;
 		case 'o': output_list = optarg;
 			output = true;
@@ -290,7 +301,7 @@ int main(int argc, char* argv[])
 
 
 		s = high_resolution_clock::now();
-		user_safe_list.Save(output_list, false);
+		user_safe_list.Save(output_list, extended);
 		e = high_resolution_clock::now();
 		d = duration_cast<microseconds>(e-s);
 		std::ios_base::sync_with_stdio(true);

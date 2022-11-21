@@ -10,9 +10,7 @@
 #include "UserList.h"
 #include "CsvParser.h"
 #include <iostream>
-#include <iomanip>
 #include <numeric>
-#include <chrono>
 #include "Utils.h"
 
 Proofpoint::UserList::UserList() :address_count(0), safe_count(0), block_count(0) {}
@@ -105,7 +103,6 @@ void Proofpoint::UserList::Save(const std::string& user_file, bool extended)
 		  << "\",\"" << "block"
 		  << "\",\"" << "block_sender"
 		  << "\",\"" << "block_hfrom" << "\"\r\n";
-
 		for (const auto& user : entries) {
 			for (const auto& safe : user.safe) {
 				f << "\"" << user.givenName
