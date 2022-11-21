@@ -11,7 +11,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "re2/re2.h"
-#include <iostream>
 
 Proofpoint::Subnet::Subnet(const std::string& cidr)
 		:min(0), max(0), wmask(0), hosts(0)
