@@ -69,7 +69,7 @@ cmake -S . -B build/ -D CMAKE_BUILD_TYPE=Release
 cmake --build build/
 ```
 
-![image](https://user-images.githubusercontent.com/83429267/203080734-7226126d-7ac1-4638-a218-a25310fa5373.png)
+![image](https://user-images.githubusercontent.com/83429267/203167782-e05ed53f-288d-4b31-b1ce-b3aaf734a683.png)
 
 ## Processing Global Block / Safe Lists 
 
@@ -80,7 +80,8 @@ Export the block / safe list you want to compare.
 ![image](https://user-images.githubusercontent.com/83429267/202720435-3b27e154-6702-4b11-94d7-559a0f2484f4.png)
 
 Export the results to a CSV(s) and pass them to the tool as the last parameter.  
-![image](https://user-images.githubusercontent.com/83429267/203081405-e9678b8b-5512-4a89-856c-0620c385ce63.png)
+![image](https://user-images.githubusercontent.com/83429267/203168166-e82e4592-2f97-459c-b7e7-5ab7b0d30531.png)
+
 
 ### Reviewing the Data
 
@@ -96,9 +97,21 @@ or safe list. This is provides a good heatmap to see which safelist entry is exc
 "$ip","equal","192.89.112.126","","2","0"
 ```
 
-## Processing User Block / Safe Lists
+## Processing User Block / Safe Lists 
+### Basic Output
 To process user safe and blocklists you must export the user data via Export CSV in the Proofpoint Protection admin user interface.
+![image](https://user-images.githubusercontent.com/83429267/203168396-b25b3691-b5c2-47e0-9bec-ae31b7c3e7b1.png)
 
+The basic user safe / block information has the following format.
+```
+"givenName","sn","mail","mailLocalAddress","safelist","blocklist","safe_list_count","block_list_count"
+"Ludvik","Jerabek","ljerabek@domains.com","ljerabekalias@domains.com","block@domain.com;domain2.com;@domain3.com","safe@domain.com","56","2"
+```
+### Extended Output
+It's possible to get extended output via -x
+```
+"givenName","sn","mail","mailLocalAddress","safe","safe_sender","safe_hfrom","block","block_sender","block_hfrom"
+```
 
 ### Performance
 During testing analyzer was able to process 10,000(10K) safelist entries and 10,000,000(10M) row smart search in ~74 seconds that would be 10,000,000,000(10B)  permutations. 
