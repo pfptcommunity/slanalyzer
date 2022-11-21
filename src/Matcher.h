@@ -14,6 +14,7 @@
 #include "re2/set.h"
 #include <memory>
 #include <unordered_map>
+#include <iostream>
 
 namespace Proofpoint {
 

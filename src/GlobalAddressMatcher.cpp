@@ -66,8 +66,7 @@ bool Proofpoint::GlobalAddressMatcher::Match(bool inbound, const std::string& pa
 		if (m.second->GetPatternCount()) {
 			matched |= m.second->Match(pattern, match_indexes);
 			for (auto i : match_indexes) {
-				auto mle = safe_list.at(i);
-				(inbound) ? mle.inbound++ : mle.outbound++;
+				(inbound) ? safe_list[i].inbound++ : safe_list[i].outbound++;
 			}
 		}
 	}

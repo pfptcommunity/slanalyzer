@@ -23,7 +23,6 @@ void Proofpoint::GlobalList::Load(const std::string& list_file, EntryErrors& ent
 		size_t cols = row.size();
 		FieldType ft = (cols>0) ? GetFieldType(row.at(0)) : FieldType::UNKNOWN;
 		MatchType mt = (cols>1) ? GetMatchType(row.at(1)) : MatchType::UNKNOWN;
-
 		if ( cols > 1 && (ft==FieldType::UNKNOWN || mt==MatchType::UNKNOWN) ) {
 			// We are missing something.
 			entry_errors.push_back({count,
@@ -63,8 +62,8 @@ void Proofpoint::GlobalList::Save(const std::string& list_file)
 		  << "\",\"" << MatchTypeStrings[static_cast<int>(list_entry.match_type)]
 		  << "\",\"" << list_entry.pattern
 		  << "\",\"" << list_entry.comment
-		  << "\",\"" << std::to_string(list_entry.inbound)
-		  << "\",\"" << std::to_string(list_entry.outbound) << "\"\r\n";
+		  << "\",\"" << list_entry.inbound
+		  << "\",\"" << list_entry.outbound << "\"\r\n";
 		count++;
 	}
 }
