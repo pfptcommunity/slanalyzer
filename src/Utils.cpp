@@ -60,17 +60,17 @@ std::string Proofpoint::Utils::reverse_copy(std::string str){
 std::string Proofpoint::Utils::ltrim_copy(std::string s)
 {
 	ltrim(s);
-	return s;
+	return std::move(s);
 }
 
 std::string Proofpoint::Utils::rtrim_copy(std::string s)
 {
 	rtrim(s);
-	return s;
+	return std::move(s);
 }
 
 std::string Proofpoint::Utils::trim_copy(std::string s)
 {
 	trim(s);
-	return s;
+	return std::move(s);
 }

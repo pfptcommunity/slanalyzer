@@ -6,4 +6,4 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 link_libraries(libre2.a)
 
-add_executable(slanalyzer slanalyzer.cpp src/Subnet.cpp src/SafeList.cpp src/StringMatcher.cpp src/AddressMatcher.cpp src/Analyzer.cpp src/Matcher.cpp src/InvertedMatcher.cpp src/Utils.cpp)
+add_executable(slanalyzer slanalyzer.cpp src/Subnet.cpp src/GlobalList.cpp src/UserList.cpp src/GlobalStringMatcher.cpp src/GlobalAddressMatcher.cpp src/GlobalAnalyzer.cpp src/UserAnalyzer.cpp src/Utils.cpp)

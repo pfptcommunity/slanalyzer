@@ -13,20 +13,22 @@
 #include <vector>
 
 namespace Proofpoint {
+template <typename T>
 class IMatcher {
 public:
 	struct PatternError {
-	  std::size_t index;
+	  T index;
 	  std::string pattern;
 	  std::string error;
 	};
-	typedef std::vector<PatternError> PatternErrors;
+	using PatternErrors = std::vector<PatternError> ;
 public:
-	virtual void Add(const std::string& pattern, const std::size_t& index, PatternErrors& pattern_errors) = 0;
-	virtual bool Match(const std::string& pattern, std::vector<std::size_t>& match_indexes) = 0;
+	virtual void Add(const std::string& pattern, const T& index, PatternErrors& pattern_errors) = 0;
+	virtual bool Match(const std::string& pattern, std::vector<T>& match_indexes) = 0;
 	virtual std::size_t GetPatternCount() = 0;
 };
-typedef IMatcher::PatternErrors PatternErrors;
+template<typename T>
+using PatternErrors = typename IMatcher<T>::PatternErrors;
 }
 
 #endif //SLANALYZER_IMATCHER_H

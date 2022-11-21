@@ -131,7 +131,7 @@ public:
 
 	// Not the actual position in the stream (its buffered) just the
 	// position up to last availiable token
-	std::streamoff position() const
+	[[nodiscard]] std::streamoff position() const
 	{
 		return m_scanposition+static_cast<std::streamoff>(m_cursor);
 	}
