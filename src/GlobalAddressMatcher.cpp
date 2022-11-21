@@ -24,14 +24,16 @@ void Proofpoint::GlobalAddressMatcher::Add(GlobalList::MatchType type, const std
 	if (type==GlobalList::MatchType::IS_IN_DOMAINSET || type==GlobalList::MatchType::UNKNOWN) return;
 
 	switch (type) {
-	case GlobalList::MatchType::IP_IN_NET: in_subnets.emplace_back();
-		std::get<1>(in_subnets.back()) = 0;
+	case GlobalList::MatchType::IP_IN_NET:
+		in_subnets.emplace_back();
+		std::get<1>(in_subnets.back()) = index;
 		for (auto subnet : Utils::split(pattern, ',')) {
 			std::get<0>(in_subnets.back()).emplace_back(std::make_shared<Subnet>(std::string(subnet)));
 		}
 		break;
-	case GlobalList::MatchType::IP_NOT_IN_NET: not_in_subnets.emplace_back();
-		std::get<1>(not_in_subnets.back()) = 0;
+	case GlobalList::MatchType::IP_NOT_IN_NET:
+		not_in_subnets.emplace_back();
+		std::get<1>(not_in_subnets.back()) = index;
 		for (auto subnet : Utils::split(pattern, ',')) {
 			std::get<0>(not_in_subnets.back()).emplace_back(std::make_shared<Subnet>(std::string(subnet)));
 		}
@@ -45,12 +47,13 @@ bool Proofpoint::GlobalAddressMatcher::Match(bool inbound, const std::string& pa
 	bool matched = false;
 	for (auto s : in_subnets) {
 		// Find a single match per match condition
-		for (const auto& subnet : std::get<0>(s))
+		for (const auto& subnet : std::get<0>(s)) {
 			if (subnet->InSubnet(pattern)) {
 				(inbound) ? safe_list[std::get<1>(s)].inbound++ : safe_list[std::get<1>(s)].outbound++;
 				matched |= true;
 				break;
 			}
+		}
 	}
 	for (auto s : not_in_subnets) {
 		// Find a single match per match condition

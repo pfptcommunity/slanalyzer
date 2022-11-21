@@ -73,7 +73,8 @@ std::size_t Proofpoint::GlobalAnalyzer::Process(const std::string& ss_file, Glob
 				row[header_map.find("Header_From")->second].length(), RE2::UNANCHORED, matches, 2))
 				? matches[1].ToString() : row[header_map.find("Header_From")->second], safelist.entries);
 		from.Match(inbound, row[header_map.find("Sender")->second], safelist.entries);
-		rcpt.Match(inbound, row[header_map.find("Recipients")->second], safelist.entries);
+
+		rcpt.Match(inbound, Utils::split(row[header_map.find("Recipients")->second],','), safelist.entries);
 		records_processed++;
 	}
 	return header_index;

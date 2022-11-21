@@ -38,3 +38,20 @@ bool Proofpoint::GlobalStringMatcher::Match(bool inbound, const std::string& pat
 	}
 	return matched;
 }
+
+bool Proofpoint::GlobalStringMatcher::Match(bool inbound, const std::vector<std::basic_string_view<char>>& patterns, GlobalList::Entries& safe_list)
+{
+	std::vector<std::size_t> match_indexes;
+	bool matched = false;
+	for (auto m : matchers) {
+		if (m.second->GetPatternCount()) {
+			for( const auto& pattern : patterns ) {
+				matched |= m.second->Match(std::string(pattern), match_indexes);
+				for (auto i : match_indexes) {
+					(inbound) ? safe_list[i].inbound++ : safe_list[i].outbound++;
+				}
+			}
+		}
+	}
+	return matched;
+}

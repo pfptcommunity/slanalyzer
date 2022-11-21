@@ -20,6 +20,7 @@ public:
 	GlobalStringMatcher();
 	void Add(GlobalList::MatchType type, const std::string& pattern, const std::size_t& index,PatternErrors<std::size_t>& pattern_errors);
 	bool Match(bool inbound, const std::string& pattern, GlobalList::Entries& safe_list);
+	bool Match(bool inbound, const std::vector<std::basic_string_view<char>>& patterns, GlobalList::Entries& safe_list);
 private:
 	std::unordered_map<GlobalList::MatchType, std::shared_ptr<IMatcher<std::size_t>>> matchers;
 };
