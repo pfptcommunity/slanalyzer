@@ -96,14 +96,36 @@ or safe list. This is provides a good heatmap to see which safelist entry is exc
 "$ip","equal","192.89.112.126","","2","0"
 ```
 
+## Processing User Block / Safe Lists
+To process user safe and blocklists you must export the user data via Export CSV in the Proofpoint Protection admin user interface.
+
+
 ### Performance
 During testing analyzer was able to process 10,000(10K) safelist entries and 10,000,000(10M) row smart search in ~74 seconds that would be 10,000,000,000(10B)  permutations. 
 ```
-Status                    Microseconds              Seconds                   Records                   Filename
-SL Load Completed         2726                      0.002726                  10000                     /home/ljerabek/megasafe.csv
-SS Processing Completed   73874963                  73.874963                 10000000                  /home/ljerabek/mega_smart_search.csv
-SL Save Completed         4314                      0.004314                  10000                     /home/ljerabek/safelist_annotated.csv
-SL Load Completed         73913884                  73.913884
+### Global List Load Completed ###
+              Load Time: 0.003212s
+             List Count: 10000
+            List Errors: 0
+              List File: /home/ljerabek/megasafe.csv
+
+### Preprocessing Completed ###
+              Load Time: 0.029909s
+         Pattern Errors: 0
+
+### Analysis Completed ###
+          Analysis Time: 74.477194s
+      Smart Search File: /home/ljerabek/mega_smart_search.csv
+
+### Analysis Summary ###
+          Total Inbound: 823500
+         Total Outbound: 0
+
+### Global List Save Completed ###
+              Save Time: 0.004267s
+
+### Processing Completed ###
+  Total Processing Time: 74.524358s
 ```
 
 ### Limitations
