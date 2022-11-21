@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
 
 
 		s = high_resolution_clock::now();
-		user_safe_list.Save(output_list);
+		user_safe_list.Save(output_list, false);
 		e = high_resolution_clock::now();
 		d = duration_cast<microseconds>(e-s);
 		std::ios_base::sync_with_stdio(true);

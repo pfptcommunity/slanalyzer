@@ -41,6 +41,8 @@ void Proofpoint::UserList::Load(const std::string& user_file, UserErrors& entry_
 			entries.back().givenName = row[header_map.find("givenName")->second];
 			entries.back().sn = row[header_map.find("sn")->second];
 			entries.back().mail = row[header_map.find("mail")->second];
+			entries.back().safe_count = 0;
+			entries.back().block_count = 0;
 			address_count++;
 			for (auto proxy_address : Utils::split(row[header_map.find("mailLocalAddress")->second], ';')) {
 				entries.back().proxy_addresses.emplace_back(proxy_address);
@@ -58,31 +60,87 @@ void Proofpoint::UserList::Load(const std::string& user_file, UserErrors& entry_
 		}
 }
 
-void Proofpoint::UserList::Save(const std::string& user_file)
+void Proofpoint::UserList::Save(const std::string& user_file, bool extended)
 {
-	std::size_t count = 0;
 	std::ios_base::sync_with_stdio(false);
-	std::ofstream f(user_file);
-	f  << "\"" << "givenName"
-	  << "\",\"" << "sn"
-	  << "\",\"" << "mail"
-	  << "\",\"" << "mailLocalAddress"
-	  << "\",\"" << "safelist"
-	  << "\",\"" << "blocklist"
-	  << "\",\"" << "safe_count"
-	  << "\",\"" << "block_count" <<"\"\r\n";
+	if( !extended ) {
+		std::ofstream f(user_file);
+		f << "\"" << "givenName"
+		  << "\",\"" << "sn"
+		  << "\",\"" << "mail"
+		  << "\",\"" << "mailLocalAddress"
+		  << "\",\"" << "safelist"
+		  << "\",\"" << "blocklist"
+		  << "\",\"" << "safe_count"
+		  << "\",\"" << "block_count" << "\"\r\n";
 
-	auto concat1 = [](const std::string& a, const std::string& b) -> std::string { return a + (a.size() > 0 ? ";" : "") + b;};
-	//auto concat2 = [](const UserList::Entry::ListItem& a, const UserList::Entry::ListItem& b) -> UserList::Entry::ListItem { return a.pattern + (a.pattern.size() > 0 ? ";" : "") + b.pattern;};
+		auto acc = [](const std::string& a, const Entry::ListItem& b) -> std::string {
+		  return a+(a.size()>0 ? ";" : "")+b.pattern;
+		};
 
-	for (const auto& user : entries) {
-		f << "\"" << user.givenName
-		  << "\",\"" << user.sn
-		  << "\",\"" << user.mail
-		  << "\",\"" << std::accumulate(user.proxy_addresses.begin(), user.proxy_addresses.end(), std::string(), concat1 )
-		  //<< "\",\"" << std::accumulate(user.safe.begin(), user.safe.end(), std::string(), concat2)
-		 // << "\",\"" << std::accumulate(user.block.begin(), user.block.end(), std::string(), concat2)
-		 << "\"\r\n";
-		count++;
+		for (const auto& user : entries) {
+			f << "\"" << user.givenName
+			  << "\",\"" << user.sn
+			  << "\",\"" << user.mail
+			  << "\",\"" << std::accumulate(user.proxy_addresses.begin(), user.proxy_addresses.end(), std::string(),
+					[](const std::string& a, const std::string& b) -> std::string {
+					  return a+(a.size()>0 ? ";" : "")+b;
+					})
+			  << "\",\"" << std::accumulate(user.safe.begin(), user.safe.end(), std::string(), acc)
+			  << "\",\"" << std::accumulate(user.block.begin(), user.block.end(), std::string(), acc)
+			  << "\",\"" << user.safe_count
+			  << "\",\"" << user.block_count
+			  << "\"\r\n";
+		}
+	}
+	else {
+		std::ofstream f(user_file);
+		f << "\"" << "givenName"
+		  << "\",\"" << "sn"
+		  << "\",\"" << "mail"
+		  << "\",\"" << "mailLocalAddress"
+		  << "\",\"" << "safe"
+		  << "\",\"" << "safe_sender"
+		  << "\",\"" << "safe_hfrom"
+		  << "\",\"" << "block"
+		  << "\",\"" << "block_sender"
+		  << "\",\"" << "block_hfrom" << "\"\r\n";
+
+		for (const auto& user : entries) {
+			for (const auto& safe : user.safe) {
+				f << "\"" << user.givenName
+				  << "\",\"" << user.sn
+				  << "\",\"" << user.mail
+				  << "\",\""
+				  << std::accumulate(user.proxy_addresses.begin(), user.proxy_addresses.end(), std::string(),
+						  [](const std::string& a, const std::string& b) -> std::string {
+							return a+(a.size()>0 ? ";" : "")+b;
+						  })
+				  << "\",\"" << safe.pattern
+				  << "\",\"" << safe.sender_count
+				  << "\",\"" << safe.hfrom_count
+				  << "\",\""
+				  << "\",\"" << 0
+				  << "\",\"" << 0
+				  << "\"\r\n";
+			}
+			for (const auto& block : user.block) {
+				f << "\"" << user.givenName
+				  << "\",\"" << user.sn
+				  << "\",\"" << user.mail
+				  << "\",\""
+				  << std::accumulate(user.proxy_addresses.begin(), user.proxy_addresses.end(), std::string(),
+						  [](const std::string& a, const std::string& b) -> std::string {
+							return a+(a.size()>0 ? ";" : "")+b;
+						  })
+				  << "\",\""
+				  << "\",\"" << 0
+				  << "\",\"" << 0
+				  << "\",\"" << block.pattern
+				  << "\",\"" << block.sender_count
+				  << "\",\"" << block.hfrom_count
+				  << "\"\r\n";
+			}
+		}
 	}
 }

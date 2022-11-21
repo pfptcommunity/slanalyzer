@@ -50,7 +50,6 @@ std::size_t Proofpoint::UserAnalyzer::Process(const std::string& ss_file, UserLi
 	csv::HeaderList required_headers{"Policy_Route","Header_From","Sender","Recipients"};
 	// Validate there are headers we are interested in...
 	header_index = parser.FindHeader(required_headers, header_map);
-
 	//std::cout << std::setw(35) << "Highest Index" << " " << std::setw(25) << header_index << std::endl;
 	// std::multimap is useful for CSVs where there may be duplicate headers.
 	//for (auto i = header_map.begin(); i!= header_map.end(); i++){
@@ -59,29 +58,45 @@ std::size_t Proofpoint::UserAnalyzer::Process(const std::string& ss_file, UserLi
 	if( header_index > -1 ) {
 		for (auto& row : parser) {
 			bool inbound = RE2::PartialMatch(row[header_map.find("Policy_Route")->second], inbound_check);
+			std::string hfrom = (hfrom_addr_only.Match(row[header_map.find("Header_From")->second], 0,row[header_map.find("Header_From")->second].length(), RE2::UNANCHORED, matches, 2)) ? matches[1].ToString() : row[header_map.find("Header_From")->second];
+			Utils::reverse(hfrom);
+			std::string sender = Utils::reverse_copy(row[header_map.find("Sender")->second]);
+
 			for (auto recipient : Utils::split(row[header_map.find("Recipients")->second], ',')) {
 				auto user = addr_to_user.find(std::string(recipient));
 				if (user != addr_to_user.end()) {
 					auto smatcher = safe_matcher.find(user->second);
 					if( smatcher != safe_matcher.end() ) {
 						std::vector<UserMatch> user_matches;
-						if( smatcher->second->Match(Utils::reverse_copy(row[header_map.find("Sender")->second]), user_matches) )
-							userlist.safe_count++;
+						bool matched = smatcher->second->Match(sender, user_matches);
 						for( auto m : user_matches ) {
-							//std::cout << "Safe Matched: " << m.list_index << "-->" << m.user_index << std::endl;
-							userlist.entries[m.user_index].safe[m.list_index].count++;
+							//std::cout << "Sender Safe Matched: " << m.list_index << "-->" << m.user_index << std::endl;
+							userlist.entries[m.user_index].safe[m.list_index].sender_count++;
 						}
-
+						matched |= smatcher->second->Match(hfrom, user_matches);
+						for( auto m : user_matches ) {
+							//std::cout << "Header Safe Matched: " << m.list_index << "-->" << m.user_index << std::endl;
+							userlist.entries[m.user_index].safe[m.list_index].hfrom_count++;
+						}
+						if( matched )
+							userlist.entries[user->second].safe_count++;
 					}
 
 					auto bmatcher = block_matcher.find(user->second);
 					if( bmatcher != block_matcher.end() ) {
 						std::vector<UserMatch> user_matches;
-						bmatcher->second->Match(Utils::reverse_copy(row[header_map.find("Sender")->second]), user_matches);
+						bool matched = bmatcher->second->Match(sender, user_matches);
 						for( auto m : user_matches ){
-							//std::cout << "Block Matched: " << m.list_index << "-->" << m.user_index << std::endl;
-							userlist.entries[m.user_index].block[m.list_index].count++;
+							//std::cout << "Sender Block Matched: " << m.list_index << "-->" << m.user_index << std::endl;
+							userlist.entries[m.user_index].block[m.list_index].sender_count++;
 						}
+						matched |= bmatcher->second->Match(hfrom, user_matches);
+						for( auto m : user_matches ){
+							//std::cout << "Header Block Matched: " << m.list_index << "-->" << m.user_index << std::endl;
+							userlist.entries[m.user_index].block[m.list_index].hfrom_count++;
+						}
+						if( matched )
+							userlist.entries[user->second].block_count++;
 					}
 				}
 			}

@@ -20,9 +20,10 @@ class UserList {
 public:
 	struct Entry {
 	  struct ListItem {
-		explicit ListItem(std::string pattern) : pattern(std::move(pattern)), count(0) {}
+		explicit ListItem(std::string pattern) : pattern(std::move(pattern)), hfrom_count(0), sender_count(0) {}
 		std::string pattern;
-		std::size_t count;
+		std::size_t hfrom_count;
+		std::size_t sender_count;
 	  };
 	  std::string givenName;
 	  std::string sn;
@@ -45,7 +46,7 @@ public:
 public:
 	UserList();
 	void Load(const std::string& list_file, UserErrors& entry_errors);
-	void Save(const std::string& list_file);
+	void Save(const std::string& list_file, bool extened);
 public:
 	[[nodiscard]] inline std::size_t GetUserCount() const { return entries.size(); }
 	[[nodiscard]] inline std::size_t GetAddressCount() const { return address_count; }
