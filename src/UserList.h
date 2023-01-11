@@ -25,6 +25,7 @@ public:
 		std::size_t hfrom_count;
 		std::size_t sender_count;
 	  };
+	  std::size_t line_number;
 	  std::string givenName;
 	  std::string sn;
 	  std::string mail;
@@ -38,7 +39,7 @@ public:
 	using iterator = Entries::iterator;
 	using const_iterator = Entries::const_iterator;
 	struct UserError {
-	  std::size_t line;
+	  std::size_t line_number;
 	  std::string error;
 	};
 	using UserErrors = std::vector<UserError>;

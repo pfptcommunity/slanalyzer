@@ -38,6 +38,7 @@ public:
 	  IS_IN_DOMAINSET
 	};
 	struct Entry {
+	  std::size_t line_number;
 	  FieldType field_type;
 	  MatchType match_type;
 	  std::string pattern;

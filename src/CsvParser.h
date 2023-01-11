@@ -400,7 +400,7 @@ public:
 			})){
 				std::size_t index = 0;
 				std::transform( row.begin(), row.end() ,std::inserter( header_map , header_map.end() ) ,[&index](const std::string& field)  {return std::make_pair(field,index++); } );
-				// Return success and position of highest required line
+				// Return success and position of highest required index
 				return max_req;
 			}
 		}

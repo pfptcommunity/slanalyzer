@@ -44,6 +44,7 @@ void Proofpoint::UserList::Load(const std::string& user_file, UserErrors& entry_
 
 			// Should add some logic to make sure that the column numbers exist
 			entries.emplace_back();
+			entries.back().line_number = line_number;
 			entries.back().givenName = row[header_map.find("givenName")->second];
 			entries.back().sn = row[header_map.find("sn")->second];
 			entries.back().mail = row[header_map.find("mail")->second];

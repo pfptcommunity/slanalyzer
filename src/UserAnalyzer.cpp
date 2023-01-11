@@ -26,11 +26,12 @@ void Proofpoint::UserAnalyzer::Load(const UserList& userlist, PatternErrors<User
 		for (std::size_t j = 0; j < user->safe.size(); j++) {
 			safe_matcher.emplace(index, std::make_shared<Matcher<UserMatch>>(true,false,RE2::ANCHOR_START));
 			safe_matcher.at(index)->Add(Utils::reverse_copy(user->safe[j].pattern), {index,j},pattern_errors);
-			//std::cout << "Added: (" << user->safe[j].pattern << ") " << user->givenName << "," << user->sn << " " << user->mail << "" << line << " --> " << j << std::endl;
+			//std::cout << "Added: (" << user->safe[j].pattern << ") " << user->givenName << "," << user->sn << " " << user->mail << "" << index << " --> " << j << std::endl;
  		}
 		for (std::size_t j = 0; j < user->block.size(); j++){
 			block_matcher.emplace(index, std::make_shared<Matcher<UserMatch>>(true,false,RE2::ANCHOR_START));
 			block_matcher.at(index)->Add(Utils::reverse_copy(user->block[j].pattern), {index,j},pattern_errors);
+			//std::cout << "Added: (" << user->block[j].pattern << ") " << user->givenName << "," << user->sn << " " << user->mail << "" << index << " --> " << j << std::endl;
 		}
 		count++;
 	}

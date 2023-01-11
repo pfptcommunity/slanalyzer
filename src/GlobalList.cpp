@@ -39,6 +39,7 @@ void Proofpoint::GlobalList::Load(const std::string& list_file, EntryErrors& ent
 		}
 
 		entries.emplace_back();
+		entries.back().line_number = line_number;
 		entries.back().field_type = ft;
 		entries.back().match_type = mt;
 		if (cols>2) entries.back().pattern = row.at(2);
