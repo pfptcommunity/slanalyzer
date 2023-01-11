@@ -8,6 +8,7 @@
  */
 #include "GlobalList.h"
 #include "CsvParser.h"
+#include "Utils.h"
 #include <iostream>
 #include <utility>
 #include <chrono>
@@ -16,20 +17,27 @@
 
 void Proofpoint::GlobalList::Load(const std::string& list_file, EntryErrors& entry_errors )
 {
-	std::size_t count = 0;
+	std::size_t line_number = 0;
 	std::ifstream f(list_file);
 	csv::CsvParser parser(f);
 	for (auto& row : parser) {
+		line_number++;
 		size_t cols = row.size();
 		FieldType ft = (cols>0) ? GetFieldType(row.at(0)) : FieldType::UNKNOWN;
 		MatchType mt = (cols>1) ? GetMatchType(row.at(1)) : MatchType::UNKNOWN;
-		if ( cols > 1 && (ft==FieldType::UNKNOWN || mt==MatchType::UNKNOWN) ) {
+
+		// Skip empty lines
+		if( cols == 1 && Utils::trim_copy(row.at(0)).empty() )
+			continue;
+
+		if (ft==FieldType::UNKNOWN || mt==MatchType::UNKNOWN) {
 			// We are missing something.
-			entry_errors.push_back({count,
-									(cols>0) ? row.at(0) : "",
-									(cols>1) ? row.at(1) : "",
-									"Please see field type and match type information"});
+			entry_errors.push_back({line_number,
+					(cols>0) ? row.at(0) : "",
+					(cols>1) ? row.at(1) : "",
+					"Please see field type and match type information"});
 		}
+
 		entries.emplace_back();
 		entries.back().field_type = ft;
 		entries.back().match_type = mt;
@@ -37,7 +45,6 @@ void Proofpoint::GlobalList::Load(const std::string& list_file, EntryErrors& ent
 		if (cols>3) entries.back().comment = row.at(3);
 		entries.back().inbound = 0;
 		entries.back().outbound = 0;
-		count++;
 	}
 }
 void Proofpoint::GlobalList::Save(const std::string& list_file)

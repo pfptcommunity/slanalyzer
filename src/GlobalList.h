@@ -47,7 +47,7 @@ public:
 	};
 	using Entries = std::vector<Entry>;
 	struct EntryError {
-	  std::size_t index;
+	  std::size_t line;
 	  std::string field_data;
 	  std::string match_data;
 	  std::string error;

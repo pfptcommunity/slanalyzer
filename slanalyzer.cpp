@@ -245,7 +245,7 @@ int main(int argc, char* argv[])
 		if (!entry_errors.empty()) {
 			cerr << endl << endl << endl << "Entry errors occurred, see the following entries in your safe or blocked list:" << endl;
 			for (auto e : entry_errors) {
-				cerr << "Line: " << e.index << " FieldType: " << e.field_data << " MatchType: " << e.match_data << "Error: " << e.error << endl;
+				cerr << "Line: " << e.line << " FieldType: " << e.field_data << " MatchType: " << e.match_data << "Error: " << e.error << endl;
 			}
 		}
 	}

@@ -37,9 +37,8 @@ public:
 	using Entries = std::vector<Entry>;
 	using iterator = Entries::iterator;
 	using const_iterator = Entries::const_iterator;
-
 	struct UserError {
-	  std::size_t index;
+	  std::size_t line;
 	  std::string error;
 	};
 	using UserErrors = std::vector<UserError>;

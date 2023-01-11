@@ -18,7 +18,7 @@ Proofpoint::UserList::UserList() :user_address_count(0), safe_list_count(0), blo
 void Proofpoint::UserList::Load(const std::string& user_file, UserErrors& entry_errors)
 {
 	user_address_count = 0;
-	std::size_t count = 0;
+	std::size_t line_number = 0;
 	std::ifstream f(user_file);
 	csv::CsvParser parser(f);
 	csv::HeaderMap header_map;
@@ -33,8 +33,16 @@ void Proofpoint::UserList::Load(const std::string& user_file, UserErrors& entry_
 	// Validate there are headers we are interested in...
 	csv::HeaderIndex header_index = parser.FindHeader(required_headers, header_map);
 
-	if (header_index!=-1)
+	if (header_index != -1)
 		for (const auto& row : parser) {
+			line_number++;
+			size_t cols = row.size();
+
+			// Skip empty lines
+			if( cols == 1 && Utils::trim_copy(row.at(0)).empty() )
+				continue;
+
+			// Should add some logic to make sure that the column numbers exist
 			entries.emplace_back();
 			entries.back().givenName = row[header_map.find("givenName")->second];
 			entries.back().sn = row[header_map.find("sn")->second];
@@ -54,7 +62,6 @@ void Proofpoint::UserList::Load(const std::string& user_file, UserErrors& entry_
 				entries.back().block.emplace_back(std::string(block_entry));
 				block_list_count++;
 			}
-			count++;
 		}
 }
 
