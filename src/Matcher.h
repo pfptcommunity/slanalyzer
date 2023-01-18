@@ -29,6 +29,7 @@ public:
 	std::size_t GetPatternCount() override;
 private:
 	bool compiled;
+	bool compile_failed;
 	RE2::Options opt;
 	RE2::Set* match;
 	std::unordered_map<int, T> map_to_list_entry;
@@ -36,11 +37,13 @@ private:
 
 
 template<typename T>
-Proofpoint::Matcher<T>::Matcher(bool literal, bool case_sensitive, RE2::Anchor anchor) : compiled(false)
+Proofpoint::Matcher<T>::Matcher(bool literal, bool case_sensitive, RE2::Anchor anchor) : compiled(false), compile_failed(false)
 {
 	opt.set_literal(literal);
 	opt.set_case_sensitive(case_sensitive);
 	opt.set_log_errors(false);
+	// Set max memory to 16mb per pattern
+	opt.set_max_mem(16777216);
 	match = new RE2::Set(opt, anchor);
 }
 
@@ -61,9 +64,15 @@ bool Proofpoint::Matcher<T>::Match(const std::string& pattern, std::vector<T>& m
 {
 	match_indexes.clear();
 	if (!compiled) {
-		match->Compile();
+		compile_failed = match->Compile();
 		compiled = true;
 	}
+
+	if( !compile_failed ) {
+		std::cerr << "Failed to compile" << std::endl;
+		return false;
+	}
+
 	std::vector<int> m;
 	bool matched = match->Match(pattern, &m);
 	for (auto index : m) {
