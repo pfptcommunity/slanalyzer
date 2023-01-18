@@ -18,20 +18,26 @@ void Proofpoint::UserAnalyzer::Load(const UserList& userlist, PatternErrors<User
 	std::size_t count = 0;
 	addr_to_user.reserve(userlist.GetUserAddressCount());
 	for ( auto user = userlist.begin() ; user != userlist.end() ; user++ ) {
-		std::size_t index = std::distance(userlist.begin(),user);
-		addr_to_user.emplace(user->mail,index);
-		for ( const auto& email : user->proxy_addresses ) {
+		std::size_t index = std::distance(userlist.begin(), user);
+		//std::cout << "Load Primary: " << user->mail << " at " << index << std::endl;
+		addr_to_user.emplace(user->mail, index);
+		for (const auto& email : user->proxy_addresses) {
+			//std::cout << "(" << user->mail << ") Load ProxyAddress: " << email << " at " << index << std::endl;
 			addr_to_user.emplace(email, index);
 		}
-		for (std::size_t j = 0; j < user->safe.size(); j++) {
-			safe_matcher.emplace(index, std::make_shared<Matcher<UserMatch>>(true,false,RE2::ANCHOR_START));
-			safe_matcher.at(index)->Add(Utils::reverse_copy(user->safe[j].pattern), {index,j},pattern_errors);
-			//std::cout << "Added: (" << user->safe[j].pattern << ") " << user->givenName << "," << user->sn << " " << user->mail << "" << index << " --> " << j << std::endl;
- 		}
-		for (std::size_t j = 0; j < user->block.size(); j++){
-			block_matcher.emplace(index, std::make_shared<Matcher<UserMatch>>(true,false,RE2::ANCHOR_START));
-			block_matcher.at(index)->Add(Utils::reverse_copy(user->block[j].pattern), {index,j},pattern_errors);
-			//std::cout << "Added: (" << user->block[j].pattern << ") " << user->givenName << "," << user->sn << " " << user->mail << "" << index << " --> " << j << std::endl;
+		if( !user->safe.empty() ) {
+			safe_matcher.emplace(index, std::make_shared<Matcher<UserMatch>>(true, false, RE2::ANCHOR_START));
+			for (std::size_t j = 0; j<user->safe.size(); j++) {
+				safe_matcher.at(index)->Add(Utils::reverse_copy(user->safe[j].pattern), {index, j}, pattern_errors);
+				//std::cout << "Added: (" << user->safe[j].pattern << ") " << user->givenName << "," << user->sn << " " << user->mail << "" << index << " --> " << j << std::endl;
+			}
+		}
+		if( !user->block.empty() ) {
+			block_matcher.emplace(index, std::make_shared<Matcher<UserMatch>>(true, false, RE2::ANCHOR_START));
+			for (std::size_t j = 0; j<user->block.size(); j++) {
+				block_matcher.at(index)->Add(Utils::reverse_copy(user->block[j].pattern), {index, j}, pattern_errors);
+				//std::cout << "Added: (" << user->block[j].pattern << ") " << user->givenName << "," << user->sn << " " << user->mail << "" << index << " --> " << j << std::endl;
+			}
 		}
 		count++;
 	}
@@ -49,11 +55,11 @@ std::size_t Proofpoint::UserAnalyzer::Process(const std::string& ss_file, UserLi
 	csv::HeaderList required_headers{"Policy_Route","Header_From","Sender","Recipients"};
 	// Validate there are headers we are interested in...
 	header_index = parser.FindHeader(required_headers, header_map);
-	//std::cout << std::setw(35) << "Highest Index" << " " << std::setw(25) << header_index << std::endl;
+	// std::cout << std::setw(35) << "Highest Index" << " " << std::setw(25) << header_index << std::endl;
 	// std::multimap is useful for CSVs where there may be duplicate headers.
-	//for (auto i = header_map.begin(); i!= header_map.end(); i++){
+	// for (auto i = header_map.begin(); i!= header_map.end(); i++){
 	//	std::cout << std::setw(35) << i->first << " " << std::setw(25) << i->second  << " " << header_map.count(i->first) << std::endl;
-	//}
+	// }
 	if( header_index > -1 ) {
 		for (auto& row : parser) {
 			bool inbound = RE2::PartialMatch(row[header_map.find("Policy_Route")->second], inbound_check);
