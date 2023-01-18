@@ -21,7 +21,6 @@ public:
 	struct case_insensitive_unordered_map {
 	  struct comp {
 		bool operator() (const std::string& lhs, const std::string& rhs) const {
-			// On non Windows OS, use the function "strcasecmp" in #include <strings.h>
 			return strcasecmp(lhs.c_str(), rhs.c_str()) == 0;
 		}
 	  };
