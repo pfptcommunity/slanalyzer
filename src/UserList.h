@@ -46,7 +46,7 @@ public:
 public:
 	UserList();
 	void Load(const std::string& list_file, UserErrors& entry_errors);
-	void Save(const std::string& list_file, bool extened);
+	void Save(const std::string& list_file, bool extended);
 public:
 	[[nodiscard]] inline std::size_t GetUserCount() const { return entries.size(); }
 	[[nodiscard]] inline std::size_t GetUserAddressCount() const { return user_address_count; }
