@@ -36,7 +36,7 @@ match            - String matches the match field partially or completely.
 not_match        - String matches the match fields that don't match partially or completely.  
 regex            - Regular expression matches the match fields.  
 not_regex        - Regular expression matches the match fields that don't match.  
-in_ip_net        - Matches a CIDR block for $ip match field only.  
+ip_in_net        - Matches a CIDR block for $ip match field only.  
 ip_not_in_net    - Matches ip that are not in the CIDR block, for $ip match field only.
 if_in_domain_set - Matches addresses that match entries contained in a domainset. (Not Yet Implemented)
 ```
