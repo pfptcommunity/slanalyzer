@@ -32,45 +32,45 @@ void Proofpoint::Utils::reverse(std::string& str){
 	std::reverse(str.begin(),str.end());
 }
 
-void Proofpoint::Utils::ltrim(std::string& s)
+void Proofpoint::Utils::ltrim(std::string& str)
 {
-	s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+	str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](unsigned char ch) {
 	  return !std::isspace(ch);
 	}));
 }
 
-void Proofpoint::Utils::rtrim(std::string& s)
+void Proofpoint::Utils::rtrim(std::string& str)
 {
-	s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+	str.erase(std::find_if(str.rbegin(), str.rend(), [](unsigned char ch) {
 	  return !std::isspace(ch);
-	}).base(), s.end());
+	}).base(), str.end());
 }
 
-void Proofpoint::Utils::trim(std::string& s)
+void Proofpoint::Utils::trim(std::string& str)
 {
-	rtrim(s);
-	ltrim(s);
+	rtrim(str);
+	ltrim(str);
 }
 
 std::string Proofpoint::Utils::reverse_copy(std::string str){
 	std::reverse(str.begin(),str.end());
-	return std::move(str);
+	return str;
 }
 
-std::string Proofpoint::Utils::ltrim_copy(std::string s)
+std::string Proofpoint::Utils::ltrim_copy(std::string str)
 {
-	ltrim(s);
-	return std::move(s);
+	ltrim(str);
+	return str;
 }
 
-std::string Proofpoint::Utils::rtrim_copy(std::string s)
+std::string Proofpoint::Utils::rtrim_copy(std::string str)
 {
-	rtrim(s);
-	return std::move(s);
+	rtrim(str);
+	return str;
 }
 
-std::string Proofpoint::Utils::trim_copy(std::string s)
+std::string Proofpoint::Utils::trim_copy(std::string str)
 {
-	trim(s);
-	return std::move(s);
+	trim(str);
+	return str;
 }
