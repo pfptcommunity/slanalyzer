@@ -45,7 +45,7 @@ if_in_domain_set - Matches addresses that match entries contained in a domainset
 
 ```
 # Install necessary packages for the build 
-sudo apt install update
+sudo apt update
 sudo apt install cmake
 sudo apt install g++
 sudo apt install libre2-dev
