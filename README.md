@@ -13,6 +13,21 @@ filtering module.
 * cmake
 * g++ (C++20 is required)
 
+
+### Supported platforms
+
+The project is known to build and run on modern Linux distributions, including:
+
+- **Debian GNU/Linux 13 (trixie)**
+- **WSL (Windows Subsystem for Linux)** using Debian 13
+- GCC 14.x or newer
+- CMake 3.16 or newer
+
+Other modern Linux distributions may work but have not been explicitly tested.
+
+---
+
+
 The global safe and block entries have the following match fields.
 
 ```
@@ -46,15 +61,14 @@ if_in_domain_set - Matches addresses that match entries contained in a domainset
 ```
 # Install necessary packages for the build 
 sudo apt update
+sudo apt install build-essential
 sudo apt install cmake
+sudo apt install pkg-config
 sudo apt install g++
 sudo apt install libre2-dev
+sudo apt install libabsl-dev
 sudo apt-get install gdb
 
-# Ubuntu 20.04 (requires GCC 10.1 or greater) you will need to install the following
-sudo apt update
-sudo apt install -y gcc-10 g++-10 cpp-10
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10 --slave /usr/bin/gcov gcov /usr/bin/gcov-10
 
 # Download slparser via Git or Zip
 git clone https://github.com/pfptcommunity/slanalyzer
