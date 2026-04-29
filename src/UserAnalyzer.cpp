@@ -63,7 +63,7 @@ std::size_t Proofpoint::UserAnalyzer::Process(const std::string& ss_file, UserLi
 	if( header_index > -1 ) {
 		for (auto& row : parser) {
 			bool inbound = RE2::PartialMatch(row[header_map.find("Policy_Route")->second], inbound_check);
-			std::string hfrom = (hfrom_addr_only.Match(row[header_map.find("Header_From")->second], 0,row[header_map.find("Header_From")->second].length(), RE2::UNANCHORED, matches, 2)) ? matches[1].ToString() : row[header_map.find("Header_From")->second];
+			std::string hfrom = (hfrom_addr_only.Match(row[header_map.find("Header_From")->second], 0,row[header_map.find("Header_From")->second].length(), RE2::UNANCHORED, matches, 2)) ? std::string(matches[1].data(), matches[1].size()) : row[header_map.find("Header_From")->second];
 			Utils::reverse(hfrom);
 			std::string sender = Utils::reverse_copy(row[header_map.find("Sender")->second]);
 

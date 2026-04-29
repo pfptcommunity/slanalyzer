@@ -7,6 +7,7 @@
  * @license MIT
  */
 #include "Utils.h"
+#include <algorithm>
 
 std::vector<std::string_view> Proofpoint::Utils::split(std::string_view str, char d)
 {

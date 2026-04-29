@@ -1,156 +1,151 @@
-/**
- * This code was tested against C++20
- *
- * @author Ludvik Jerabek
- * @package slanalyzer
- * @version 1.0.0
- * @license MIT
- */
 #include "Subnet.h"
+
+#include <arpa/inet.h>
+#include <cstring>
 #include <cstdlib>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include "re2/re2.h"
 
-Proofpoint::Subnet::Subnet(const std::string& cidr)
-		:min(0), max(0), wmask(0), hosts(0)
-{
-	re2::StringPiece matches[3];
+using namespace Proofpoint;
 
-	if (!cidr_matcher.Match(cidr, 0, cidr.length(), RE2::ANCHOR_BOTH, matches, 3))
-		throw SubnetArgumentException("Invalid CIDR format ["+cidr+"]");
+/* ---------- Static helpers ---------- */
 
-	in_addr net_address = {0};
+bool Subnet::IsValidIp(const std::string& address)
+{
+    return RE2::FullMatch(address, ip_matcher);
+}
 
-	if (inet_pton(AF_INET, matches[1].ToString().c_str(), &net_address)==0)
-		throw SubnetArgumentException("Invalid network address format ["+matches[1].ToString()+"]");
+bool Subnet::IsValidCidr(const std::string& cidr)
+{
+    std::string n, b;
+    return IsValidCidr(cidr, n, b);
+}
 
-	unsigned long b = atoi(matches[2].ToString().c_str());
+bool Subnet::IsValidCidr(const std::string& cidr,
+                         std::string& network,
+                         std::string& bits)
+{
+    re2::StringPiece net_part;
+    re2::StringPiece bits_part;
 
-	this->net = ntohl(net_address.s_addr);
+    if (!RE2::FullMatch(cidr, cidr_matcher, &net_part, &bits_part))
+        return false;
 
-	mask = (0xFFFFFFFFu << (32-b));
-	net = net & mask;
-	wmask = ~mask;
-	bcast = net | wmask;
-	min = net+1;
-	max = bcast-1;
-	hosts = wmask-1;
+    network.assign(net_part.data(), net_part.size());
+    bits.assign(bits_part.data(), bits_part.size());
+    return true;
 }
-Proofpoint::Subnet::Subnet(const std::string& network, const std::string& netmask)
-{
-	in_addr net_address = {0};
-	in_addr mask_address = {0};
 
-	if (inet_pton(AF_INET, network.c_str(), &net_address)==0)
-		throw SubnetArgumentException("Invalid network address format ["+network+"]");
+/* ---------- Constructors ---------- */
 
-	if (inet_pton(AF_INET, netmask.c_str(), &mask_address)==0)
-		throw SubnetArgumentException("Invalid mask address format ["+netmask+"]");
+Subnet::Subnet(const std::string& cidr)
+{
+    std::string net_str, bits_str;
+    if (!IsValidCidr(cidr, net_str, bits_str)) {
+        throw SubnetArgumentException("Invalid CIDR: " + cidr);
+    }
 
-	this->net = ntohl(net_address.s_addr);
-	this->mask = ntohl(mask_address.s_addr);
+    in_addr net_addr{};
+    if (inet_pton(AF_INET, net_str.c_str(), &net_addr) == 0) {
+        throw SubnetArgumentException("Invalid network address: " + net_str);
+    }
 
-	if ((mask & (~mask >> 1))) {
-		throw SubnetArgumentException("Invalid mask address ["+GetAddress(mask)+"]");
-	}
-	net = net & mask;
-	wmask = ~mask;
-	bcast = net | wmask;
-	min = net+1;
-	max = bcast-1;
-	hosts = wmask-1;
+    int bits = std::stoi(bits_str);
+    if (bits < 0 || bits > 32) {
+        throw SubnetArgumentException("Invalid CIDR bits: " + bits_str);
+    }
+
+    net = ntohl(net_addr.s_addr);
+    mask = bits == 0 ? 0 : (~0U << (32 - bits));
+
+    min   = net & mask;
+    max   = min | ~mask;
+    bcast = max;
+    wmask = ~mask;
+
+    hosts = (bits >= 31) ? 0 : ((1U << (32 - bits)) - 2);
 }
-Proofpoint::Subnet::Subnet(const in_addr_t& network, const in_addr_t& netmask, Proofpoint::Subnet::ByteOrder order)
+
+Subnet::Subnet(const std::string& network, const std::string& netmask)
 {
-	if (order==ByteOrder::HOST) {
-		net = network;
-		mask = netmask;
-	}
-	else {
-		net = ntohl(network);
-		mask = ntohl(netmask);
-	}
-	net = net & mask;
-	wmask = ~mask;
-	bcast = net | wmask;
-	min = net+1;
-	max = bcast-1;
-	hosts = wmask-1;
+    in_addr net_addr{}, mask_addr{};
+
+    if (inet_pton(AF_INET, network.c_str(), &net_addr) == 0 ||
+        inet_pton(AF_INET, netmask.c_str(), &mask_addr) == 0) {
+        throw SubnetArgumentException("Invalid network or mask");
+    }
+
+    net  = ntohl(net_addr.s_addr);
+    mask = ntohl(mask_addr.s_addr);
+
+    min   = net & mask;
+    max   = min | ~mask;
+    bcast = max;
+    wmask = ~mask;
+    hosts = (mask == 0xFFFFFFFF) ? 0 : ((~mask) - 1);
 }
-std::string Proofpoint::Subnet::GetNet() const
+
+Subnet::Subnet(const in_addr_t& network,
+               const in_addr_t& netmask,
+               ByteOrder order)
 {
-	return GetAddress(this->net);
+    net  = (order == NETWORK) ? ntohl(network) : network;
+    mask = (order == NETWORK) ? ntohl(netmask) : netmask;
+
+    min   = net & mask;
+    max   = min | ~mask;
+    bcast = max;
+    wmask = ~mask;
+    hosts = (mask == 0xFFFFFFFF) ? 0 : ((~mask) - 1);
 }
-std::string Proofpoint::Subnet::GetMask() const
+
+/* ---------- Getters ---------- */
+
+static std::string to_string(in_addr_t addr)
 {
-	return GetAddress(this->mask);
+    in_addr a{ htonl(addr) };
+    char buf[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &a, buf, sizeof(buf));
+    return buf;
 }
-std::string Proofpoint::Subnet::GetMin() const
+
+std::string Subnet::GetNet() const { return to_string(net); }
+std::string Subnet::GetMask() const { return to_string(mask); }
+std::string Subnet::GetMin() const { return to_string(min); }
+std::string Subnet::GetMax() const { return to_string(max); }
+std::string Subnet::GetBroadcast() const { return to_string(bcast); }
+std::string Subnet::GetWildcard() const { return to_string(wmask); }
+
+in_addr_t Subnet::GetNetAddress(ByteOrder order) const
 {
-	return GetAddress(this->min);
+    return order == NETWORK ? htonl(net) : net;
 }
-std::string Proofpoint::Subnet::GetMax() const
+
+in_addr_t Subnet::GetMaskAddress(ByteOrder order) const
 {
-	return GetAddress(this->max);
+    return order == NETWORK ? htonl(mask) : mask;
 }
-std::string Proofpoint::Subnet::GetBroadcast() const
+
+in_addr_t Subnet::GetMinAddress(ByteOrder order) const
 {
-	return GetAddress(this->bcast);
+    return order == NETWORK ? htonl(min) : min;
 }
-std::string Proofpoint::Subnet::GetWildcard() const
+
+in_addr_t Subnet::GetMaxAddress(ByteOrder order) const
 {
-	return GetAddress(this->wmask);
+    return order == NETWORK ? htonl(max) : max;
 }
-in_addr_t Proofpoint::Subnet::GetNetAddress(Proofpoint::Subnet::ByteOrder order) const
+
+in_addr_t Subnet::GetBroadcastAddress(ByteOrder order) const
 {
-	return (order==ByteOrder::HOST) ? net : htonl(net);
+    return order == NETWORK ? htonl(bcast) : bcast;
 }
-in_addr_t Proofpoint::Subnet::GetMaskAddress(Proofpoint::Subnet::ByteOrder order) const
+
+in_addr_t Subnet::GetWildcardAddress(ByteOrder order) const
 {
-	return (order==ByteOrder::HOST) ? mask : htonl(mask);
+    return order == NETWORK ? htonl(wmask) : wmask;
 }
-in_addr_t Proofpoint::Subnet::GetMinAddress(Proofpoint::Subnet::ByteOrder order) const
+
+uint32_t Subnet::GetAddressableHosts() const
 {
-	return (order==ByteOrder::HOST) ? min : htonl(min);
+    return hosts;
 }
-in_addr_t Proofpoint::Subnet::GetMaxAddress(Proofpoint::Subnet::ByteOrder order) const
-{
-	return (order==ByteOrder::HOST) ? max : htonl(max);
-}
-in_addr_t Proofpoint::Subnet::GetBroadcastAddress(Proofpoint::Subnet::ByteOrder order) const
-{
-	return (order==ByteOrder::HOST) ? bcast : htonl(bcast);
-}
-in_addr_t Proofpoint::Subnet::GetWildcardAddress(Proofpoint::Subnet::ByteOrder order) const
-{
-	return (order==ByteOrder::HOST) ? wmask : htonl(wmask);
-}
-uint32_t Proofpoint::Subnet::GetAddressableHosts() const
-{
-	return hosts;
-}
-bool Proofpoint::Subnet::IsValidIp(const std::string& address)
-{
-	return RE2::FullMatch(address, ip_matcher);
-}
-bool Proofpoint::Subnet::IsValidCidr(const std::string& cidr, std::string& network, std::string& bits)
-{
-	re2::StringPiece matches[3];
-	if (!cidr_matcher.Match(cidr, 0, cidr.length(), RE2::ANCHOR_BOTH, matches, 3)) return false;
-	network = matches[1].ToString();
-	bits = matches[2].ToString();
-	return true;
-}
-bool Proofpoint::Subnet::IsValidCidr(const std::string& cidr)
-{
-	return RE2::FullMatch(cidr, cidr_matcher);
-}
-std::string Proofpoint::Subnet::GetAddress(in_addr_t address, Proofpoint::Subnet::ByteOrder order)
-{
-	char s[INET_ADDRSTRLEN];
-	if (order==ByteOrder::HOST)
-		address = htonl(address);
-	inet_ntop(AF_INET, &address, s, INET_ADDRSTRLEN);
-	return s;
-}
+
