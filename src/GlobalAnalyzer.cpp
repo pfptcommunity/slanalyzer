@@ -70,7 +70,7 @@ std::size_t Proofpoint::GlobalAnalyzer::Process(const std::string& ss_file, Glob
 		// This single call has large impact on processing. Since we need to perform header from "address only"
 		hfrom.Match(inbound, (hfrom_addr_only.Match(row[header_map.find("Header_From")->second], 0,
 				row[header_map.find("Header_From")->second].length(), RE2::UNANCHORED, matches, 2))
-				? matches[1].ToString() : row[header_map.find("Header_From")->second], safelist.entries);
+				? Utils::cvt_std_string(matches[1]) : row[header_map.find("Header_From")->second], safelist.entries);
 		from.Match(inbound, row[header_map.find("Sender")->second], safelist.entries);
 
 		rcpt.Match(inbound, Utils::split(row[header_map.find("Recipients")->second],','), safelist.entries);

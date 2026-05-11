@@ -10,7 +10,7 @@
 #include "CsvParser.h"
 #include "Utils.h"
 #include <iostream>
-#include <utility>
+#include <cstring>
 #include <chrono>
 #include "re2/re2.h"
 #include <numeric>
