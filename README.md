@@ -49,6 +49,7 @@ sudo apt update
 sudo apt install cmake
 sudo apt install g++
 sudo apt install libre2-dev
+sudo apt install pkg-config
 sudo apt-get install gdb
 
 # Ubuntu 20.04 (requires GCC 10.1 or greater) you will need to install the following
