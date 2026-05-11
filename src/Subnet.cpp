@@ -7,6 +7,7 @@
  * @license MIT
  */
 #include "Subnet.h"
+#include "Utils.h"
 #include <cstdlib>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -22,30 +23,41 @@ Proofpoint::Subnet::Subnet(const std::string& cidr)
 
 	in_addr net_address = {0};
 
-	if (inet_pton(AF_INET, matches[1].ToString().c_str(), &net_address)==0)
-		throw SubnetArgumentException("Invalid network address format ["+matches[1].ToString()+"]");
+	std::string address = Utils::cvt_std_string(matches[1]);
+	if (inet_pton(AF_INET, address.c_str(), &net_address) != 1)
+		throw SubnetArgumentException("Invalid network address format ["+address+"]");
 
-	unsigned long b = atoi(matches[2].ToString().c_str());
+	std::string bits = Utils::cvt_std_string(matches[2]);
+	unsigned long b = atoi(bits.c_str());
 
 	this->net = ntohl(net_address.s_addr);
 
-	mask = (0xFFFFFFFFu << (32-b));
+	mask = (b == 0) ? 0 : (0xFFFFFFFFu << (32 - b));
+
 	net = net & mask;
 	wmask = ~mask;
 	bcast = net | wmask;
-	min = net+1;
-	max = bcast-1;
-	hosts = wmask-1;
+
+	if (b >= 31) {
+		min = net;
+		max = bcast;
+		hosts = 0;
+	}
+	else {
+		min = net + 1;
+		max = bcast - 1;
+		hosts = wmask - 1;
+	}
 }
 Proofpoint::Subnet::Subnet(const std::string& network, const std::string& netmask)
 {
 	in_addr net_address = {0};
 	in_addr mask_address = {0};
 
-	if (inet_pton(AF_INET, network.c_str(), &net_address)==0)
+	if (inet_pton(AF_INET, network.c_str(), &net_address) != 1)
 		throw SubnetArgumentException("Invalid network address format ["+network+"]");
 
-	if (inet_pton(AF_INET, netmask.c_str(), &mask_address)==0)
+	if (inet_pton(AF_INET, netmask.c_str(), &mask_address) != 1)
 		throw SubnetArgumentException("Invalid mask address format ["+netmask+"]");
 
 	this->net = ntohl(net_address.s_addr);
@@ -138,8 +150,8 @@ bool Proofpoint::Subnet::IsValidCidr(const std::string& cidr, std::string& netwo
 {
 	re2::StringPiece matches[3];
 	if (!cidr_matcher.Match(cidr, 0, cidr.length(), RE2::ANCHOR_BOTH, matches, 3)) return false;
-	network = matches[1].ToString();
-	bits = matches[2].ToString();
+	network = Utils::cvt_std_string(matches[1]);
+	bits = Utils::cvt_std_string(matches[2]);
 	return true;
 }
 bool Proofpoint::Subnet::IsValidCidr(const std::string& cidr)
