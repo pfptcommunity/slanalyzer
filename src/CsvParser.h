@@ -10,12 +10,11 @@
 #define ARIA_CSV_H
 
 #include <fstream>
-#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <unordered_set>
 #include <map>
+#include <optional>
 #include <algorithm>
 
 namespace csv {
@@ -380,36 +379,63 @@ public:
 	iterator end() { return iterator(this, true); };
 
 public:
-	typedef std::multimap<std::string,std::size_t> HeaderMap;
-	typedef std::vector<std::string> HeaderList;
-	typedef std::vector<std::string>::difference_type HeaderIndex;
-	// Search limit will set how many lines to search before aborting header lookup
-	HeaderIndex FindHeader(const HeaderList& required_fields, HeaderMap& header_map, std::size_t search_limit = 0)
+	using HeaderMap = std::multimap<std::string,std::size_t> ;
+	using HeaderList = std::vector<std::string>;
+	using HeaderIndex = std::size_t;
+
+	std::optional<HeaderIndex> FindHeader(
+	const HeaderList& required_fields,
+	HeaderMap& header_map,
+	std::size_t search_limit = 0)
 	{
-		std::size_t lines_read = 0;
+		HeaderIndex lines_read = 0;
+
 		for (const auto& row : *this) {
-			// Max lines to search was reached
-			if( search_limit > 0 && search_limit <= lines_read++ ) break;
-			if (row.size() < required_fields.size()) continue;
-			// Find header and return true
-			HeaderIndex max_req = -1;
-			if (std::ranges::all_of(required_fields,[&max_req, &row](const std::string& field) {
-				auto found = std::find(row.begin(), row.end(), field);
-			  	if( found != row.end() ) max_req = std::max(max_req, std::distance(row.begin(),found));
-				  return found != row.end();
-			})){
-				std::size_t index = 0;
-				std::transform( row.begin(), row.end() ,std::inserter( header_map , header_map.end() ) ,[&index](const std::string& field)  {return std::make_pair(field,index++); } );
-				// Return success and position of highest required index
+			if (search_limit > 0 && lines_read >= search_limit) {
+				break;
+			}
+
+			++lines_read;
+
+			if (row.size() < required_fields.size()) {
+				continue;
+			}
+
+			std::size_t max_req = 0;
+
+			const bool found_all = std::ranges::all_of(
+				required_fields,
+				[&max_req, &row](const std::string& field) {
+					auto found = std::find(row.begin(), row.end(), field);
+
+					if (found == row.end()) {
+						return false;
+					}
+
+					auto index = static_cast<std::size_t>(
+						std::distance(row.begin(), found)
+					);
+
+					max_req = std::max(max_req, index);
+					return true;
+				});
+
+			if (found_all) {
+				header_map.clear();
+
+				for (std::size_t index = 0; index < row.size(); ++index) {
+					header_map.emplace(row[index], index);
+				}
+
 				return max_req;
 			}
 		}
-		// Nothing was found -1
-		return -1;
+
+		return std::nullopt;
 	}
 };
-typedef CsvParser::HeaderMap HeaderMap;
-typedef CsvParser::HeaderList HeaderList;
-typedef CsvParser::HeaderIndex HeaderIndex;
+using HeaderMap = CsvParser::HeaderMap;
+using HeaderList = CsvParser::HeaderList;
+using HeaderIndex = CsvParser::HeaderIndex;
 }
 #endif
