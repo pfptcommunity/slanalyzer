@@ -42,10 +42,10 @@ void Proofpoint::UserAnalyzer::Load(const UserList& userlist, PatternErrors<User
 		count++;
 	}
 }
-std::size_t Proofpoint::UserAnalyzer::Process(const std::string& ss_file, UserList& userlist, std::size_t& records_processed)
+
+std::optional<std::size_t> Proofpoint::UserAnalyzer::Process(const std::string& ss_file, UserList& userlist, std::size_t& records_processed)
 {
 	records_processed = 0;
-	csv::HeaderIndex header_index;
 	std::ifstream f(ss_file);
 	csv::CsvParser parser(f);
 	re2::StringPiece matches[2];
@@ -54,15 +54,15 @@ std::size_t Proofpoint::UserAnalyzer::Process(const std::string& ss_file, UserLi
 	csv::HeaderMap header_map;
 	csv::HeaderList required_headers{"Policy_Route","Header_From","Sender","Recipients"};
 	// Validate there are headers we are interested in...
-	header_index = parser.FindHeader(required_headers, header_map);
+	auto header_index = parser.FindHeader(required_headers, header_map);
 	// std::cout << std::setw(35) << "Highest Index" << " " << std::setw(25) << header_index << std::endl;
 	// std::multimap is useful for CSVs where there may be duplicate headers.
 	// for (auto i = header_map.begin(); i!= header_map.end(); i++){
 	//	std::cout << std::setw(35) << i->first << " " << std::setw(25) << i->second  << " " << header_map.count(i->first) << std::endl;
 	// }
-	if( header_index > -1 ) {
+	if(header_index) {
 		for (auto& row : parser) {
-			bool inbound = RE2::PartialMatch(row[header_map.find("Policy_Route")->second], inbound_check);
+			//bool inbound = RE2::PartialMatch(row[header_map.find("Policy_Route")->second], inbound_check);
 			std::string hfrom = (hfrom_addr_only.Match(row[header_map.find("Header_From")->second], 0,row[header_map.find("Header_From")->second].length(), RE2::UNANCHORED, matches, 2)) ? Utils::cvt_std_string(matches[1]) : row[header_map.find("Header_From")->second];
 			Utils::reverse(hfrom);
 			std::string sender = Utils::reverse_copy(row[header_map.find("Sender")->second]);

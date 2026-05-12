@@ -52,8 +52,8 @@ void Proofpoint::GlobalList::Save(const std::string& list_file)
 {
 	std::size_t count = 0;
 	RE2 quoted("\"");
-	const char delim{'"'};
-	const char escape{'"'};
+	// const char delim{'"'};
+	// const char escape{'"'};
 	std::ios_base::sync_with_stdio(false);
 	std::ofstream f(list_file);
 	f << "\"" << "FieldType"

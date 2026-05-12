@@ -34,9 +34,8 @@ void Proofpoint::GlobalAnalyzer::Load(const GlobalList& safelist, PatternErrors<
 		}
 	}
 }
-std::size_t Proofpoint::GlobalAnalyzer::Process(const std::string& ss_file, GlobalList& safelist, std::size_t& records_processed)
+std::optional<std::size_t> Proofpoint::GlobalAnalyzer::Process(const std::string& ss_file, GlobalList& safelist, std::size_t& records_processed)
 {
-	csv::HeaderIndex header_index;
 	std::ifstream f(ss_file);
 	csv::CsvParser parser(f);
 	re2::StringPiece matches[2];
@@ -53,7 +52,7 @@ std::size_t Proofpoint::GlobalAnalyzer::Process(const std::string& ss_file, Glob
 			"Recipients"};
 
 	// Validate there are headers we are interested in...
-	header_index = parser.FindHeader(required_headers, header_map);
+	auto header_index = parser.FindHeader(required_headers, header_map);
 
 	//std::cout << std::setw(35) << "Highest Index" << " " << std::setw(25) << header_index << std::endl;
 	// std::multimap is useful for CSVs where there may be duplicate headers.
@@ -61,7 +60,7 @@ std::size_t Proofpoint::GlobalAnalyzer::Process(const std::string& ss_file, Glob
 	//	std::cout << std::setw(35) << i->first << " " << std::setw(25) << i->second  << " " << header_map.count(i->first) << std::endl;
 	//}
 
-	if( header_index > -1 )
+	if(header_index)
  	for (auto& row : parser){
 		bool inbound = RE2::PartialMatch(row[header_map.find("Policy_Route")->second], inbound_check);
 		ip.Match(inbound, row[header_map.find("Sender_IP_Address")->second], safelist.entries);

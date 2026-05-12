@@ -43,7 +43,7 @@ public:
 	UserAnalyzer() = default;
 	~UserAnalyzer() = default;
 	void Load(const UserList& safelist, PatternErrors<UserMatch>& pattern_errors);
-	std::size_t Process(const std::string& ss_file, UserList& safelist, std::size_t& records_processed );
+	std::optional<std::size_t> Process(const std::string& ss_file, UserList& safelist, std::size_t& records_processed );
 private:
 	std::unordered_map<std::string,UserIndex,case_insensitive_unordered_map::hash,case_insensitive_unordered_map::comp> addr_to_user;
 	std::unordered_map<UserIndex,std::shared_ptr<Matcher<UserMatch>>> safe_matcher;
