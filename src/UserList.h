@@ -45,7 +45,7 @@ public:
 	using UserErrors = std::vector<UserError>;
 public:
 	UserList();
-	void Load(const std::string& list_file, UserErrors& entry_errors);
+	void Load(const std::string& list_file, [[maybe_unused]] UserErrors& entry_errors);
 	void Save(const std::string& list_file, bool extended);
 public:
 	[[nodiscard]] inline std::size_t GetUserCount() const { return entries.size(); }
@@ -66,6 +66,6 @@ private:
 	std::size_t safe_list_count;
 	std::size_t block_list_count;
 };
-typedef UserList::UserErrors UserErrors;
+using UserErrors = UserList::UserErrors;
 }
 #endif //SLANALYZER_USERSAFELIST_H

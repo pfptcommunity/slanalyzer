@@ -15,7 +15,7 @@
 
 Proofpoint::UserList::UserList() :user_address_count(0), safe_list_count(0), block_list_count(0) {}
 
-void Proofpoint::UserList::Load(const std::string& user_file, UserErrors& entry_errors)
+void Proofpoint::UserList::Load(const std::string& user_file, [[maybe_unused]] UserErrors& entry_errors)
 {
 	user_address_count = 0;
 	std::size_t line_number = 0;
@@ -30,10 +30,9 @@ void Proofpoint::UserList::Load(const std::string& user_file, UserErrors& entry_
 			"sn",
 			"mail"};
 
-	// Validate there are headers we are interested in...
-	csv::HeaderIndex header_index = parser.FindHeader(required_headers, header_map);
+	auto header_index = parser.FindHeader(required_headers, header_map);
 
-	if (header_index != -1)
+	if (!header_index)
 		for (const auto& row : parser) {
 			line_number++;
 			size_t cols = row.size();
