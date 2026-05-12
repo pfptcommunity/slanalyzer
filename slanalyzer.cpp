@@ -209,7 +209,7 @@ int main(int argc, char* argv[])
 		for (const auto& file : ss_inputs) {
 			s = high_resolution_clock::now();
 			std::size_t records_processed = 0;
-			std::size_t header_index = processor.Process(file, safelist, records_processed);
+			auto header_index = processor.Process(file, safelist, records_processed);
 			e = high_resolution_clock::now();
 			d = duration_cast<microseconds>(e-s);
 			total_records_processed += records_processed;
@@ -217,7 +217,7 @@ int main(int argc, char* argv[])
 					  << std::right << std::setw(25) <<  "Analysis Time: "
 					  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl
 					  << std::right << std::setw(25) << "Smart Search File: "
-					  << file << ((header_index == -1) ? " (No CSV Header Found)" : "") << std::endl << std::endl;
+					  << file << (!header_index ? " (No CSV Header Found)" : "") << std::endl << std::endl;
 		}
 		std::cout << std::left << "### Analysis Summary ###" << std::endl
 				  << std::right << std::setw(25) <<  "Total Inbound: "
@@ -292,7 +292,7 @@ int main(int argc, char* argv[])
 		for (const auto& file : ss_inputs) {
 			s = high_resolution_clock::now();
 			std::size_t records_processed = 0;
-			std::size_t header_index = processor.Process(file, user_safe_list, records_processed);
+			auto header_index = processor.Process(file, user_safe_list, records_processed);
 			e = high_resolution_clock::now();
 			d = duration_cast<microseconds>(e-s);
 			total_records_processed += records_processed;
@@ -300,7 +300,7 @@ int main(int argc, char* argv[])
 					  << std::right << std::setw(25) <<  "Analysis Time: "
 					  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl
 					  << std::right << std::setw(25) << "Smart Search File: "
-					  << file << ((header_index == -1) ? " (No CSV Header Found)" : "") << std::endl << std::endl;
+					  << file << (!header_index ? " (No CSV Header Found)" : "") << std::endl << std::endl;
 		}
 		std::cout << std::left << "### Analysis Summary ###" << std::endl
 		          << std::right << std::setw(25) <<  "Total Safe Listed: "
