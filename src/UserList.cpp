@@ -32,7 +32,7 @@ void Proofpoint::UserList::Load(const std::string& user_file, [[maybe_unused]] U
 
 	auto header_index = parser.FindHeader(required_headers, header_map);
 
-	if (!header_index)
+	if (header_index)
 		for (const auto& row : parser) {
 			line_number++;
 			size_t cols = row.size();
