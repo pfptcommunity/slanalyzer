@@ -167,9 +167,12 @@ int main(int argc, char* argv[])
 		exit(1);
 	}
 
+	std::size_t total_records_processed = 0;
 	auto start = high_resolution_clock::now();
-	if( safe ) {
 
+	// Global Safe / Block List
+	if( safe ) {
+		// Global Safe / Block List Specified
 		Proofpoint::GlobalList safelist;
 		Proofpoint::GlobalList::EntryErrors entry_errors;
 
@@ -205,7 +208,6 @@ int main(int argc, char* argv[])
 				  << std::left << std::setw(25) << pattern_errors.size() << std::endl
 				  << std::endl;
 
-		std::size_t total_records_processed = 0;
 		for (const auto& file : ss_inputs) {
 			s = high_resolution_clock::now();
 			std::size_t records_processed = 0;
@@ -216,6 +218,8 @@ int main(int argc, char* argv[])
 			std::cout << std::left << "### Analysis Completed ###" << std::endl
 					  << std::right << std::setw(25) <<  "Analysis Time: "
 					  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl
+			          << std::right << std::setw(25) <<  "Records Processed: "
+			          << std::left << records_processed << std::endl
 					  << std::right << std::setw(25) << "Smart Search File: "
 					  << file << (!header_index ? " (No CSV Header Found)" : "") << std::endl << std::endl;
 		}
@@ -249,6 +253,7 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
+	// User Block / Safe List
 	if( user ) {
 		Proofpoint::UserList user_safe_list;
 		Proofpoint::UserList::UserErrors user_errors;
@@ -287,9 +292,8 @@ int main(int argc, char* argv[])
 				  << std::right << std::setw(25) << "Pattern Errors: "
 				  << std::left << std::setw(25) << pattern_errors.size() << std::endl << std::endl;
 
-
-		std::size_t total_records_processed = 0;
-		for (const auto& file : ss_inputs) {
+		for (const auto& file : ss_inputs)
+		{
 			s = high_resolution_clock::now();
 			std::size_t records_processed = 0;
 			auto header_index = processor.Process(file, user_safe_list, records_processed);
@@ -299,6 +303,8 @@ int main(int argc, char* argv[])
 			std::cout << std::left << "### Analysis Completed ###" << std::endl
 					  << std::right << std::setw(25) <<  "Analysis Time: "
 					  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl
+			          << std::right << std::setw(25) <<  "Records Processed: "
+                      << std::left << records_processed << std::endl
 					  << std::right << std::setw(25) << "Smart Search File: "
 					  << file << (!header_index ? " (No CSV Header Found)" : "") << std::endl << std::endl;
 		}
@@ -321,8 +327,11 @@ int main(int argc, char* argv[])
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop-start);
 	std::cout << std::left << "### Processing Completed ###" << std::endl
+	          << std::right << std::setw(25) <<  "Total Records Processed: "
+              << std::left <<  total_records_processed << std::endl
 	          << std::right << std::setw(25) <<  "Total Processing Time: "
 			  << std::left << std::setprecision(9) << (double)duration.count()/1000000 << "s" << std::endl << std::endl;
+
 
 	return 0;
 }
