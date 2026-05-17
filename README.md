@@ -77,7 +77,9 @@ Export the block / safe list you want to compare.
 ![image](https://user-images.githubusercontent.com/83429267/202720435-3b27e154-6702-4b11-94d7-559a0f2484f4.png)
 
 Export the results to a CSV(s) and pass them to the tool as the last parameter.  
-![image](https://user-images.githubusercontent.com/83429267/203168166-e82e4592-2f97-459c-b7e7-5ab7b0d30531.png)
+<img width="1115" height="609" alt="image" src="https://github.com/user-attachments/assets/dd064d86-fcfb-4d16-b3e1-a89e8f7a4c9c" />
+
+
 
 
 ### Reviewing the Data
