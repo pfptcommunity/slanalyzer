@@ -35,7 +35,7 @@ not_equal        - String matches match fields that don't match the entire field
 match            - String matches the match field partially or completely.  
 not_match        - String matches the match fields that don't match partially or completely.  
 regex            - Regular expression matches the match fields.  
-not_regex        - Regular expression matches the match fields that don't match.  
+not_regex        - Regular expression matches the match fields that don't match. 
 ip_in_net        - Matches a CIDR block for $ip match field only.  
 ip_not_in_net    - Matches ip that are not in the CIDR block, for $ip match field only.
 if_in_domain_set - Matches addresses that match entries contained in a domainset. (Not Yet Implemented)
@@ -135,6 +135,33 @@ During testing analyzer was able to process 10,000(10K) safelist entries and 10,
 
 ### Processing Completed ###
   Total Processing Time: 74.524358s
+```
+
+### ⚠️ Negative Conditions Should Be Avoided
+
+The following negative match conditions are strongly discouraged in Proofpoint safelists and blocklists. The analizer
+issue warning for any blocklist or safelist entries containing these conditions. 
+
+ - `not_match`
+ - `not_regex`
+ - `not_equal`
+ - `ip_not_in_net` 
+
+Please see the Proofpoint Community article [Organizational Safe and Block List Best Practices](https://proofpoint.my.site.com/community/s/article/Email-Protection-PPS-PoD-Organizational-Safe-and-Block-List-Best-Practices) for more information.
+
+#### Why you should avoid them:
+- They can cause unexpected behavior and false positives/negatives
+
+#### Example errors:
+
+```
+Entry errors occurred, see the following entries in your safe or blocked list:
+
+Line: 1  FieldType: $ip     MatchType: ip_not_in_net   Reason: Negative match condition detected.
+Line: 2  FieldType: $from   MatchType: not_match       Reason: Negative match condition detected.
+Line: 3  FieldType: $from   MatchType: not_regex       Reason: Negative match condition detected.
+Line: 15 FieldType: $from   MatchType: not_equal       Reason: Negative match condition detected.
+Line: 16 FieldType: $from   MatchType: not_match       Reason: Negative match condition detected.
 ```
 
 ### Limitations
