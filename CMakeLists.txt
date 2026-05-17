@@ -30,6 +30,7 @@ pkg_check_modules(RE2 REQUIRED re2)
 add_executable(slanalyzer
         slanalyzer.cpp
         src/Subnet.cpp
+        src/SubnetSet.cpp
         src/GlobalList.cpp
         src/UserList.cpp
         src/GlobalStringMatcher.cpp
