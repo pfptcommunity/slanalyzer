@@ -14,6 +14,7 @@
 #include <chrono>
 #include <iostream>
 #include "src/UserList.h"
+#include "src/TermColor.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -239,18 +240,19 @@ int main(int argc, char* argv[])
 				  << std::left << std::setprecision(9) << (double)d.count()/1000000 << "s" << std::endl << std::endl;
 
 		if (!pattern_errors.empty()) {
-			cerr << endl << endl << endl << "Pattern errors occurred, see the following entries in your safe or blocked list:" << endl;
+			cerr << termcolor::bright_red << endl << endl << endl << "Pattern errors occurred, see the following entries in your safe or blocked list:" << endl;
 			for (auto e : pattern_errors) {
-				cerr << "Line: " << e.index << " Pattern: " << e.pattern << " Reason: " << e.error << endl;
+				cerr << "Line: " << safelist.GetLineNumber(e.index) << " Pattern: " << e.pattern << " Reason: " << e.error << endl;
 			}
 			cerr << std::endl;
 		}
 
 		if (!entry_errors.empty()) {
-			cerr << endl << endl << endl << "Entry errors occurred, see the following entries in your safe or blocked list:" << endl;
+			cerr << termcolor::bright_red << endl << endl << endl << "Entry errors occurred, see the following entries in your safe or blocked list:" << endl;
 			for (auto e : entry_errors) {
-				cerr << "Line: " << e.line << " FieldType: " << e.field_data << " MatchType: " << e.match_data << "Error: " << e.error << endl;
+				cerr << "Line: " << e.line_number << " FieldType: " << e.field_data << " MatchType: " << e.match_data << " Reason: " << e.error << endl ;
 			}
+			cerr << termcolor::reset << endl;
 		}
 	}
 	// User Block / Safe List
