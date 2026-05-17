@@ -12,13 +12,15 @@
 std::vector<std::string_view> Proofpoint::Utils::split(std::string_view str, char d)
 {
 	std::vector<std::string_view> res;
-	res.reserve(str.length()/2);
+	res.reserve(str.length() / 2);
 	const char* ptr = str.data();
 	size_t size = 0;
-	for (const char c : str) {
-		if (c==d) {
+	for (const char c : str)
+	{
+		if (c == d)
+		{
 			res.emplace_back(ptr, size);
-			ptr += size+1;
+			ptr += size + 1;
 			size = 0;
 			continue;
 		}
@@ -29,21 +31,24 @@ std::vector<std::string_view> Proofpoint::Utils::split(std::string_view str, cha
 	return res;
 }
 
-void Proofpoint::Utils::reverse(std::string& str){
-	std::reverse(str.begin(),str.end());
+void Proofpoint::Utils::reverse(std::string& str)
+{
+	std::reverse(str.begin(), str.end());
 }
 
 void Proofpoint::Utils::ltrim(std::string& str)
 {
-	str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](unsigned char ch) {
-	  return !std::isspace(ch);
+	str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](unsigned char ch)
+	{
+		return !std::isspace(ch);
 	}));
 }
 
 void Proofpoint::Utils::rtrim(std::string& str)
 {
-	str.erase(std::find_if(str.rbegin(), str.rend(), [](unsigned char ch) {
-	  return !std::isspace(ch);
+	str.erase(std::find_if(str.rbegin(), str.rend(), [](unsigned char ch)
+	{
+		return !std::isspace(ch);
 	}).base(), str.end());
 }
 
@@ -53,8 +58,9 @@ void Proofpoint::Utils::trim(std::string& str)
 	ltrim(str);
 }
 
-std::string Proofpoint::Utils::reverse_copy(std::string str){
-	std::reverse(str.begin(),str.end());
+std::string Proofpoint::Utils::reverse_copy(std::string str)
+{
+	std::reverse(str.begin(), str.end());
 	return str;
 }
 
