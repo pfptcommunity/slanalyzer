@@ -23,10 +23,6 @@ public:
 	void Add(GlobalList::MatchType type, const std::string& pattern, const std::size_t& index, PatternErrors<std::size_t>& pattern_error);
 	bool Match(bool inbound, const std::string& pattern, GlobalList::Entries& safe_list);
 private:
-	using SubnetCollection = std::vector<std::shared_ptr<Subnet>>;
-	using SubnetPair = std::tuple<SubnetCollection, std::size_t>;
-	std::vector<SubnetPair> in_subnets;
-	std::vector<SubnetPair> not_in_subnets;
 	std::unordered_map<GlobalList::MatchType, std::shared_ptr<IMatcher<std::size_t>>> matchers;
 };
 }
