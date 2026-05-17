@@ -70,10 +70,10 @@ namespace termcolor
         template <typename CharT>
         bool is_atty(const std::basic_ostream<CharT>& stream);
 
-    #if defined(TERMCOLOR_TARGET_WINDOWS)
+#if defined(TERMCOLOR_TARGET_WINDOWS)
         template <typename CharT>
         void win_change_attributes(std::basic_ostream<CharT>& stream, int foreground, int background = -1);
-    #endif
+#endif
     }
 
     template <typename CharT>
@@ -95,11 +95,11 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[00m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1, -1);
-        #endif
+#endif
         }
         return stream;
     }
@@ -109,10 +109,10 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[1m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
-        #endif
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
+#endif
         }
         return stream;
     }
@@ -122,10 +122,10 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[2m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
-        #endif
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
+#endif
         }
         return stream;
     }
@@ -135,10 +135,10 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[3m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
-        #endif
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
+#endif
         }
         return stream;
     }
@@ -148,11 +148,11 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[4m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1, COMMON_LVB_UNDERSCORE);
-        #endif
+#endif
         }
         return stream;
     }
@@ -162,10 +162,10 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[5m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
-        #endif
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
+#endif
         }
         return stream;
     }
@@ -175,10 +175,10 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[7m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
-        #endif
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
+#endif
         }
         return stream;
     }
@@ -188,10 +188,10 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[8m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
-        #endif
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
+#endif
         }
         return stream;
     }
@@ -201,10 +201,10 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[9m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
-        #endif
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
+#endif
         }
         return stream;
     }
@@ -214,10 +214,10 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[38;5;" << +code << "m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
-        #endif
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
+#endif
         }
         return stream;
     }
@@ -227,10 +227,10 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[48;5;" << +code << "m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
-        #endif
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
+#endif
         }
         return stream;
     }
@@ -240,10 +240,10 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[38;2;" << +r << ";" << +g << ";" << +b << "m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
-        #endif
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
+#endif
         }
         return stream;
     }
@@ -253,10 +253,10 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[48;2;" << +r << ";" << +g << ";" << +b << "m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
-        #endif
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
+#endif
         }
         return stream;
     }
@@ -266,13 +266,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[30m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                0   // grey (black)
+                                             0 // grey (black)
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -282,13 +282,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[31m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_RED
+                                             FOREGROUND_RED
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -298,13 +298,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[32m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_GREEN
+                                             FOREGROUND_GREEN
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -314,13 +314,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[33m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_GREEN | FOREGROUND_RED
+                                             FOREGROUND_GREEN | FOREGROUND_RED
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -330,13 +330,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[34m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_BLUE
+                                             FOREGROUND_BLUE
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -346,13 +346,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[35m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_BLUE | FOREGROUND_RED
+                                             FOREGROUND_BLUE | FOREGROUND_RED
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -362,13 +362,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[36m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_BLUE | FOREGROUND_GREEN
+                                             FOREGROUND_BLUE | FOREGROUND_GREEN
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -378,13 +378,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[37m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED
+                                             FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -395,13 +395,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[90m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                0 | FOREGROUND_INTENSITY   // grey (black)
+                                             0 | FOREGROUND_INTENSITY // grey (black)
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -411,13 +411,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[91m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_RED | FOREGROUND_INTENSITY
+                                             FOREGROUND_RED | FOREGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -427,13 +427,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[92m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_GREEN | FOREGROUND_INTENSITY
+                                             FOREGROUND_GREEN | FOREGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -443,13 +443,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[93m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
+                                             FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -459,13 +459,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[94m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_BLUE | FOREGROUND_INTENSITY
+                                             FOREGROUND_BLUE | FOREGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -475,13 +475,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[95m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY
+                                             FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -491,13 +491,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[96m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY
+                                             FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -507,13 +507,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[97m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
-                FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
+                                             FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -524,13 +524,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[40m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                0   // grey (black)
+                                             0 // grey (black)
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -540,13 +540,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[41m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_RED
+                                             BACKGROUND_RED
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -556,13 +556,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[42m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_GREEN
+                                             BACKGROUND_GREEN
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -572,13 +572,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[43m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_GREEN | BACKGROUND_RED
+                                             BACKGROUND_GREEN | BACKGROUND_RED
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -588,13 +588,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[44m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_BLUE
+                                             BACKGROUND_BLUE
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -604,13 +604,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[45m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_BLUE | BACKGROUND_RED
+                                             BACKGROUND_BLUE | BACKGROUND_RED
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -620,13 +620,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[46m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_GREEN | BACKGROUND_BLUE
+                                             BACKGROUND_GREEN | BACKGROUND_BLUE
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -636,13 +636,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[47m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_RED
+                                             BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_RED
             );
-        #endif
+#endif
         }
 
         return stream;
@@ -654,13 +654,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[100m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                0 | BACKGROUND_INTENSITY   // grey (black)
+                                             0 | BACKGROUND_INTENSITY // grey (black)
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -670,13 +670,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[101m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_RED | BACKGROUND_INTENSITY
+                                             BACKGROUND_RED | BACKGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -686,13 +686,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[102m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_GREEN | BACKGROUND_INTENSITY
+                                             BACKGROUND_GREEN | BACKGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -702,13 +702,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[103m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY
+                                             BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -718,13 +718,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[104m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_BLUE | BACKGROUND_INTENSITY
+                                             BACKGROUND_BLUE | BACKGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -734,13 +734,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[105m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_BLUE | BACKGROUND_RED | BACKGROUND_INTENSITY
+                                             BACKGROUND_BLUE | BACKGROUND_RED | BACKGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -750,13 +750,13 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[106m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY
+                                             BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY
             );
-        #endif
+#endif
         }
         return stream;
     }
@@ -766,18 +766,17 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+#if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[107m";
-        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+#elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
-                BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_RED | BACKGROUND_INTENSITY
+                                             BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_RED | BACKGROUND_INTENSITY
             );
-        #endif
+#endif
         }
 
         return stream;
     }
-
 
 
     //! Since C++ hasn't a way to hide something in the header from
@@ -848,16 +847,16 @@ namespace termcolor
             if (!std_stream)
                 return false;
 
-        #if defined(TERMCOLOR_TARGET_POSIX)
+#if defined(TERMCOLOR_TARGET_POSIX)
             return ::isatty(fileno(std_stream));
-        #elif defined(TERMCOLOR_TARGET_WINDOWS)
+#elif defined(TERMCOLOR_TARGET_WINDOWS)
             return ::_isatty(_fileno(std_stream));
-        #else
+#else
             return false;
-        #endif
+#endif
         }
 
-    #if defined(TERMCOLOR_TARGET_WINDOWS)
+#if defined(TERMCOLOR_TARGET_WINDOWS)
 
         //! same hack as used in get_standard_stream function, but for Windows with `std::ostream`
         inline HANDLE get_terminal_handle(std::ostream& stream)
@@ -933,10 +932,8 @@ namespace termcolor
 
             SetConsoleTextAttribute(hTerminal, info.wAttributes);
         }
-    #endif // TERMCOLOR_TARGET_WINDOWS
-
+#endif // TERMCOLOR_TARGET_WINDOWS
     } // namespace _internal
-
 } // namespace termcolor
 
 

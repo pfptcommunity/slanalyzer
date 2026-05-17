@@ -43,7 +43,8 @@ void Proofpoint::GlobalList::Load(const std::string& list_file, EntryErrors& ent
 		}
 
 		// Not logic is highly dangerous and will be removed from Proofpoint Safe/Block lists in the future. We will notify.
-		if (mt == MatchType::IP_NOT_IN_NET || mt == MatchType::NOT_MATCH || mt == MatchType::NOT_REGEX || mt == MatchType::NOT_EQUAL)
+		if (mt == MatchType::IP_NOT_IN_NET || mt == MatchType::NOT_MATCH || mt == MatchType::NOT_REGEX || mt ==
+			MatchType::NOT_EQUAL)
 		{
 			entry_errors.push_back({
 				line_number,

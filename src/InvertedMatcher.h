@@ -90,7 +90,8 @@ namespace Proofpoint
 
 		if (m.empty())
 		{
-			for (const auto& item : map_to_global_list) {
+			for (const auto& item : map_to_global_list)
+			{
 				match_indexes.emplace_back(item.second);
 			}
 			return matched;
@@ -98,8 +99,10 @@ namespace Proofpoint
 
 		std::unordered_set<int> matched_set(m.begin(), m.end());
 
-		for (const auto& item : map_to_global_list) {
-			if (matched_set.find(item.first) == matched_set.end()) {
+		for (const auto& item : map_to_global_list)
+		{
+			if (matched_set.find(item.first) == matched_set.end())
+			{
 				match_indexes.emplace_back(item.second);
 			}
 		}

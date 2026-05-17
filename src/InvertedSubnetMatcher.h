@@ -17,10 +17,11 @@
 #include <unordered_set>
 #include <iostream>
 
-namespace Proofpoint {
-
+namespace Proofpoint
+{
     template <typename T>
-    class InvertedSubnetMatcher : public IMatcher<T> {
+    class InvertedSubnetMatcher : public IMatcher<T>
+    {
     public:
         void Add(const std::string& pattern,
                  const T& index,
@@ -38,15 +39,17 @@ namespace Proofpoint {
 
     template <typename T>
     void InvertedSubnetMatcher<T>::Add(const std::string& pattern,
-                               const T& index,
-                               PatternErrors<T>& pattern_errors)
+                                       const T& index,
+                                       PatternErrors<T>& pattern_errors)
     {
-        for (const auto& cidr : Utils::split(pattern, ',')) {
+        for (const auto& cidr : Utils::split(pattern, ','))
+        {
             std::string error;
 
             int id = subnet_set.Add(std::string(cidr), &error);
 
-            if (id == -1) {
+            if (id == -1)
+            {
                 pattern_errors.push_back({index, std::string(cidr), error});
                 continue;
             }
@@ -57,7 +60,7 @@ namespace Proofpoint {
 
     template <typename T>
     bool InvertedSubnetMatcher<T>::Match(const std::string& pattern,
-                                 std::vector<T>& match_indexes)
+                                         std::vector<T>& match_indexes)
     {
         match_indexes.clear();
         match_indexes.reserve(map_to_list_entry.size());
@@ -68,7 +71,8 @@ namespace Proofpoint {
 
         if (matches.empty())
         {
-            for (const auto& item : map_to_list_entry) {
+            for (const auto& item : map_to_list_entry)
+            {
                 match_indexes.emplace_back(item.second);
             }
             return matched;
@@ -76,8 +80,10 @@ namespace Proofpoint {
 
         std::unordered_set<int> matched_set(matches.begin(), matches.end());
 
-        for (const auto& item : map_to_list_entry) {
-            if (matched_set.find(item.first) == matched_set.end()) {
+        for (const auto& item : map_to_list_entry)
+        {
+            if (matched_set.find(item.first) == matched_set.end())
+            {
                 match_indexes.emplace_back(item.second);
             }
         }
@@ -90,7 +96,6 @@ namespace Proofpoint {
     {
         return subnet_set.Size();
     }
-
 }
 
 #endif

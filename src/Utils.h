@@ -24,6 +24,7 @@ namespace Proofpoint::Utils
     std::string rtrim_copy(std::string s);
     std::string trim_copy(std::string s);
     std::vector<std::string_view> split(std::string_view str, char d);
+
     template <typename T>
     inline std::string cvt_std_string(const T& value)
     {

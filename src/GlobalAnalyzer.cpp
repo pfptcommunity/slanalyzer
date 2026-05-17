@@ -13,6 +13,7 @@
 #include "re2/re2.h"
 #include "Utils.h"
 #include <iostream>
+
 void Proofpoint::GlobalAnalyzer::Load(const GlobalList& safelist, PatternErrors<std::size_t>& pattern_errors)
 {
 	for (auto sle = safelist.begin(); sle != safelist.end(); sle++)

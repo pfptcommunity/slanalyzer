@@ -17,10 +17,11 @@
 #include <unordered_map>
 #include <iostream>
 
-namespace Proofpoint {
-
+namespace Proofpoint
+{
     template <typename T>
-    class SubnetMatcher : public IMatcher<T> {
+    class SubnetMatcher : public IMatcher<T>
+    {
     public:
         void Add(const std::string& pattern,
                  const T& index,
@@ -41,12 +42,14 @@ namespace Proofpoint {
                                const T& index,
                                PatternErrors<T>& pattern_errors)
     {
-        for (const auto& cidr : Utils::split(pattern, ',')) {
+        for (const auto& cidr : Utils::split(pattern, ','))
+        {
             std::string error;
 
             int id = subnet_set.Add(std::string(cidr), &error);
 
-            if (id == -1) {
+            if (id == -1)
+            {
                 pattern_errors.push_back({index, std::string(cidr), error});
                 continue;
             }
@@ -63,14 +66,17 @@ namespace Proofpoint {
 
         std::vector<int> matches;
 
-        if (!subnet_set.Match(pattern, &matches)) {
+        if (!subnet_set.Match(pattern, &matches))
+        {
             return false;
         }
 
-        for (int id : matches) {
+        for (int id : matches)
+        {
             auto it = map_to_list_entry.find(id);
 
-            if (it != map_to_list_entry.end()) {
+            if (it != map_to_list_entry.end())
+            {
                 match_indexes.emplace_back(it->second);
             }
         }
@@ -83,7 +89,6 @@ namespace Proofpoint {
     {
         return subnet_set.Size();
     }
-
 }
 
 #endif

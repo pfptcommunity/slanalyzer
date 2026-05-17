@@ -15,15 +15,19 @@
 #include "Utils.h"
 #include <unordered_map>
 
-namespace Proofpoint {
-class GlobalAddressMatcher {
-public:
-	GlobalAddressMatcher();
-	~GlobalAddressMatcher() = default;
-	void Add(GlobalList::MatchType type, const std::string& pattern, const std::size_t& index, PatternErrors<std::size_t>& pattern_error);
-	bool Match(bool inbound, const std::string& pattern, GlobalList::Entries& safe_list);
-private:
-	std::unordered_map<GlobalList::MatchType, std::shared_ptr<IMatcher<std::size_t>>> matchers;
-};
+namespace Proofpoint
+{
+	class GlobalAddressMatcher
+	{
+	public:
+		GlobalAddressMatcher();
+		~GlobalAddressMatcher() = default;
+		void Add(GlobalList::MatchType type, const std::string& pattern, const std::size_t& index,
+		         PatternErrors<std::size_t>& pattern_error);
+		bool Match(bool inbound, const std::string& pattern, GlobalList::Entries& safe_list);
+
+	private:
+		std::unordered_map<GlobalList::MatchType, std::shared_ptr<IMatcher<std::size_t>>> matchers;
+	};
 }
 #endif //SLANALYZER_ADDRESSMATCHER_H
