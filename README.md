@@ -65,7 +65,7 @@ cmake -S . -B build/ -D CMAKE_BUILD_TYPE=Release
 cmake --build build/
 ```
 
-![image](https://user-images.githubusercontent.com/83429267/203167782-e05ed53f-288d-4b31-b1ce-b3aaf734a683.png)
+<img width="1115" height="1152" alt="image" src="https://github.com/user-attachments/assets/1bda4527-ddd3-4a7c-ac94-85d40f41ee8c" />
 
 ## Processing Global Block / Safe Lists 
 
